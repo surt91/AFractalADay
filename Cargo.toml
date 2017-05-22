@@ -1,0 +1,6 @@
+[package]
+name = "AFractalADay"
+version = "0.1.0"
+authors = ["Hendrik Schawe <surt91@gmail.com>"]
+
+[dependencies]
