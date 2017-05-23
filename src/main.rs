@@ -41,9 +41,7 @@ fn twitter_update(auth: Auth) {
 }
 
 fn main() {
-    let a = NewtonFractal {a: 1.,
-                           f: |z| z.powf(4.) + z.sin() + 15.,
-                           fprime: |z| 4.*z.powf(3.) + z.cos()};
+    let a = NewtonFractal::new(|z| z.powf(4.) + z.sin() + 15.);
 
     a.render("test.png");
 }

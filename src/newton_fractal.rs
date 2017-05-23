@@ -18,7 +18,7 @@ use self::rayon::prelude::*;
 pub struct NewtonFractal {
     pub a: f64,
     pub f: fn(Complex<f64>) -> Complex<f64>,
-    pub fprime: fn(Complex<f64>) -> Complex<f64>
+    pub h: f64
 }
 
 struct Convergence {
@@ -48,6 +48,10 @@ fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
 }
 
 impl NewtonFractal {
+    pub fn new(f: fn(Complex<f64>) -> Complex<f64>) -> NewtonFractal {
+        NewtonFractal {a: 1., f: f, h: 1e-4}
+    }
+
     fn iterate(&self, mut state: Complex<f64>) -> Convergence {
         let mut ctr = 0;
         let threshold = 1e-4;
@@ -56,12 +60,16 @@ impl NewtonFractal {
         // condition and the body is empty, thus omitted
         while {
             tmp = state;
-            state = state - self.a * (self.f)(state) / (self.fprime)(state);
+            state = state - self.a * (self.f)(state) / self.fprime(state);
             ctr += 1;
 
             (state - tmp).norm() > threshold && ctr < 10000
         } {}
         Convergence {count: ctr, value: state}
+    }
+
+    fn fprime(&self, x: Complex<f64>) -> Complex<f64> {
+        ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
     fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
