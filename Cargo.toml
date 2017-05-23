@@ -6,6 +6,7 @@ authors = ["Hendrik Schawe <surt91@gmail.com>"]
 [dependencies]
 png = "*"
 num = "*"
+itertools = "*"
 
 oauth-client = "*"
 twitter-api = "*"

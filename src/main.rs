@@ -4,6 +4,7 @@ extern crate json;
 extern crate twitter_api as twitter;
 extern crate oauth_client as oauth;
 
+#[macro_use] extern crate itertools;
 mod newton_fractal;
 
 use oauth::Token;

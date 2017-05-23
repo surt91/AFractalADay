@@ -61,17 +61,14 @@ impl NewtonFractal {
     }
 
     fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
-        let mut out = Vec::with_capacity((x*y) as usize);
-        for j in 0..y {
-            for i in 0..x {
-                let xp = (i-x/2) as f64 * xscale;
-                let yp = (j-y/2) as f64 * yscale;
-                let p = Complex {re: xp, im: yp};
-                let state = self.iterate(p);
-                out.push(state)
-            }
-        }
-        out
+        // let mut out = Vec::with_capacity((x*y) as usize);
+        iproduct!(0..y, 0..x).map(|(j, i)| {
+            let xp = (i-x/2) as f64 * xscale;
+            let yp = (j-y/2) as f64 * yscale;
+            let p = Complex {re: xp, im: yp};
+            let state = self.iterate(p);
+            state
+        }).collect()
     }
 
     pub fn render(&self, filename: &str) {
