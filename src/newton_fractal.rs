@@ -93,8 +93,10 @@ impl NewtonFractal {
         // use randomness to determine the colors
         let random_color = rand::random::<f64>();
         let random_count = rand::random::<f64>();
+        let random_zoom = rand::random::<f64>();
+        let scale = 4e-3 * random_zoom;
 
-        let states = self.raster(x, y, 2e-3, 2e-3);
+        let states = self.raster(x, y, scale, scale);
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {
                                 let hue = (i.value.norm() * 10. * random_color) % 1.;
