@@ -2,6 +2,7 @@ extern crate std;
 extern crate num;
 extern crate png;
 extern crate rayon;
+extern crate rand;
 
 use self::num::complex::Complex;
 
@@ -76,14 +77,20 @@ impl NewtonFractal {
     }
 
     pub fn render(&self, filename: &str) {
+        // resolution
         let x = 1920;
         let y = 1080;
+
+        // use randomness to determine the colors
+        let random_color = rand::random::<f64>();
+        let random_count = rand::random::<f64>();
+
         let states = self.raster(x, y, 2e-3, 2e-3);
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {
-                                let hue = i.value.re - i.value.re.floor();
+                                let hue = (i.value.norm() * 10. * random_color) % 1.;
                                 let saturation = 1f64;
-                                let value = if i.count as f64 / 50. > 1f64 { 1f64 } else { i.count as f64 / 50. };
+                                let value = 1f64.min(i.count as f64 / (10. + 50. * random_count));
 
                                 let (r, g, b) = hsv2rgb(hue, saturation, value);
                                 let a = 255;
