@@ -86,7 +86,7 @@ impl NewtonFractal {
         let b = (rand::random::<f64>() * 8.).floor();
 
         a = af();
-        candidates.push((Box::new(move |x: Complex<f64>| Complex::new((a - 0.5) * 2. * coeff, 0.) ),
+        candidates.push((Box::new(move |_: Complex<f64>| Complex::new((a - 0.5) * 2. * coeff, 0.) ),
                          format!("{}", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x),
