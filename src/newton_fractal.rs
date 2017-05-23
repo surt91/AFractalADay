@@ -10,6 +10,7 @@ use std::fs::File;
 use std::io::BufWriter;
 // To use encoder.set()
 use self::png::HasParameters;
+use itertools::Itertools;
 
 use self::rayon::prelude::*;
 
@@ -78,20 +79,21 @@ impl NewtonFractal {
         let x = 1920;
         let y = 1080;
         let states = self.raster(x, y, 2e-3, 2e-3);
-        let mut buffer: Vec<u8> = Vec::with_capacity((4*x*y) as usize);
-        for i in states.iter() {
-            let hue = i.value.re - i.value.re.floor();
-            let saturation = 1f64;
-            let value = if i.count as f64 / 50. > 1f64 { 1f64 } else { i.count as f64 / 50. };
+        let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
+                            .map(|i| {
+                                let hue = i.value.re - i.value.re.floor();
+                                let saturation = 1f64;
+                                let value = if i.count as f64 / 50. > 1f64 { 1f64 } else { i.count as f64 / 50. };
 
-            let (r, g, b) = hsv2rgb(hue, saturation, value);
-            let a = 255;
+                                let (r, g, b) = hsv2rgb(hue, saturation, value);
+                                let a = 255;
 
-            buffer.push((r * 255.) as u8);
-            buffer.push((g * 255.) as u8);
-            buffer.push((b * 255.) as u8);
-            buffer.push(a);
-        }
+                                vec![(r * 255.) as u8, (g * 255.) as u8, (b * 255.) as u8, a]
+                            })
+                            .collect();
+        let buffer: Vec<u8> = tmp_buffer.into_iter()
+                                        .flatten()
+                                        .collect();
 
         let path = Path::new(filename);
         let file = File::create(path).unwrap();
