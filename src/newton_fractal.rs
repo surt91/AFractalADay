@@ -1,6 +1,7 @@
 extern crate std;
 extern crate num;
 extern crate png;
+extern crate rayon;
 
 use self::num::complex::Complex;
 
@@ -9,6 +10,8 @@ use std::fs::File;
 use std::io::BufWriter;
 // To use encoder.set()
 use self::png::HasParameters;
+
+use self::rayon::prelude::*;
 
 pub struct NewtonFractal {
     pub a: f64,
@@ -60,8 +63,9 @@ impl NewtonFractal {
     }
 
     fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
-        // let mut out = Vec::with_capacity((x*y) as usize);
-        iproduct!(0..y, 0..x).map(|(j, i)| {
+        let coordinates: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();
+        coordinates.par_iter()
+                   .map(|&(j, i)| {
             let xp = (i-x/2) as f64 * xscale;
             let yp = (j-y/2) as f64 * yscale;
             let p = Complex {re: xp, im: yp};

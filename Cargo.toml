@@ -7,6 +7,7 @@ authors = ["Hendrik Schawe <surt91@gmail.com>"]
 png = "*"
 num = "*"
 itertools = "*"
+rayon = "*"
 
 oauth-client = "*"
 twitter-api = "*"
