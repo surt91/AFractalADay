@@ -24,9 +24,8 @@ struct Convergence {
 fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
     // https://de.wikipedia.org/wiki/HSV-Farbraum#Umrechnung_HSV_in_RGB
 
-    let H = h * 360.;
-    let hi = (H / 60.).floor() as u32;
-    let f = H / 60. - hi as f64;
+    let hi = (h * 6.).floor() as u32;
+    let f = h * 6. - hi as f64;
     let p = v*(1.-s);
     let q = v*(1.-s*f);
     let t = v*(1.-s*(1.-f));
