@@ -60,12 +60,12 @@ impl NewtonFractal {
         Convergence {count: ctr, value: state}
     }
 
-    fn raster(&self, x: i32, y: i32, w: f64, h: f64) -> Vec<Convergence> {
+    fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
         let mut out = Vec::with_capacity((x*y) as usize);
         for j in 0..y {
             for i in 0..x {
-                let xp = w/x as f64 * (i-x/2) as f64;
-                let yp = h/y as f64 * (j-y/2) as f64;
+                let xp = (i-x/2) as f64 * xscale;
+                let yp = (j-y/2) as f64 * yscale;
                 let p = Complex {re: xp, im: yp};
                 let state = self.iterate(p);
                 out.push(state)
@@ -77,7 +77,7 @@ impl NewtonFractal {
     pub fn render(&self, filename: &str) {
         let x = 1920;
         let y = 1080;
-        let states = self.raster(x, y, 2., 2.);
+        let states = self.raster(x, y, 2e-3, 2e-3);
         let mut buffer: Vec<u8> = Vec::with_capacity((4*x*y) as usize);
         for i in states.iter() {
             let hue = i.value.re - i.value.re.floor();
