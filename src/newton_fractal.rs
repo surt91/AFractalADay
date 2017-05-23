@@ -17,7 +17,7 @@ use self::rayon::prelude::*;
 
 pub struct NewtonFractal {
     pub a: f64,
-    pub f: fn(Complex<f64>) -> Complex<f64>,
+    pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
     pub h: f64
 }
 
@@ -48,7 +48,7 @@ fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
 }
 
 impl NewtonFractal {
-    pub fn new(f: fn(Complex<f64>) -> Complex<f64>) -> NewtonFractal {
+    pub fn new(f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>) -> NewtonFractal {
         NewtonFractal {a: 1., f: f, h: 1e-4}
     }
 
@@ -72,6 +72,69 @@ impl NewtonFractal {
         ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
+    pub fn random_formula() -> (Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String){
+        // use up to 5 terms but at least 2
+        let num_terms = (rand::random::<f64>() * 3.).floor() as i32 + 2;
+        let mut terms: Vec<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>> = Vec::new();
+        let mut term_string: Vec<String> = Vec::new();
+
+        let mut candidates: Vec<(Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String)> = Vec::new();
+
+        let af = || 0.1f64.max((rand::random::<f64>() * 3. * 10.).round() / 10.);
+        let mut a;
+        let coeff = 2.;
+        let b = (rand::random::<f64>() * 8.).floor();
+
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| Complex::new((a - 0.5) * 2. * coeff, 0.) ),
+                         format!("{}", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x),
+                         format!("{} * x", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
+                         format!("{} * x ^ 5", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
+                         format!("{} * x ^ 6", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
+                         format!("{} * x ^ 7", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.sin()),
+                         format!("{} * sin(x)", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.cosh()),
+                         format!("{} * cosh(x)", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
+                         format!("{} * cosh(x)", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * (x+Complex {re: 0., im: 1.}).cosh()),
+                         format!("{} * cosh(x+i)", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
+                         format!("{} * {} ^ x", a, b)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.exp() ),
+                         format!("{} * exp(x)", a)));
+        a = af();
+        candidates.push((Box::new(move |x: Complex<f64>| a * x.ln() ),
+                         format!("{} * ln(x)", a)));
+
+        for _ in 0..num_terms {
+            let num_cand = candidates.len();
+            let neo = candidates.swap_remove((rand::random::<f64>() * num_cand as f64) as usize);
+            terms.push(neo.0);
+            term_string.push(neo.1);
+        }
+
+        let f = move |x| terms.iter()
+                              .map(move |f| f(x))
+                              .fold(Complex {re: 0., im: 0.}, |sum: Complex<f64>, x| sum + x);
+        (Box::new(f), term_string.join(" + "))
+    }
+
     fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
         let pixels: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();
         pixels.par_iter()
@@ -85,7 +148,7 @@ impl NewtonFractal {
               .collect()
     }
 
-    pub fn render(&self, filename: &str) {
+    pub fn render(&self, filename: &str) -> i64 {
         // resolution
         let x = 1920;
         let y = 1080;
@@ -97,6 +160,11 @@ impl NewtonFractal {
         let scale = 4e-3 * random_zoom;
 
         let states = self.raster(x, y, scale, scale);
+        let total_iterations: i64 = states.par_iter()
+                                     .map(|i| i.count)
+                                     .sum();
+        println!("{:.2}M iterations", total_iterations as f64/1e6);
+
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {
                                 let hue = (i.value.norm() * 10. * random_color) % 1.;
@@ -122,5 +190,7 @@ impl NewtonFractal {
         let mut writer = encoder.write_header().unwrap();
 
         writer.write_image_data(&buffer).unwrap(); // Save
+
+        total_iterations
     }
 }

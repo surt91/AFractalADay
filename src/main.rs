@@ -41,7 +41,13 @@ fn twitter_update(auth: Auth) {
 }
 
 fn main() {
-    let a = NewtonFractal::new(|z| z.powf(4.) + z.sin() + 15.);
+    // let a = NewtonFractal::new(|z| z.powf(4.) + z.sin() + 15.);
+    let mut finished = false;
+    while ! finished {
+        let f = NewtonFractal::random_formula();
+        println!("{}", f.1);
+        let a = NewtonFractal::new(f.0);
 
-    a.render("test.png");
+        finished = a.render("test.png") > 10000000;
+    }
 }
