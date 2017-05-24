@@ -16,10 +16,10 @@ fn postprocess_image(filename: &str) {
     // add a transparent border to suppress the conversion
     // using imagemagick's convert
     let output = Command::new("convert")
-                         .arg("-alpha on")
-                         .arg("-channel RGBA")
-                         .arg("-bordercolor \"rgba(0,0,0,0)\"")
-                         .arg("-border \"1x1\"")
+                         .arg("-alpha").arg("on")
+                         .arg("-channel").arg("RGBA")
+                         .arg("-bordercolor").arg("rgba(0,0,0,0)")
+                         .arg("-border").arg("1x1")
                          .arg(filename)
                          .arg(filename)
                          .output();
