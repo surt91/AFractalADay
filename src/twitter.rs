@@ -3,7 +3,6 @@ extern crate tweetust;
 extern crate std;
 
 use std::error::Error;
-use std::fmt;
 use std::fs;
 use std::io;
 use std::io::prelude::*;
@@ -22,7 +21,7 @@ fn read_token() -> io::Result<Auth> {
     let mut file = fs::File::open("keys_and_secrets.json")?;
     let mut raw = String::new();
     file.read_to_string(&mut raw)?;
-    let obj = json::parse(&raw).unwrap();
+    let obj = json::parse(&raw).expect("'keys_and_secrets.json' contains no valid json!");
 
     Ok(
         Auth { consumer_key: obj["consumer_key"].to_string(),
@@ -33,7 +32,7 @@ fn read_token() -> io::Result<Auth> {
 }
 
 fn create_client<'a>() -> Client<'a> {
-    load_config_file().unwrap()
+    load_config_file().expect("failed to load config from file")
 }
 
 fn load_config_file<'a>() -> io::Result<Client<'a>> {
@@ -51,23 +50,23 @@ pub fn tweet_image(text: &str, image_filename: &str) -> Result<(), Box<Error>> {
     let mut image_file = fs::File::open(image_filename.trim())?;
     let file_len = image_file.metadata()?.len();
 
-    let init_res = client.media()
-                         .upload_init_command(file_len, "image/png")
-                         .media_category("tweet_image")
-                         .execute()?;
-
     let mut buffer = Vec::new();
     // read the whole file
     image_file.read_to_end(&mut buffer)?;
     let mut io_buf = io::Cursor::new(&buffer);
 
+    let init_res = client.media()
+                         .upload_init_command(file_len, "image/png")
+                         .media_category("tweet_image")
+                         .execute()?;
+
     client.media().upload_append_command(init_res.object.media_id, 0)
           .media(&mut io_buf)
           .execute()?;
 
-    let finalize_res = client.media()
-                             .upload_finalize_command(init_res.object.media_id)
-                             .execute()?;
+    client.media()
+          .upload_finalize_command(init_res.object.media_id)
+          .execute()?;
 
     client.statuses()
           .update(text)

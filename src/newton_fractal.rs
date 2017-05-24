@@ -8,7 +8,7 @@ use self::num::complex::Complex;
 
 use std::path::Path;
 use std::fs::File;
-use std::io::BufWriter;
+use std::io;
 // To use encoder.set()
 use self::png::HasParameters;
 use itertools::Itertools;
@@ -148,10 +148,8 @@ impl NewtonFractal {
               .collect()
     }
 
-    pub fn render(&self, filename: &str) -> i64 {
-        // resolution
-        let x = 1920;
-        let y = 1080;
+    pub fn render(&self, resolution: (i32, i32), filename: &str) -> io::Result<i64> {
+        let (x, y) = resolution;
 
         // use randomness to determine the colors
         let random_color = rand::random::<f64>();
@@ -182,15 +180,15 @@ impl NewtonFractal {
                                         .collect();
 
         let path = Path::new(filename);
-        let file = File::create(path).unwrap();
-        let ref mut w = BufWriter::new(file);
+        let file = File::create(path)?;
+        let ref mut w = io::BufWriter::new(file);
 
         let mut encoder = png::Encoder::new(w, x as u32, y as u32);
         encoder.set(png::ColorType::RGBA).set(png::BitDepth::Eight);
-        let mut writer = encoder.write_header().unwrap();
+        let mut writer = encoder.write_header()?;
 
-        writer.write_image_data(&buffer).unwrap(); // Save
+        writer.write_image_data(&buffer)?; // Save
 
-        total_iterations
+        Ok(total_iterations)
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "AFractalADay"
+name = "a_fractal_a_day"
 version = "0.1.0"
 authors = ["Hendrik Schawe <surt91@gmail.com>"]
 
@@ -9,6 +9,7 @@ num = "*"
 rand = "*"
 itertools = "*"
 rayon = "*"
+time = "*"
 
 json = "*"
 tweetust = "*"
