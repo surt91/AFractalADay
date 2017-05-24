@@ -55,5 +55,5 @@ fn main() {
     }
 
     postprocess_image(&output);
-    twitter::tweet_image(&detail, "test.png").expect("Uploading to twitter failed!");
+    twitter::tweet_image(&detail, &output).expect("Uploading to twitter failed!");
 }
