@@ -68,10 +68,11 @@ pub fn tweet_image(text: &str, image_filename: &str) -> Result<(), Box<Error>> {
           .upload_finalize_command(init_res.object.media_id)
           .execute()?;
 
+    // seems to always result in a parse error: why?
     client.statuses()
           .update(text)
           .media_ids(Some(init_res.object.media_id))
-          .execute()?;
+          .execute();
 
     Ok(())
 }
