@@ -10,6 +10,5 @@ rand = "*"
 itertools = "*"
 rayon = "*"
 
-oauth-client = "*"
-twitter-api = "*"
 json = "*"
+tweetust = "*"
