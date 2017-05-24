@@ -3,6 +3,8 @@
 #[macro_use] extern crate itertools;
 extern crate time;
 
+use std::fs;
+
 mod newton_fractal;
 mod twitter;
 
@@ -34,7 +36,9 @@ fn postprocess_image(filename: &str) {
 fn main() {
     let mut finished = false;
     let mut detail = String::new();
-    let output = format!("{}.png", time::now_utc().to_timespec().sec);
+    fs::create_dir_all("img").expect("could not create output directory");
+    let output = format!("img/{}.png", time::now_utc().to_timespec().sec);
+
     while ! finished {
         let f = NewtonFractal::random_formula();
         println!("{}", f.1);
