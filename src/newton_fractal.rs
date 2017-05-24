@@ -165,12 +165,14 @@ impl NewtonFractal {
 
         let styles = [style_spooky, style_strong, style_vibrant, style_pastell];
         let num_styles = styles.len();
+        let idx = (rand::random::<f64>() * num_styles as f64) as usize;
+        let style = styles[idx];
 
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {
-                                let idx = (rand::random::<f64>() * num_styles as f64) as usize;
-                                let (h, s, v) = styles[idx](i.value, i.count,
-                                                            Some(random_color), Some(random_count));
+
+                                let (h, s, v) = style(i.value, i.count,
+                                                      Some(random_color), Some(random_count));
 
                                 let (r, g, b) = hsv2rgb(h, s, v);
                                 let a = 255;
