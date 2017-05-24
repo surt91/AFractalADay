@@ -90,37 +90,37 @@ impl NewtonFractal {
                          format!("{}", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x),
-                         format!("{} * x", a)));
+                         format!("{} x", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
-                         format!("{} * x ^ 5", a)));
+                         format!("{} x^5", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
-                         format!("{} * x ^ 6", a)));
+                         format!("{} x^6", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
-                         format!("{} * x ^ 7", a)));
+                         format!("{} x^7", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.sin()),
-                         format!("{} * sin(x)", a)));
+                         format!("{} sin(x)", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.cosh()),
-                         format!("{} * cosh(x)", a)));
+                         format!("{} cosh(x)", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
-                         format!("{} * cosh(x)", a)));
+                         format!("{} cosh(x)", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * (x+Complex {re: 0., im: 1.}).cosh()),
-                         format!("{} * cosh(x+i)", a)));
+                         format!("{} cosh(x+i)", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
-                         format!("{} * {} ^ x", a, b)));
+                         format!("{} {}^x", a, b)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.exp() ),
-                         format!("{} * exp(x)", a)));
+                         format!("{} exp(x)", a)));
         a = af();
         candidates.push((Box::new(move |x: Complex<f64>| a * x.ln() ),
-                         format!("{} * ln(x)", a)));
+                         format!("{} ln(x)", a)));
 
         for _ in 0..num_terms {
             let num_cand = candidates.len();
@@ -167,7 +167,8 @@ impl NewtonFractal {
                             .map(|i| {
                                 let hue = (i.value.norm() * 10. * random_color) % 1.;
                                 let saturation = 1f64;
-                                let value = 1f64.min(i.count as f64 / (10. + 50. * random_count));
+                                let value = 1f64.min(i.count as f64 / (10. + 200. * random_count))
+                                                .powf(0.7);  // Gamma value -> more vibrant colors
 
                                 let (r, g, b) = hsv2rgb(hue, saturation, value);
                                 let a = 255;

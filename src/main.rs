@@ -44,7 +44,7 @@ fn main() {
         println!("{}", f.1);
         let a = NewtonFractal::new(f.0);
 
-        detail = format!("{} {}", "Newton Fractal", f.1);
+        detail = format!("{} {}", "Newton Fractal of", f.1);
 
         // ensure that we do at least 10 million iterations
         // otherwise the images are probably boring
