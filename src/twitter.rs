@@ -11,8 +11,6 @@ use self::tweetust::*;
 
 type Client<'a> = TwitterClient<OAuthAuthenticator<'a>, DefaultHttpHandler<conn::DefaultHttpsConnector>>;
 
-
-
 struct Auth {
     pub consumer_key: String,
     pub consumer_secret: String,
@@ -58,8 +56,6 @@ pub fn tweet_image(text: &str, image_filename: &str) -> Result<(), Box<Error>> {
                          .media_category("tweet_image")
                          .execute()?;
 
-    print!("\n{:?}\n\n", init_res);
-
     let mut buffer = Vec::new();
     // read the whole file
     image_file.read_to_end(&mut buffer)?;
@@ -72,31 +68,11 @@ pub fn tweet_image(text: &str, image_filename: &str) -> Result<(), Box<Error>> {
     let finalize_res = client.media()
                              .upload_finalize_command(init_res.object.media_id)
                              .execute()?;
-    println!("\n{:?}", finalize_res);
 
-
-    if let Some(models::ProcessingInfo { mut check_after_secs, .. }) = finalize_res.object.processing_info {
-        while let Some(x) = check_after_secs {
-            std::thread::sleep(std::time::Duration::from_secs(x as u64));
-
-            let status_res = client.media().upload_status_command(init_res.object.media_id).execute()?;
-            println!("\n{:?}", status_res);
-
-            check_after_secs = status_res.object.processing_info.check_after_secs;
-        }
-    }
-
-    // write_and_flush(format_args!("\nTweet: "));
-    // let mut status = String::new();
-    // io::stdin().read_line(&mut status).unwrap();
-
-    println!(
-        "\n{:?}",
-        client.statuses()
-              .update(text)
-              .media_ids(Some(init_res.object.media_id))
-              .execute()?
-    );
+    client.statuses()
+          .update(text)
+          .media_ids(Some(init_res.object.media_id))
+          .execute()?;
 
     Ok(())
 }
