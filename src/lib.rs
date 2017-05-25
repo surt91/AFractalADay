@@ -4,6 +4,7 @@
 #[macro_use] extern crate log;
 
 pub mod newton_fractal;
+mod functions;
 
 use std::process::Command;
 

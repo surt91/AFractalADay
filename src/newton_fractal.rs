@@ -17,6 +17,8 @@ use itertools::Itertools;
 
 use self::rayon::prelude::*;
 
+use functions::Terms;
+
 pub struct NewtonFractal {
     pub a: Coef,
     pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
@@ -108,8 +110,6 @@ impl NewtonFractal {
         let mut terms: Vec<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>> = Vec::new();
         let mut term_string: Vec<String> = Vec::new();
 
-        let mut candidates: Vec<(Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String)> = Vec::new();
-
         let mut prefix;
         let a_re = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
         let a_im = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
@@ -127,76 +127,15 @@ impl NewtonFractal {
         };
         prefix += "z ↦ ";
 
-        let mut a;
-        let coeff = 2.;
-        let b = (rng.gen_range(-1f64, 1f64) * 8.).floor();
-        let af = |generator: &mut rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
-        let i = Complex {re: 0., im: 1.};
+        let a_real_gen = |generator: &mut rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
+        let a_comp_gen = |generator: &mut rand::StdRng| Complex::new(a_real_gen(generator), a_real_gen(generator));
 
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |_: Complex<f64>| Complex::new(a * 2. * coeff, 0.) ),
-                             format!("{}", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x),
-                         format!("{} z", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
-                         format!("{} z⁵", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
-                         format!("{} z⁶", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
-                         format!("{} z⁷", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.sin()),
-                         format!("{} sin(z)", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.cosh()),
-                         format!("{} cosh(z)", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
-                         format!("{} artanh(z)", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * (x+i).cosh()),
-                         format!("{} cosh(z+i)", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
-                         format!("{} {}ᶻ", a, b)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.exp() ),
-                         format!("{} exp(z)", a)));
-        }
-        {
-            a = af(rng);
-            candidates.push((Box::new(move |x: Complex<f64>| a * x.ln() ),
-                         format!("{} ln(z)", a)));
-        }
+        let mut possible_terms = Terms::new();
 
         for _ in 0..num_terms {
-            let num_cand = candidates.len();
-            let neo = candidates.swap_remove(rng.gen_range(0, num_cand as usize));
+            // let num_cand = candidates.len();
+            // let neo = candidates.swap_remove(rng.gen_range(0, num_cand as usize));
+            let neo = possible_terms.choice(a_comp_gen(rng), rng);
             terms.push(neo.0);
             term_string.push(neo.1);
         }
