@@ -17,7 +17,7 @@ use itertools::Itertools;
 use self::rayon::prelude::*;
 
 pub struct NewtonFractal {
-    pub a: Complex<f64>,
+    pub a: Coef,
     pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
     h: f64,
     rng: rand::StdRng,
@@ -26,9 +26,14 @@ pub struct NewtonFractal {
 
 pub struct Formula {
     pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
-    pub a: Complex<f64>,
+    pub a: Coef,
     pub formula: String,
     pub prefix: String
+}
+
+pub enum Coef {
+    Real(f64),
+    Complex(Complex<f64>)
 }
 
 struct Convergence {
@@ -64,7 +69,7 @@ impl NewtonFractal {
             None => rand::StdRng::new().unwrap()
         };
         let formula = match f {
-            Some(x) => Formula {f: x, a: Complex::new(1., 0.), formula: "n/a".to_string(), prefix: "Newton Fractal of".to_string()},
+            Some(x) => Formula {f: x, a: Coef::Real(1.), formula: "n/a".to_string(), prefix: "Newton Fractal of".to_string()},
             None => NewtonFractal::random_formula(&mut rng)
         };
 
@@ -77,12 +82,17 @@ impl NewtonFractal {
         let mut tmp;
         // *attention*: this is a do while loop, mind that the "body" is actually the
         // condition and the body is empty, thus omitted
+        let kernel: Box<Fn(Complex<f64>) -> Complex<f64>> = match self.a {
+            Coef::Complex(z) => Box::new(move |state| state - z * (self.f)(state) / self.fprime(state)),
+            Coef::Real(x) => Box::new(move |state| state - x * (self.f)(state) / self.fprime(state))
+        };
+
         while {
             tmp = state;
-            state = state - self.a * (self.f)(state) / self.fprime(state);
+            state = kernel(state);
             ctr += 1;
 
-            (state - tmp).norm() > threshold && ctr < 10000
+            (state - tmp).norm() > threshold && ctr < 1000
         } {}
         Convergence {count: ctr, value: state}
     }
@@ -105,14 +115,14 @@ impl NewtonFractal {
         let alpha = if rng.gen::<f64>() < 0.1 {
             let tmp = Complex::new(a_re, a_im);
             prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
-            tmp
+            Coef::Complex(tmp)
         } else if rng.gen::<f64>() < 0.4 {
-            let tmp = Complex::new(a_re, 0.);
+            let tmp = a_re;
             prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
-            tmp
+            Coef::Real(tmp)
         } else {
             prefix = "Newton Fractal of ".to_string();
-            Complex::new(1., 0.)
+            Coef::Real(1.)
         };
 
         let mut a;
