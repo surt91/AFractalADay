@@ -242,7 +242,9 @@ impl NewtonFractal {
         let idx = self.rng.gen_range(0, num_styles as usize);
         let style = styles[idx];
         info!("use style '{}'", style_names[idx]);
-        info!("rcol {}\nrcnt {}\nrzo {}", random_color, random_count, random_zoom);
+        info!("rcol {}", random_color);
+        info!("rcnt {}", random_count);
+        info!("rzo {}", random_zoom);
 
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {

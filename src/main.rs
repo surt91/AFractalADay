@@ -28,7 +28,7 @@ struct Options {
 
 impl fmt::Display for Options {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Optionen:\n  seed:  {}\n  name:  {}\n  tweet: {}",
+        write!(f, "Options: seed: {}, name:  {}, tweet: {}",
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
                   self.tweet)
