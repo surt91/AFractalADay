@@ -27,7 +27,7 @@ pub struct NewtonFractal {
     pub formula: String
 }
 
-pub struct Formula {
+pub struct IterationDetails {
     pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
     pub a: Coef,
     pub formula: String,
@@ -48,7 +48,7 @@ impl NewtonFractal {
             None => rand::StdRng::new().unwrap()
         };
         let formula = match f {
-            Some(x) => Formula {f: x, a: Coef::Real(1.), formula: "n/a".to_string(), prefix: "Newton Fractal of".to_string()},
+            Some(x) => IterationDetails {f: x, a: Coef::Real(1.), formula: "n/a".to_string(), prefix: "Newton Fractal of".to_string()},
             None => NewtonFractal::random_formula(&mut rng)
         };
 
@@ -80,7 +80,7 @@ impl NewtonFractal {
         ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
-    pub fn random_formula(rng: &mut rand::StdRng) -> Formula{
+    pub fn random_formula(rng: &mut rand::StdRng) -> IterationDetails{
         // use up to 5 terms but at least 2
         let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 2;
         let mut terms: Vec<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>> = Vec::new();
@@ -116,15 +116,15 @@ impl NewtonFractal {
             };
 
             let neo = possible_terms.choice(a, rng);
-            terms.push(neo.0);
-            term_string.push(neo.1);
+            terms.push(neo.callable);
+            term_string.push(neo.readable);
         }
 
         let f = move |x| terms.iter()
                               .map(move |f| f(x))
                               .fold(Complex {re: 0., im: 0.}, |sum: Complex<f64>, x| sum + x);
 
-        Formula {f: Box::new(f), a: alpha, formula: term_string.join(" + "), prefix: prefix}
+        IterationDetails {f: Box::new(f), a: alpha, formula: term_string.join(" + "), prefix: prefix}
     }
 
     fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
