@@ -256,7 +256,7 @@ fn style_vibrant(value: Complex<f64>, count: i64, random_color: Option<f64>, ran
 
     let hue = (value.norm() * 10. * (random_color + 0.1)) % 1.;
     let value = 1f64;
-    let tmp = count as f64 / (10. + 200. * random_count);
+    let tmp = count as f64 / (10. + 40. * random_count);
     let saturation = 1. - 1f64.min(tmp);
 
     (hue, saturation, value)
