@@ -137,6 +137,8 @@ fn main() {
     info!("image saved as {}", filename);
 
     if opt.tweet {
+        info!("start upload to twitter");
         tweet(&filename, &fractal);
+        info!("tweeted");
     }
 }
