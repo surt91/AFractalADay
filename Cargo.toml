@@ -12,6 +12,7 @@ rand = "*"
 itertools = "*"
 rayon = "*"
 time = "*"
+clap = "*"
 
 [dependencies.my_twitter]
 path = "my_twitter"

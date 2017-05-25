@@ -4,29 +4,86 @@ use a_fractal_a_day::*;
 use newton_fractal::NewtonFractal;
 
 use std::fs;
+use std::fmt;
 
 extern crate time;
+
+extern crate clap;
+use clap::{App, Arg};
 
 extern crate my_twitter;
 use my_twitter::twitter as twitter;
 
-fn main() {
-    let mut finished = false;
-    let mut detail = String::new();
+#[derive(Debug)]
+struct Options {
+    seed: Option<usize>,
+    filename: Option<String>,
+    tweet: bool
+}
+
+impl fmt::Display for Options {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Optionen:\n  seed:  {}\n  name:  {}\n  tweet: {}",
+                  self.seed.map_or("random".to_string(), |s| s.to_string()),
+                  self.filename.as_ref().unwrap_or(&"random".to_string()),
+                  self.tweet)
+    }
+}
+
+fn parse_cl() -> Options {
+    let matches = App::new(env!("CARGO_PKG_NAME"))
+              .version(env!("CARGO_PKG_VERSION"))
+              .about(env!("CARGO_PKG_DESCRIPTION"))
+              .author(env!("CARGO_PKG_AUTHORS"))
+              .arg(Arg::with_name("tweet")
+                    .short("t")
+                    .long("tweet")
+                    .help("do tweet the generated image")
+              )
+              .arg(Arg::with_name("seed")
+                    .short("s")
+                    .long("seed")
+                    .takes_value(true)
+                    .help("the seed for the random number generator ")
+              )
+              .arg(Arg::with_name("filename")
+                    .short("f")
+                    .long("filename")
+                    .takes_value(true)
+                    .help("the name of the outputted image")
+              )
+              .get_matches();
+
+    let tweet = matches.is_present("tweet");
+    let filename = matches.value_of("filename")
+                          .and_then(|f| Some(f.to_string()))
+                          .or_else(|| None);
+    let seed = matches.value_of("seed")
+                      .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be and integer")))
+                      .or_else(|| None);
+
+    Options {seed: seed, filename: filename, tweet: tweet}
+}
+
+fn prepare(filename: &str) -> String {
     fs::create_dir_all("img").expect("could not create output directory");
-    let timestamp = time::now_utc().to_timespec().sec;
-    let output = format!("img/{}.png", timestamp);
+
+    format!("img/{}.png", filename)
+}
+
+fn render_fractal(filename: &str, seed: usize) -> NewtonFractal {
+    let mut finished = false;
 
     let mut a;
     let mut ctr = 0;
     // hacky do while loop
     while {
-        a = NewtonFractal::new(None, Some(&[timestamp as usize + ctr]));
+        a = NewtonFractal::new(None, Some(&[seed + ctr]));
         println!("{}", a.formula);
 
         // ensure that we do at least 10 million iterations
         // otherwise the images are probably boring
-        match a.render((2048-2, 1024-2), &output) {
+        match a.render((2048-2, 1024-2), filename) {
             Ok(x) => finished = x > 10000000,
             Err(x) => println!("creation of fractal failed {:?}", x)
         }
@@ -35,6 +92,33 @@ fn main() {
         ! finished
     } {}
 
-    postprocess_image(&output);
-    twitter::tweet_image(&a.formula, &output).expect("Uploading to twitter failed!");
+    postprocess_image(filename);
+
+    a
+}
+
+fn tweet(filename: &str, fractal: &NewtonFractal) {
+    twitter::tweet_image(&fractal.formula, filename)
+            .expect("Uploading to twitter failed!");
+}
+
+fn main() {
+    let timestamp = time::now_utc().to_timespec().sec;
+
+    let opt = parse_cl();
+    println!("{}", opt);
+
+    let seed = opt.seed.unwrap_or(timestamp as usize);
+    let filename = opt.filename.unwrap_or(timestamp.to_string());
+    let filename = prepare(&filename);
+
+    println!("start generation with seed {}", seed);
+
+    let fractal = render_fractal(&filename, seed);
+
+    println!("image saved as {}", filename);
+
+    if opt.tweet {
+        tweet(&filename, &fractal);
+    }
 }
