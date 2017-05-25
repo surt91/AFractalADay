@@ -40,8 +40,10 @@ fn main() {
     fs::create_dir_all("img").expect("could not create output directory");
     let output = format!("img/{}.png", time::now_utc().to_timespec().sec);
 
-    while ! finished {
-        let mut a = NewtonFractal::new(None, None);
+    let mut a;
+    // hacky do while loop
+    while {
+        a = NewtonFractal::new(None, None);
         println!("{}", a.formula);
 
         // ensure that we do at least 10 million iterations
@@ -50,7 +52,9 @@ fn main() {
             Ok(x) => finished = x > 10000000,
             Err(x) => println!("creation of fractal failed {:?}", x)
         }
-    }
+
+        ! finished
+    } {}
 
     postprocess_image(&output);
     twitter::tweet_image(&a.formula, &output).expect("Uploading to twitter failed!");
