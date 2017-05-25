@@ -110,7 +110,7 @@ impl NewtonFractal {
 
         let mut candidates: Vec<(Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String)> = Vec::new();
 
-        let prefix;
+        let mut prefix;
         let a_re = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
         let a_im = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
         let alpha = if rng.gen::<f64>() < 0.1 {
@@ -125,6 +125,7 @@ impl NewtonFractal {
             prefix = "Newton Fractal of ".to_string();
             Coef::Real(1.)
         };
+        prefix += "z ↦ ";
 
         let mut a;
         let coeff = 2.;
