@@ -225,7 +225,7 @@ impl NewtonFractal {
         // use randomness to determine the colors
         let random_color = self.rng.gen_range(0f64, 1.);
         let random_count = self.rng.gen_range(0f64, 1.);
-        let random_zoom = self.rng.gen_range(0f64, 1.);
+        let random_zoom = self.rng.gen_range(0.1f64, 2.);
         let scale = 4e-3 * random_zoom;
 
         let states = self.raster(x, y, scale, scale);
