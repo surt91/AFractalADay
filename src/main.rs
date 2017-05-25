@@ -1,38 +1,11 @@
-#![feature(closure_to_fn_coercion)]
+extern crate a_fractal_a_day;
 
-#[macro_use] extern crate itertools;
-extern crate time;
+use a_fractal_a_day::*;
+use newton_fractal::NewtonFractal;
 
 use std::fs;
 
-mod newton_fractal;
-mod twitter;
-
-use newton_fractal::NewtonFractal;
-use std::process::Command;
-
-fn postprocess_image(filename: &str) {
-    // since twitter will convert the pictures to jpg with artifacts,
-    // add a transparent border to suppress the conversion
-    // using imagemagick's convert
-    let output = Command::new("convert")
-                         .arg("-alpha").arg("on")
-                         .arg("-channel").arg("RGBA")
-                         .arg("-bordercolor").arg("rgba(0,0,0,0)")
-                         .arg("-border").arg("1x1")
-                         .arg(filename)
-                         .arg(filename)
-                         .output();
-
-    match output {
-        Ok(x) => if !x.status.success() {
-                        println!("convert failed")
-                    } else {
-                        println!("convert successful")
-                    },
-        Err(x) => println!("failed with {:?}", x)
-    };
-}
+extern crate time;
 
 fn main() {
     let mut finished = false;
