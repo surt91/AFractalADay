@@ -1,0 +1,8 @@
+[package]
+name = "my_twitter"
+version = "0.1.0"
+authors = ["Hendrik Schawe <surt91@gmail.com>"]
+
+[dependencies]
+json = "*"
+tweetust = "*"

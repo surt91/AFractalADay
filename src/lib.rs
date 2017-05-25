@@ -3,7 +3,6 @@
 #[macro_use] extern crate itertools;
 
 pub mod newton_fractal;
-pub mod twitter;
 
 use std::process::Command;
 

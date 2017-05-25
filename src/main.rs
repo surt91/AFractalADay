@@ -7,6 +7,9 @@ use std::fs;
 
 extern crate time;
 
+extern crate my_twitter;
+use my_twitter::twitter as twitter;
+
 fn main() {
     let mut finished = false;
     let mut detail = String::new();

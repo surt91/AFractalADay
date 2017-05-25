@@ -11,5 +11,5 @@ itertools = "*"
 rayon = "*"
 time = "*"
 
-json = "*"
-tweetust = "*"
+[dependencies.my_twitter]
+path = "my_twitter"
