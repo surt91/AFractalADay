@@ -23,6 +23,7 @@ fn postprocess_image(filename: &str) {
                          .arg(filename)
                          .arg(filename)
                          .output();
+
     match output {
         Ok(x) => if !x.status.success() {
                         println!("convert failed")
@@ -43,8 +44,6 @@ fn main() {
         let mut a = NewtonFractal::new(None, None);
         println!("{}", a.formula);
 
-        detail = format!("{} {}", "Newton Fractal of", a.formula);
-
         // ensure that we do at least 10 million iterations
         // otherwise the images are probably boring
         match a.render((2048-2, 1024-2), &output) {
@@ -54,5 +53,5 @@ fn main() {
     }
 
     postprocess_image(&output);
-    twitter::tweet_image(&detail, &output).expect("Uploading to twitter failed!");
+    twitter::tweet_image(&a.formula, &output).expect("Uploading to twitter failed!");
 }
