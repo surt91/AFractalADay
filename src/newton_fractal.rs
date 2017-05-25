@@ -204,22 +204,22 @@ fn style_pastell(value: Complex<f64>, count: i64, random_color: Option<f64>, ran
 
     let hue = (value.norm() * 10. * random_color) % 1.;
     let value = 1f64;
-    let tmp = count as f64 / (10. + 200. * random_count);
+    let tmp = count as f64 / (10. + 40. * random_count);
     let saturation = 1f64.min(tmp);
 
-    (hue, value, saturation)
+    (hue, saturation, value)
 }
 
 fn style_vibrant(value: Complex<f64>, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (value.norm() * 10. * random_color) % 1.;
+    let hue = (value.norm() * 10. * (random_color + 0.1)) % 1.;
     let value = 1f64;
     let tmp = count as f64 / (10. + 200. * random_count);
     let saturation = 1. - 1f64.min(tmp);
 
-    (hue, value, saturation)
+    (hue, saturation, value)
 }
 
 fn style_strong(value: Complex<f64>, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
@@ -231,7 +231,7 @@ fn style_strong(value: Complex<f64>, count: i64, random_color: Option<f64>, rand
     let tmp = count as f64 / (10. + 100. * random_count);
     let value = 1f64.min(tmp.powf(0.7));
 
-    (hue, value, saturation)
+    (hue, saturation, value)
 }
 
 fn style_spooky(value: Complex<f64>, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
@@ -243,5 +243,5 @@ fn style_spooky(value: Complex<f64>, count: i64, random_color: Option<f64>, rand
     let tmp = count as f64 / (10. + 50. * random_count);
     let value = 1f64.min(tmp);
 
-    (hue, value, saturation)
+    (hue, saturation, value)
 }

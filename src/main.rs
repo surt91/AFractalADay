@@ -40,11 +40,10 @@ fn main() {
     let output = format!("img/{}.png", time::now_utc().to_timespec().sec);
 
     while ! finished {
-        let f = NewtonFractal::random_formula();
-        println!("{}", f.1);
-        let a = NewtonFractal::new(f.0);
+        let a = NewtonFractal::new(None, None);
+        println!("{}", a.formula);
 
-        detail = format!("{} {}", "Newton Fractal of", f.1);
+        detail = format!("{} {}", "Newton Fractal of", a.formula);
 
         // ensure that we do at least 10 million iterations
         // otherwise the images are probably boring
