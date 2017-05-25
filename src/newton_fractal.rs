@@ -146,17 +146,17 @@ impl NewtonFractal {
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
-                         format!("{} z^5", a)));
+                         format!("{} z⁵", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
-                         format!("{} z^6", a)));
+                         format!("{} z⁶", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
-                         format!("{} z^7", a)));
+                         format!("{} z⁷", a)));
         }
         {
             a = af(rng);
@@ -181,7 +181,7 @@ impl NewtonFractal {
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
-                         format!("{} {}^x", a, b)));
+                         format!("{} {}ᶻ", a, b)));
         }
         {
             a = af(rng);
