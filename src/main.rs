@@ -43,7 +43,9 @@ fn init_logging() {
         vec![
             SimpleLogger::new(LogLevelFilter::Error, Config::default()),
             WriteLogger::new(LogLevelFilter::Info, Config::default(),
-                             fs::File::create("fractals.log").expect("Failed to create log file!"))
+                             fs::OpenOptions::new().append(true)
+                                                   .open("fractals.log")
+                                                   .expect("Failed to create log file!"))
         ]
     );
 }
