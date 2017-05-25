@@ -8,6 +8,7 @@ use std::fmt;
 
 #[macro_use]
 extern crate log;
+extern crate log_panics;
 extern crate simplelog;
 use simplelog::{ CombinedLogger, SimpleLogger, WriteLogger, LogLevelFilter, Config};
 
@@ -37,6 +38,7 @@ impl fmt::Display for Options {
 
 // only log errors to stdout, but everything to a log file
 fn init_logging() {
+    log_panics::init();
     let _ = CombinedLogger::init(
         vec![
             SimpleLogger::new(LogLevelFilter::Error, Config::default()),
