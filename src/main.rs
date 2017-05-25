@@ -141,7 +141,7 @@ fn main() {
     info!("{}", opt);
 
     let seed = opt.seed.unwrap_or(timestamp as usize);
-    let filename = opt.filename.unwrap_or(timestamp.to_string());
+    let filename = opt.filename.unwrap_or_else(|| timestamp.to_string());
     let filename = prepare(&filename);
 
     info!("start generation with seed {}", seed);

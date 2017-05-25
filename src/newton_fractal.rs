@@ -50,13 +50,12 @@ fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
     let t = v*(1.-s*(1.-f));
 
     match hi {
-        0 => (v, t, p),
+        0 | 6 => (v, t, p),
         1 => (q, v, p),
         2 => (p, v, t),
         3 => (p, q, v),
         4 => (t, p, v),
         5 => (v, p, q),
-        6 => (v, t, p),
         _ => (0., 0., 0.)
     }
 }
@@ -154,8 +153,7 @@ impl NewtonFractal {
                   let xp = (i-x/2) as f64 * xscale;
                   let yp = (j-y/2) as f64 * yscale;
                   let p = Complex {re: xp, im: yp};
-                  let state = self.iterate(p);
-                  state
+                  self.iterate(p)
               })
               .collect()
     }
@@ -203,7 +201,7 @@ impl NewtonFractal {
 
         let path = Path::new(filename);
         let file = File::create(path)?;
-        let ref mut w = io::BufWriter::new(file);
+        let w = io::BufWriter::new(file);
 
         let mut encoder = png::Encoder::new(w, x as u32, y as u32);
         encoder.set(png::ColorType::RGBA).set(png::BitDepth::Eight);
