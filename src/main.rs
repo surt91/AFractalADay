@@ -24,24 +24,28 @@ use my_twitter::twitter as twitter;
 struct Options {
     seed: Option<usize>,
     filename: Option<String>,
-    tweet: bool
+    tweet: bool,
+    quiet: bool
 }
 
 impl fmt::Display for Options {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Options: seed: {}, name:  {}, tweet: {}",
+        write!(f, "Options: seed: {}, name:  {}, tweet: {}, quiet: {}",
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
-                  self.tweet)
+                  self.tweet,
+                  self.quiet
+              )
     }
 }
 
 // only log errors to stdout, but everything to a log file
-fn init_logging() {
+fn init_logging(quiet: bool) {
+    let level = if quiet {LogLevelFilter::Error} else {LogLevelFilter::Info};
     log_panics::init();
     let _ = CombinedLogger::init(
         vec![
-            SimpleLogger::new(LogLevelFilter::Error, Config::default()),
+            SimpleLogger::new(level, Config::default()),
             WriteLogger::new(LogLevelFilter::Info, Config::default(),
                              fs::OpenOptions::new().append(true)
                                                    .open("fractals.log")
@@ -72,9 +76,15 @@ fn parse_cl() -> Options {
                     .takes_value(true)
                     .help("the name of the outputted image")
               )
+              .arg(Arg::with_name("quiet")
+                    .short("q")
+                    .long("quiet")
+                    .help("do only print error messages")
+              )
               .get_matches();
 
     let tweet = matches.is_present("tweet");
+    let quiet = matches.is_present("quiet");
     let filename = matches.value_of("filename")
                           .and_then(|f| Some(f.to_string()))
                           .or_else(|| None);
@@ -82,7 +92,7 @@ fn parse_cl() -> Options {
                       .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be and integer")))
                       .or_else(|| None);
 
-    Options {seed: seed, filename: filename, tweet: tweet}
+    Options {seed: seed, filename: filename, tweet: tweet, quiet: quiet}
 }
 
 fn prepare(filename: &str) -> String {
@@ -123,12 +133,11 @@ fn tweet(filename: &str, fractal: &NewtonFractal) {
 }
 
 fn main() {
-    info!("Start!");
     let timestamp = time::now_utc().to_timespec().sec;
 
-    let _ = init_logging();
-
     let opt = parse_cl();
+    init_logging(opt.quiet);
+    info!("Start!");
     info!("{}", opt);
 
     let seed = opt.seed.unwrap_or(timestamp as usize);
