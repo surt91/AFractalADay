@@ -6,8 +6,6 @@ use self::num::complex::Complex;
 
 use std::fmt::Display;
 
-extern crate test;
-
 pub enum Coef {
     Real(f64),
     Complex(Complex<f64>)
@@ -72,37 +70,6 @@ impl Terms {
         match a {
             Coef::Real(x) => {self.candidates_comp.swap_remove(idx); self.candidates_real.swap_remove(idx)(x)},
             Coef::Complex(z) => {self.candidates_real.swap_remove(idx); self.candidates_comp.swap_remove(idx)(z)},
-        }
-    }
-}
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use self::test::Bencher;
-
-    #[bench]
-    fn bench_run_all_real(b: &mut Bencher) {
-        let a = 1f64;
-        for f in Terms::generate_candidates() {
-            b.iter(|| f(a));
-        }
-    }
-
-    #[bench]
-    fn bench_run_all_complex(b: &mut Bencher) {
-        let a = Complex::new(1f64, 1f64);
-        for f in Terms::generate_candidates() {
-            b.iter(|| f(a));
-        }
-    }
-
-    #[bench]
-    fn bench_run_all_complex_im0(b: &mut Bencher) {
-        let a = Complex::new(1f64, 0f64);
-        for f in Terms::generate_candidates() {
-            b.iter(|| f(a));
         }
     }
 }

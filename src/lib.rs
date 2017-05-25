@@ -1,10 +1,9 @@
-#![feature(test)]
-
 #[macro_use] extern crate itertools;
 #[macro_use] extern crate log;
 
 pub mod newton_fractal;
 mod functions;
+mod color;
 
 use std::process::Command;
 
