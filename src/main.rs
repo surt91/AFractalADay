@@ -38,12 +38,14 @@ fn main() {
     let mut finished = false;
     let mut detail = String::new();
     fs::create_dir_all("img").expect("could not create output directory");
-    let output = format!("img/{}.png", time::now_utc().to_timespec().sec);
+    let timestamp = time::now_utc().to_timespec().sec;
+    let output = format!("img/{}.png", timestamp);
 
     let mut a;
+    let mut ctr = 0;
     // hacky do while loop
     while {
-        a = NewtonFractal::new(None, None);
+        a = NewtonFractal::new(None, Some(&[timestamp as usize + ctr]));
         println!("{}", a.formula);
 
         // ensure that we do at least 10 million iterations
@@ -53,6 +55,7 @@ fn main() {
             Err(x) => println!("creation of fractal failed {:?}", x)
         }
 
+        ctr += 1;
         ! finished
     } {}
 
