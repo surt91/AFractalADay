@@ -40,7 +40,7 @@ fn main() {
     let output = format!("img/{}.png", time::now_utc().to_timespec().sec);
 
     while ! finished {
-        let a = NewtonFractal::new(None, None);
+        let mut a = NewtonFractal::new(None, None);
         println!("{}", a.formula);
 
         detail = format!("{} {}", "Newton Fractal of", a.formula);

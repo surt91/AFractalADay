@@ -4,6 +4,7 @@ extern crate png;
 extern crate rayon;
 extern crate rand;
 
+use self::rand::Rng;
 use self::num::complex::Complex;
 
 use std::path::Path;
@@ -18,7 +19,9 @@ use self::rayon::prelude::*;
 pub struct NewtonFractal {
     pub a: f64,
     pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
-    pub h: f64
+    h: f64,
+    rng: rand::StdRng,
+    pub formula: String
 }
 
 struct Convergence {
@@ -48,8 +51,17 @@ fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
 }
 
 impl NewtonFractal {
-    pub fn new(f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>) -> NewtonFractal {
-        NewtonFractal {a: 1., f: f, h: 1e-4}
+    pub fn new(f: Option<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>>, seed: Option<&[usize]>) -> NewtonFractal {
+        let mut rng: rand::StdRng = match seed {
+            Some(x) => rand::SeedableRng::from_seed(x),
+            None => rand::StdRng::new().unwrap()
+        };
+        let (f, formula) = match f {
+            Some(x) => (x, "n/a".to_string()),
+            None => NewtonFractal::random_formula(rng)
+        };
+
+        NewtonFractal {a: 1., f: f, h: 1e-4, rng, formula: formula}
     }
 
     fn iterate(&self, mut state: Complex<f64>) -> Convergence {
@@ -72,59 +84,61 @@ impl NewtonFractal {
         ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
-    pub fn random_formula() -> (Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String){
+    pub fn random_formula(mut rng: rand::StdRng) -> (Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String){
         // use up to 5 terms but at least 2
-        let num_terms = (rand::random::<f64>() * 3.).floor() as i32 + 2;
+        let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 2;
         let mut terms: Vec<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>> = Vec::new();
         let mut term_string: Vec<String> = Vec::new();
 
         let mut candidates: Vec<(Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String)> = Vec::new();
 
-        let af = || 0.1f64.max((rand::random::<f64>() * 3. * 10.).round() / 10.);
+        let alpha = Complex::new(rng.gen_range(-1f64, 1f64), rng.gen_range(-1f64, 1f64));
+
         let mut a;
         let coeff = 2.;
-        let b = (rand::random::<f64>() * 8.).floor();
+        let b = (rng.gen_range(-1f64, 1f64) * 8.).floor();
+        let mut af = |mut generator: rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
 
-        a = af();
-        candidates.push((Box::new(move |_: Complex<f64>| Complex::new((a - 0.5) * 2. * coeff, 0.) ),
+        a = af(rng);
+        candidates.push((Box::new(move |_: Complex<f64>| Complex::new(a * 2. * coeff, 0.) ),
                          format!("{}", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x),
                          format!("{} x", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
                          format!("{} x^5", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
                          format!("{} x^6", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
                          format!("{} x^7", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.sin()),
                          format!("{} sin(x)", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.cosh()),
                          format!("{} cosh(x)", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
-                         format!("{} cosh(x)", a)));
-        a = af();
+                         format!("{} artanh(x)", a)));
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * (x+Complex {re: 0., im: 1.}).cosh()),
                          format!("{} cosh(x+i)", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
                          format!("{} {}^x", a, b)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.exp() ),
                          format!("{} exp(x)", a)));
-        a = af();
+        a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * x.ln() ),
                          format!("{} ln(x)", a)));
 
         for _ in 0..num_terms {
             let num_cand = candidates.len();
-            let neo = candidates.swap_remove((rand::random::<f64>() * num_cand as f64) as usize);
+            let neo = candidates.swap_remove(rng.gen_range(0, num_cand as usize));
             terms.push(neo.0);
             term_string.push(neo.1);
         }
@@ -148,13 +162,13 @@ impl NewtonFractal {
               .collect()
     }
 
-    pub fn render(&self, resolution: (i32, i32), filename: &str) -> io::Result<i64> {
+    pub fn render(&mut self, resolution: (i32, i32), filename: &str) -> io::Result<i64> {
         let (x, y) = resolution;
 
         // use randomness to determine the colors
-        let random_color = rand::random::<f64>();
-        let random_count = rand::random::<f64>();
-        let random_zoom = rand::random::<f64>();
+        let random_color = self.rng.gen_range(0f64, 1.);
+        let random_count = self.rng.gen_range(0f64, 1.);
+        let random_zoom = self.rng.gen_range(0f64, 1.);
         let scale = 4e-3 * random_zoom;
 
         let states = self.raster(x, y, scale, scale);
@@ -164,13 +178,16 @@ impl NewtonFractal {
         println!("{:.2}M iterations", total_iterations as f64/1e6);
 
         let styles = [style_spooky, style_strong, style_vibrant, style_pastell];
+        let style_names = ["spooky", "strong", "vibrant", "pastell"];
         let num_styles = styles.len();
-        let idx = (rand::random::<f64>() * num_styles as f64) as usize;
+
+        let idx = self.rng.gen_range(0, num_styles as usize);
         let style = styles[idx];
+        println!("use style '{}'", style_names[idx]);
+        println!("rcol {}\nrcnt {}\nrzo {}", random_color, random_count, random_zoom);
 
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {
-
                                 let (h, s, v) = style(i.value, i.count,
                                                       Some(random_color), Some(random_count));
 
