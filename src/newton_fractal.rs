@@ -139,42 +139,42 @@ impl NewtonFractal {
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x),
-                         format!("{} x", a)));
+                         format!("{} z", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
-                         format!("{} x^5", a)));
+                         format!("{} z^5", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
-                         format!("{} x^6", a)));
+                         format!("{} z^6", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
-                         format!("{} x^7", a)));
+                         format!("{} z^7", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.sin()),
-                         format!("{} sin(x)", a)));
+                         format!("{} sin(z)", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.cosh()),
-                         format!("{} cosh(x)", a)));
+                         format!("{} cosh(z)", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
-                         format!("{} artanh(x)", a)));
+                         format!("{} artanh(z)", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * (x+i).cosh()),
-                         format!("{} cosh(x+i)", a)));
+                         format!("{} cosh(z+i)", a)));
         }
         {
             a = af(rng);
@@ -184,12 +184,12 @@ impl NewtonFractal {
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.exp() ),
-                         format!("{} exp(x)", a)));
+                         format!("{} exp(z)", a)));
         }
         {
             a = af(rng);
             candidates.push((Box::new(move |x: Complex<f64>| a * x.ln() ),
-                         format!("{} ln(x)", a)));
+                         format!("{} ln(z)", a)));
         }
 
         for _ in 0..num_terms {
