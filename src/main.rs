@@ -121,6 +121,7 @@ fn tweet(filename: &str, fractal: &NewtonFractal) {
 }
 
 fn main() {
+    info!("Start!");
     let timestamp = time::now_utc().to_timespec().sec;
 
     let _ = init_logging();
@@ -143,4 +144,5 @@ fn main() {
         tweet(&filename, &fractal);
         info!("tweeted");
     }
+    info!("Success!");
 }
