@@ -59,13 +59,13 @@ fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
 
 impl NewtonFractal {
     pub fn new(f: Option<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>>, seed: Option<&[usize]>) -> NewtonFractal {
-        let rng: rand::StdRng = match seed {
+        let mut rng: rand::StdRng = match seed {
             Some(x) => rand::SeedableRng::from_seed(x),
             None => rand::StdRng::new().unwrap()
         };
         let formula = match f {
             Some(x) => Formula {f: x, a: Complex::new(1., 0.), formula: "n/a".to_string(), prefix: "Newton Fractal of".to_string()},
-            None => NewtonFractal::random_formula(rng)
+            None => NewtonFractal::random_formula(&mut rng)
         };
 
         NewtonFractal {a: formula.a, f: formula.f, h: 1e-4, rng, formula: formula.prefix + &formula.formula}
@@ -91,7 +91,7 @@ impl NewtonFractal {
         ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
-    pub fn random_formula(mut rng: rand::StdRng) -> Formula{
+    pub fn random_formula(rng: &mut rand::StdRng) -> Formula{
         // use up to 5 terms but at least 2
         let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 2;
         let mut terms: Vec<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>> = Vec::new();
@@ -118,45 +118,69 @@ impl NewtonFractal {
         let mut a;
         let coeff = 2.;
         let b = (rng.gen_range(-1f64, 1f64) * 8.).floor();
-        let af = |mut generator: rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
+        let af = |generator: &mut rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
         let i = Complex {re: 0., im: 1.};
 
-        a = af(rng);
-        candidates.push((Box::new(move |_: Complex<f64>| Complex::new(a * 2. * coeff, 0.) ),
-                         format!("{}", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x),
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |_: Complex<f64>| Complex::new(a * 2. * coeff, 0.) ),
+                             format!("{}", a)));
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x),
                          format!("{} x", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(5.)),
                          format!("{} x^5", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(6.)),
                          format!("{} x^6", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.powf(7.)),
                          format!("{} x^7", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.sin()),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.sin()),
                          format!("{} sin(x)", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.cosh()),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.cosh()),
                          format!("{} cosh(x)", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
                          format!("{} artanh(x)", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * (x+i).cosh()),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * (x+i).cosh()),
                          format!("{} cosh(x+i)", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
                          format!("{} {}^x", a, b)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.exp() ),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.exp() ),
                          format!("{} exp(x)", a)));
-        a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * x.ln() ),
+        }
+        {
+            a = af(rng);
+            candidates.push((Box::new(move |x: Complex<f64>| a * x.ln() ),
                          format!("{} ln(x)", a)));
+        }
 
         for _ in 0..num_terms {
             let num_cand = candidates.len();
