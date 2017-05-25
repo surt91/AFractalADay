@@ -81,13 +81,13 @@ impl NewtonFractal {
         let mut ctr = 0;
         let threshold = 1e-4;
         let mut tmp;
-        // *attention*: this is a do while loop, mind that the "body" is actually the
-        // condition and the body is empty, thus omitted
+
         let kernel: Box<Fn(Complex<f64>) -> Complex<f64>> = match self.a {
             Coef::Complex(z) => Box::new(move |state| state - z * (self.f)(state) / self.fprime(state)),
             Coef::Real(x) => Box::new(move |state| state - x * (self.f)(state) / self.fprime(state))
         };
-
+        // *attention*: this is a do while loop, mind that the "body" is actually the
+        // condition and the body is empty, thus omitted
         while {
             tmp = state;
             state = kernel(state);
