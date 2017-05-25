@@ -119,6 +119,7 @@ impl NewtonFractal {
         let coeff = 2.;
         let b = (rng.gen_range(-1f64, 1f64) * 8.).floor();
         let af = |mut generator: rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
+        let i = Complex {re: 0., im: 1.};
 
         a = af(rng);
         candidates.push((Box::new(move |_: Complex<f64>| Complex::new(a * 2. * coeff, 0.) ),
@@ -145,7 +146,7 @@ impl NewtonFractal {
         candidates.push((Box::new(move |x: Complex<f64>| a * x.atanh()),
                          format!("{} artanh(x)", a)));
         a = af(rng);
-        candidates.push((Box::new(move |x: Complex<f64>| a * (x+Complex {re: 0., im: 1.}).cosh()),
+        candidates.push((Box::new(move |x: Complex<f64>| a * (x+i).cosh()),
                          format!("{} cosh(x+i)", a)));
         a = af(rng);
         candidates.push((Box::new(move |x: Complex<f64>| a * (x*b.ln()).exp() ),
