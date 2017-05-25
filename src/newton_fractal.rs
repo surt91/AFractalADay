@@ -17,11 +17,18 @@ use itertools::Itertools;
 use self::rayon::prelude::*;
 
 pub struct NewtonFractal {
-    pub a: f64,
+    pub a: Complex<f64>,
     pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
     h: f64,
     rng: rand::StdRng,
     pub formula: String
+}
+
+pub struct Formula {
+    pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
+    pub a: Complex<f64>,
+    pub formula: String,
+    pub prefix: String
 }
 
 struct Convergence {
@@ -52,16 +59,16 @@ fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
 
 impl NewtonFractal {
     pub fn new(f: Option<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>>, seed: Option<&[usize]>) -> NewtonFractal {
-        let mut rng: rand::StdRng = match seed {
+        let rng: rand::StdRng = match seed {
             Some(x) => rand::SeedableRng::from_seed(x),
             None => rand::StdRng::new().unwrap()
         };
-        let (f, formula) = match f {
-            Some(x) => (x, "n/a".to_string()),
+        let formula = match f {
+            Some(x) => Formula {f: x, a: Complex::new(1., 0.), formula: "n/a".to_string(), prefix: "Newton Fractal of".to_string()},
             None => NewtonFractal::random_formula(rng)
         };
 
-        NewtonFractal {a: 1., f: f, h: 1e-4, rng, formula: formula}
+        NewtonFractal {a: formula.a, f: formula.f, h: 1e-4, rng, formula: formula.prefix + &formula.formula}
     }
 
     fn iterate(&self, mut state: Complex<f64>) -> Convergence {
@@ -84,7 +91,7 @@ impl NewtonFractal {
         ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
-    pub fn random_formula(mut rng: rand::StdRng) -> (Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String){
+    pub fn random_formula(mut rng: rand::StdRng) -> Formula{
         // use up to 5 terms but at least 2
         let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 2;
         let mut terms: Vec<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>> = Vec::new();
@@ -92,12 +99,26 @@ impl NewtonFractal {
 
         let mut candidates: Vec<(Box<Fn(Complex<f64>) -> Complex<f64> + Sync>, String)> = Vec::new();
 
-        let alpha = Complex::new(rng.gen_range(-1f64, 1f64), rng.gen_range(-1f64, 1f64));
+        let prefix;
+        let a_re = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
+        let a_im = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
+        let alpha = if rng.gen::<f64>() < 0.1 {
+            let tmp = Complex::new(a_re, a_im);
+            prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
+            tmp
+        } else if rng.gen::<f64>() < 0.4 {
+            let tmp = Complex::new(a_re, 0.);
+            prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
+            tmp
+        } else {
+            prefix = "Newton Fractal of ".to_string();
+            Complex::new(1., 0.)
+        };
 
         let mut a;
         let coeff = 2.;
         let b = (rng.gen_range(-1f64, 1f64) * 8.).floor();
-        let mut af = |mut generator: rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
+        let af = |mut generator: rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
 
         a = af(rng);
         candidates.push((Box::new(move |_: Complex<f64>| Complex::new(a * 2. * coeff, 0.) ),
@@ -146,7 +167,8 @@ impl NewtonFractal {
         let f = move |x| terms.iter()
                               .map(move |f| f(x))
                               .fold(Complex {re: 0., im: 0.}, |sum: Complex<f64>, x| sum + x);
-        (Box::new(f), term_string.join(" + "))
+
+        Formula {f: Box::new(f), a: alpha, formula: term_string.join(" + "), prefix: prefix}
     }
 
     fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
