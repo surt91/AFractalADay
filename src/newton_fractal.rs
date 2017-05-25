@@ -3,6 +3,7 @@ extern crate num;
 extern crate png;
 extern crate rayon;
 extern crate rand;
+// extern crate log;
 
 use self::rand::Rng;
 use self::num::complex::Complex;
@@ -232,7 +233,7 @@ impl NewtonFractal {
         let total_iterations: i64 = states.par_iter()
                                      .map(|i| i.count)
                                      .sum();
-        println!("{:.2}M iterations", total_iterations as f64/1e6);
+        info!("{:.2}M iterations", total_iterations as f64/1e6);
 
         let styles = [style_spooky, style_strong, style_vibrant, style_pastell];
         let style_names = ["spooky", "strong", "vibrant", "pastell"];
@@ -240,8 +241,8 @@ impl NewtonFractal {
 
         let idx = self.rng.gen_range(0, num_styles as usize);
         let style = styles[idx];
-        println!("use style '{}'", style_names[idx]);
-        println!("rcol {}\nrcnt {}\nrzo {}", random_color, random_count, random_zoom);
+        info!("use style '{}'", style_names[idx]);
+        info!("rcol {}\nrcnt {}\nrzo {}", random_color, random_count, random_zoom);
 
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {

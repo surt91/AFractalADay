@@ -13,6 +13,8 @@ itertools = "*"
 rayon = "*"
 time = "*"
 clap = "*"
+log = "*"
+simplelog = "*"
 
 [dependencies.my_twitter]
 path = "my_twitter"

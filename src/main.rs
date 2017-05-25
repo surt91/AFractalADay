@@ -6,6 +6,11 @@ use newton_fractal::NewtonFractal;
 use std::fs;
 use std::fmt;
 
+#[macro_use]
+extern crate log;
+extern crate simplelog;
+use simplelog::{ CombinedLogger, SimpleLogger, WriteLogger, LogLevelFilter, Config};
+
 extern crate time;
 
 extern crate clap;
@@ -28,6 +33,17 @@ impl fmt::Display for Options {
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
                   self.tweet)
     }
+}
+
+// only log errors to stdout, but everything to a log file
+fn init_logging() {
+    let _ = CombinedLogger::init(
+        vec![
+            SimpleLogger::new(LogLevelFilter::Error, Config::default()),
+            WriteLogger::new(LogLevelFilter::Info, Config::default(),
+                             fs::File::create("fractals.log").expect("Failed to create log file!"))
+        ]
+    );
 }
 
 fn parse_cl() -> Options {
@@ -79,13 +95,13 @@ fn render_fractal(filename: &str, seed: usize) -> NewtonFractal {
     // hacky do while loop
     while {
         a = NewtonFractal::new(None, Some(&[seed + ctr]));
-        println!("{}", a.formula);
+        info!("{}", a.formula);
 
         // ensure that we do at least 10 million iterations
         // otherwise the images are probably boring
         match a.render((2048-2, 1024-2), filename) {
             Ok(x) => finished = x > 10000000,
-            Err(x) => println!("creation of fractal failed {:?}", x)
+            Err(x) => error!("creation of fractal failed {:?}", x)
         }
 
         ctr += 1;
@@ -105,18 +121,20 @@ fn tweet(filename: &str, fractal: &NewtonFractal) {
 fn main() {
     let timestamp = time::now_utc().to_timespec().sec;
 
+    let _ = init_logging();
+
     let opt = parse_cl();
-    println!("{}", opt);
+    info!("{}", opt);
 
     let seed = opt.seed.unwrap_or(timestamp as usize);
     let filename = opt.filename.unwrap_or(timestamp.to_string());
     let filename = prepare(&filename);
 
-    println!("start generation with seed {}", seed);
+    info!("start generation with seed {}", seed);
 
     let fractal = render_fractal(&filename, seed);
 
-    println!("image saved as {}", filename);
+    info!("image saved as {}", filename);
 
     if opt.tweet {
         tweet(&filename, &fractal);

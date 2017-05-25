@@ -1,6 +1,7 @@
 #![feature(closure_to_fn_coercion)]
 
 #[macro_use] extern crate itertools;
+#[macro_use] extern crate log;
 
 pub mod newton_fractal;
 
@@ -21,10 +22,10 @@ pub fn postprocess_image(filename: &str) {
 
     match output {
         Ok(x) => if !x.status.success() {
-                        println!("convert failed")
+                        error!("convert failed")
                     } else {
-                        println!("convert successful")
+                        info!("convert successful")
                     },
-        Err(x) => println!("failed with {:?}", x)
+        Err(x) => error!("failed with {:?}", x)
     };
 }
