@@ -1,4 +1,4 @@
-// #![feature(closure_to_fn_coercion)]
+#![feature(test)]
 
 #[macro_use] extern crate itertools;
 #[macro_use] extern crate log;

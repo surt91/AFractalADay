@@ -17,7 +17,7 @@ use itertools::Itertools;
 
 use self::rayon::prelude::*;
 
-use functions::Terms;
+use functions::{Terms, Coef};
 
 pub struct NewtonFractal {
     pub a: Coef,
@@ -34,10 +34,6 @@ pub struct Formula {
     pub prefix: String
 }
 
-pub enum Coef {
-    Real(f64),
-    Complex(Complex<f64>)
-}
 
 struct Convergence {
     count: i64,
@@ -133,9 +129,13 @@ impl NewtonFractal {
         let mut possible_terms = Terms::new();
 
         for _ in 0..num_terms {
-            // let num_cand = candidates.len();
-            // let neo = candidates.swap_remove(rng.gen_range(0, num_cand as usize));
-            let neo = possible_terms.choice(a_comp_gen(rng), rng);
+            // let a be a complex number in 30% of all cases
+            let a = match rng.gen_range(0f64, 1.) {
+                x if x < 0.3 => Coef::Complex(a_comp_gen(rng)),
+                _ => Coef::Real(a_real_gen(rng))
+            };
+
+            let neo = possible_terms.choice(a, rng);
             terms.push(neo.0);
             term_string.push(neo.1);
         }
