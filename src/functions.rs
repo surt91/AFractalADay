@@ -7,8 +7,8 @@ use self::num::complex::Complex;
 use std::fmt::Display;
 
 // adjust precision here
-pub type Cplx = Complex<f64>;
-pub type Real = f64;
+pub type Real = f32;
+pub type Cplx = Complex<Real>;
 
 pub type ComplexFunction = Box<Fn(Cplx) -> Cplx + Sync>;
 
