@@ -107,13 +107,16 @@ impl NewtonFractal {
         let a_comp_gen = |generator: &mut rand::StdRng| Complex::new(a_real_gen(generator), a_real_gen(generator));
 
         let mut possible_terms = Terms::new();
+        // chance that all coefficients will be real
+        let always_real = rng.gen_range(0f64, 1.) < 0.5;
 
         for _ in 0..num_terms {
             // let a be a complex number in 30% of all cases
-            let a = match rng.gen_range(0f64, 1.) {
-                x if x < 0.3 => Coef::Complex(a_comp_gen(rng)),
-                _ => Coef::Real(a_real_gen(rng))
-            };
+            let a = if !always_real && rng.gen_range(0f64, 1.) < 0.3 {
+                        Coef::Complex(a_comp_gen(rng))
+                    } else {
+                        Coef::Real(a_real_gen(rng))
+                    };
 
             let neo = possible_terms.choice(a, rng);
             terms.push(neo.callable);
