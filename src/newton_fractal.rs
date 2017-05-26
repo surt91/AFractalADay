@@ -16,33 +16,33 @@ use itertools::Itertools;
 
 use self::rayon::prelude::*;
 
-use functions::{Terms, Coef};
+use functions::{Terms, Coef, Real, Cplx, ComplexFunction};
 use color::hsv2rgb;
 
 pub struct NewtonFractal {
     pub a: Coef,
-    pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
-    h: f64,
+    pub f: ComplexFunction,
+    h: Real,
     rng: rand::StdRng,
     pub formula: String
 }
 
 pub struct IterationDetails {
-    pub f: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
+    pub f: ComplexFunction,
     pub a: Coef,
     pub formula: String,
     pub prefix: String
 }
 
 
-struct Convergence {
+pub struct Convergence {
     count: i64,
-    value: Complex<f64>
+    value: Cplx
 }
 
 
 impl NewtonFractal {
-    pub fn new(f: Option<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>>, seed: Option<&[usize]>) -> NewtonFractal {
+    pub fn new(f: Option<ComplexFunction>, seed: Option<&[usize]>) -> NewtonFractal {
         let mut rng: rand::StdRng = match seed {
             Some(x) => rand::SeedableRng::from_seed(x),
             None => rand::StdRng::new().unwrap()
@@ -55,12 +55,12 @@ impl NewtonFractal {
         NewtonFractal {a: formula.a, f: formula.f, h: 1e-4, rng, formula: formula.prefix + &formula.formula}
     }
 
-    fn iterate(&self, mut state: Complex<f64>) -> Convergence {
+    fn iterate(&self, mut state: Cplx) -> Convergence {
         let mut ctr = 0;
         let threshold = 1e-4;
         let mut tmp;
 
-        let kernel: Box<Fn(Complex<f64>) -> Complex<f64>> = match self.a {
+        let kernel: Box<Fn(Cplx) -> Cplx> = match self.a {
             Coef::Complex(z) => Box::new(move |state| state - z * (self.f)(state) / self.fprime(state)),
             Coef::Real(x) => Box::new(move |state| state - x * (self.f)(state) / self.fprime(state))
         };
@@ -76,19 +76,19 @@ impl NewtonFractal {
         Convergence {count: ctr, value: state}
     }
 
-    fn fprime(&self, x: Complex<f64>) -> Complex<f64> {
+    fn fprime(&self, x: Cplx) -> Cplx {
         ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
-    pub fn random_formula(rng: &mut rand::StdRng) -> IterationDetails{
+    fn random_formula(rng: &mut rand::StdRng) -> IterationDetails {
         // use up to 5 terms but at least 2
         let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 2;
-        let mut terms: Vec<Box<Fn(Complex<f64>) -> Complex<f64> + Sync>> = Vec::new();
+        let mut terms: Vec<ComplexFunction> = Vec::new();
         let mut term_string: Vec<String> = Vec::new();
 
         let mut prefix;
-        let a_re = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
-        let a_im = (rng.gen_range(1f64, 2.) * 10.).floor() / 10.;
+        let a_re = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
+        let a_im = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
         let alpha = if rng.gen::<f64>() < 0.1 {
             let tmp = Complex::new(a_re, a_im);
             prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
@@ -103,7 +103,7 @@ impl NewtonFractal {
         };
         prefix += "z ↦ ";
 
-        let a_real_gen = |generator: &mut rand::StdRng| (generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.;
+        let a_real_gen = |generator: &mut rand::StdRng| (generator.gen_range(-1. as Real, 1.) * 3. * 10.).round() / 10.;
         let a_comp_gen = |generator: &mut rand::StdRng| Complex::new(a_real_gen(generator), a_real_gen(generator));
 
         let mut possible_terms = Terms::new();
@@ -122,18 +122,18 @@ impl NewtonFractal {
 
         let f = move |x| terms.iter()
                               .map(move |f| f(x))
-                              .fold(Complex {re: 0., im: 0.}, |sum: Complex<f64>, x| sum + x);
+                              .fold(Complex {re: 0., im: 0.}, |sum, x| sum + x);
 
         IterationDetails {f: Box::new(f), a: alpha, formula: term_string.join(" + "), prefix: prefix}
     }
 
-    fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
+    pub fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
         let pixels: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();
         pixels.par_iter()
               .map(|&(j, i)| {
                   let xp = (i-x/2) as f64 * xscale;
                   let yp = (j-y/2) as f64 * yscale;
-                  let p = Complex {re: xp, im: yp};
+                  let p = Complex {re: xp as Real, im: yp as Real};
                   self.iterate(p)
               })
               .collect()
@@ -194,11 +194,11 @@ impl NewtonFractal {
     }
 }
 
-fn style_pastell(value: Complex<f64>, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
+fn style_pastell(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (value.norm() * 10. * random_color) % 1.;
+    let hue = (value.norm() as f64 * 10. * random_color) % 1.;
     let value = 1f64;
     let tmp = count as f64 / (10. + 40. * random_count);
     let saturation = 1f64.min(tmp);
@@ -206,11 +206,11 @@ fn style_pastell(value: Complex<f64>, count: i64, random_color: Option<f64>, ran
     (hue, saturation, value)
 }
 
-fn style_vibrant(value: Complex<f64>, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
+fn style_vibrant(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (value.norm() * 10. * (random_color + 0.1)) % 1.;
+    let hue = (value.norm() as f64 * 10. * (random_color + 0.1)) % 1.;
     let value = 1f64;
     let tmp = count as f64 / (10. + 40. * random_count);
     let saturation = 1. - 1f64.min(tmp);
@@ -218,11 +218,11 @@ fn style_vibrant(value: Complex<f64>, count: i64, random_color: Option<f64>, ran
     (hue, saturation, value)
 }
 
-fn style_strong(value: Complex<f64>, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
+fn style_strong(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (value.norm() * 10. * random_color) % 1.;
+    let hue = (value.norm() as f64 * 10. * random_color) % 1.;
     let saturation = 1f64;
     let tmp = count as f64 / (10. + 100. * random_count);
     let value = 1f64.min(tmp.powf(0.7));
@@ -230,11 +230,11 @@ fn style_strong(value: Complex<f64>, count: i64, random_color: Option<f64>, rand
     (hue, saturation, value)
 }
 
-fn style_spooky(value: Complex<f64>, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
+fn style_spooky(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> (f64, f64, f64) {
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (value.norm() * 10. * random_color) % 1.;
+    let hue = (value.norm() as f64 * 10. * random_color) % 1.;
     let saturation = 1f64;
     let tmp = count as f64 / (10. + 50. * random_count);
     let value = 1f64.min(tmp);

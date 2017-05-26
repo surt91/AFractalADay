@@ -6,19 +6,26 @@ use self::num::complex::Complex;
 
 use std::fmt::Display;
 
+// adjust precision here
+pub type Cplx = Complex<f64>;
+pub type Real = f64;
+
+pub type ComplexFunction = Box<Fn(Cplx) -> Cplx + Sync>;
+
 pub enum Coef {
-    Real(f64),
-    Complex(Complex<f64>)
+    Real(Real),
+    Complex(Cplx)
 }
 
 pub struct Formula {
-    pub callable: Box<Fn(Complex<f64>) -> Complex<f64> + Sync>,
+    pub callable: ComplexFunction,
     pub readable: String
 }
 
+#[derive(Default)]
 pub struct Terms {
-    pub candidates_real: Vec<Box<Fn(f64) -> Formula>>,
-    pub candidates_comp: Vec<Box<Fn(Complex<f64>) -> Formula>>,
+    pub candidates_real: Vec<Box<Fn(Real) -> Formula>>,
+    pub candidates_comp: Vec<Box<Fn(Cplx) -> Formula>>,
 }
 
 impl Terms {
@@ -27,81 +34,81 @@ impl Terms {
                candidates_comp: Terms::generate_candidates()}
     }
 
-    fn generate_candidates<T: 'static + Display + Sync + Copy + Into<Complex<f64>>>() -> Vec<Box<Fn(T) -> Formula>> {
+    fn generate_candidates<T: 'static + Display + Sync + Copy + Into<Cplx>>() -> Vec<Box<Fn(T) -> Formula>> {
         let mut candidates: Vec<Box<Fn(T) -> Formula>> = Vec::new();
 
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |_: Complex<f64>| a.into() ),
+                                        callable: Box::new(move |_| a.into() ),
                                         readable: format!("({})", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x),
+                                        callable: Box::new(move |x| a.into() * x),
                                         readable: format!("({}) z", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.powf(2.)),
+                                        callable: Box::new(move |x| a.into() * x.powf(2.)),
                                         readable: format!("({}) z²", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.powf(3.)),
+                                        callable: Box::new(move |x| a.into() * x.powf(3.)),
                                         readable: format!("({}) z³", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.powf(4.)),
+                                        callable: Box::new(move |x| a.into() * x.powf(4.)),
                                         readable: format!("({}) z⁴", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.powf(5.)),
+                                        callable: Box::new(move |x| a.into() * x.powf(5.)),
                                         readable: format!("({}) z⁵", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.powf(6.)),
+                                        callable: Box::new(move |x| a.into() * x.powf(6.)),
                                         readable: format!("({}) z⁶", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.powf(7.)),
+                                        callable: Box::new(move |x| a.into() * x.powf(7.)),
                                         readable: format!("({}) z⁷", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.sin()),
+                                        callable: Box::new(move |x| a.into() * x.sin()),
                                         readable: format!("({}) sin(z)", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.cos()),
+                                        callable: Box::new(move |x| a.into() * x.cos()),
                                         readable: format!("({}) cos(z)", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.tan()),
+                                        callable: Box::new(move |x| a.into() * x.tan()),
                                         readable: format!("({}) tan(z)", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.sinh()),
+                                        callable: Box::new(move |x| a.into() * x.sinh()),
                                         readable: format!("({}) sinh(z)", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.cosh()),
+                                        callable: Box::new(move |x| a.into() * x.cosh()),
                                         readable: format!("({}) cosh(z)", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.atanh()),
+                                        callable: Box::new(move |x| a.into() * x.atanh()),
                                         readable: format!("({}) artanh(z)", a)
                                     }));
         for b in 2..8i8 {
             candidates.push(Box::new(move |a| Formula {
-                                            callable: Box::new(move |x: Complex<f64>| a.into() * (x*(b as f64).ln()).exp() ),
+                                            callable: Box::new(move |x| a.into() * (x*(b as Real).ln()).exp() ),
                                             readable:     format!("({}) {}ᶻ", a, b)
                                         }));
         }
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| (x*a.into().ln()).exp() ),
+                                        callable: Box::new(move |x| (x*a.into().ln()).exp() ),
                                         readable: format!("({})ᶻ", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.exp() ),
+                                        callable: Box::new(move |x| a.into() * x.exp() ),
                                         readable: format!("({}) exp(z)", a)
                                     }));
         candidates.push(Box::new(|a| Formula {
-                                        callable: Box::new(move |x: Complex<f64>| a.into() * x.ln() ),
+                                        callable: Box::new(move |x| a.into() * x.ln() ),
                                         readable: format!("({}) ln(z)", a)
                                     }));
         candidates
