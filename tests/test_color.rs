@@ -1,4 +1,6 @@
-use color::hsv2rgb;
+extern crate a_fractal_a_day;
+
+use a_fractal_a_day::color::hsv2rgb;
 
 #[test]
 fn test_hsv2rgb_red() {

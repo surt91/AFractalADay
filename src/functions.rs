@@ -17,8 +17,8 @@ pub struct Formula {
 }
 
 pub struct Terms {
-    candidates_real: Vec<Box<Fn(f64) -> Formula>>,
-    candidates_comp: Vec<Box<Fn(Complex<f64>) -> Formula>>,
+    pub candidates_real: Vec<Box<Fn(f64) -> Formula>>,
+    pub candidates_comp: Vec<Box<Fn(Complex<f64>) -> Formula>>,
 }
 
 impl Terms {
