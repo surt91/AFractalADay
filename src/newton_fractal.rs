@@ -103,7 +103,7 @@ impl NewtonFractal {
         };
         prefix += "z ↦ ";
 
-        let a_real_gen = |generator: &mut rand::StdRng| 0.1f64.max((generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.);
+        let a_real_gen = |generator: &mut rand::StdRng| (generator.gen_range(-1f64, 1f64) * 3. * 10.).round() / 10.;
         let a_comp_gen = |generator: &mut rand::StdRng| Complex::new(a_real_gen(generator), a_real_gen(generator));
 
         let mut possible_terms = Terms::new();
