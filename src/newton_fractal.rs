@@ -86,8 +86,8 @@ impl NewtonFractal {
     }
 
     fn random_formula(rng: &mut rand::StdRng) -> IterationDetails {
-        // use up to 5 terms but at least 2
-        let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 2;
+        // use up to 3 terms but at least 1
+        let num_terms = (rng.gen_range(0f64, 1.) * 2.).floor() as i32 + 1;
         let mut terms: Vec<ComplexFunction> = Vec::new();
         let mut term_string: Vec<String> = Vec::new();
 
