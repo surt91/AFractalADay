@@ -4,6 +4,7 @@
 pub mod newton_fractal;
 pub mod functions;
 pub mod color;
+mod style;
 
 use std::process::Command;
 

@@ -19,13 +19,7 @@ use self::rayon::prelude::*;
 use functions::{Terms, Coef, Real, Cplx, ComplexFunction};
 use color;
 
-pub struct NewtonFractal {
-    pub a: Coef,
-    pub f: ComplexFunction,
-    h: Real,
-    rng: rand::StdRng,
-    pub formula: String
-}
+use style::Style;
 
 pub struct IterationDetails {
     pub f: ComplexFunction,
@@ -34,12 +28,19 @@ pub struct IterationDetails {
     pub prefix: String
 }
 
-
 pub struct Convergence {
-    count: i64,
-    value: Cplx
+    pub count: i64,
+    pub value: Cplx
 }
 
+pub struct NewtonFractal {
+    pub a: Coef,
+    pub f: ComplexFunction,
+    h: Real,
+    rng: rand::StdRng,
+    pub formula: String,
+    style: Style
+}
 
 impl NewtonFractal {
     pub fn new(f: Option<ComplexFunction>, seed: Option<&[usize]>) -> NewtonFractal {
@@ -52,7 +53,11 @@ impl NewtonFractal {
             None => NewtonFractal::random_formula(&mut rng)
         };
 
-        NewtonFractal {a: formula.a, f: formula.f, h: 1e-4, rng, formula: formula.prefix + &formula.formula}
+        NewtonFractal {a: formula.a, f: formula.f, h: 1e-4, rng, formula: formula.prefix + &formula.formula, style: Style::vibrant()}
+    }
+
+    pub fn style(&mut self, s: Style) {
+        self.style = s;
     }
 
     fn iterate(&self, mut state: Cplx) -> Convergence {
@@ -64,7 +69,7 @@ impl NewtonFractal {
             Coef::Complex(z) => Box::new(move |state| state - z * (self.f)(state) / self.fprime(state)),
             Coef::Real(x) => Box::new(move |state| state - x * (self.f)(state) / self.fprime(state))
         };
-        // *attention*: this is a do while loop, mind that the "body" is actually the
+        // this is a do while loop, mind that the "body" is actually the
         // condition and the body is empty, thus omitted
         while {
             tmp = state;
@@ -157,21 +162,15 @@ impl NewtonFractal {
                                      .sum();
         info!("{:.2}M iterations", total_iterations as f64/1e6);
 
-        let styles = [style_spooky, style_strong, style_vibrant, style_pastell];
-        let style_names = ["spooky", "strong", "vibrant", "pastell"];
-        let num_styles = styles.len();
-
-        let idx = self.rng.gen_range(0, num_styles as usize);
-        let style = styles[idx];
-        info!("use style '{}'", style_names[idx]);
+        let style = Style::index(self.rng.gen_range(0, Style::num()));
+        info!("use style '{}'", style);
         info!("rcol {}", random_color);
         info!("rcnt {}", random_count);
         info!("rzo {}", random_zoom);
 
         let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
                             .map(|i| {
-                                let hsv = style(i.value, i.count,
-                                                      Some(random_color), Some(random_count));
+                                let hsv = (style.callable)(i, Some(random_color), Some(random_count));
 
                                 let color::RGB(r, g, b) = hsv.to_rgb();
                                 let a = 255;
@@ -195,52 +194,4 @@ impl NewtonFractal {
 
         Ok(total_iterations)
     }
-}
-
-fn style_pastell(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> color::HSV {
-    let random_color = random_color.unwrap_or(1.);
-    let random_count = random_count.unwrap_or(1.);
-
-    let hue = (value.norm() as f64 * 10. * random_color) % 1.;
-    let value = 1f64;
-    let tmp = count as f64 / (10. + 40. * random_count);
-    let saturation = 1f64.min(tmp);
-
-    color::HSV(hue, saturation, value)
-}
-
-fn style_vibrant(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> color::HSV {
-    let random_color = random_color.unwrap_or(1.);
-    let random_count = random_count.unwrap_or(1.);
-
-    let hue = (value.norm() as f64 * 10. * (random_color + 0.1)) % 1.;
-    let value = 1f64;
-    let tmp = count as f64 / (10. + 40. * random_count);
-    let saturation = 1. - 1f64.min(tmp);
-
-    color::HSV(hue, saturation, value)
-}
-
-fn style_strong(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> color::HSV {
-    let random_color = random_color.unwrap_or(1.);
-    let random_count = random_count.unwrap_or(1.);
-
-    let hue = (value.norm() as f64 * 10. * random_color) % 1.;
-    let saturation = 1f64;
-    let tmp = count as f64 / (10. + 100. * random_count);
-    let value = 1f64.min(tmp.powf(0.7));
-
-    color::HSV(hue, saturation, value)
-}
-
-fn style_spooky(value: Cplx, count: i64, random_color: Option<f64>, random_count: Option<f64>) -> color::HSV {
-    let random_color = random_color.unwrap_or(1.);
-    let random_count = random_count.unwrap_or(1.);
-
-    let hue = (value.norm() as f64 * 10. * random_color) % 1.;
-    let saturation = 1f64;
-    let tmp = count as f64 / (10. + 50. * random_count);
-    let value = 1f64.min(tmp);
-
-    color::HSV(hue, saturation, value)
 }
