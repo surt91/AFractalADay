@@ -5,6 +5,10 @@ authors = ["Hendrik Schawe <surt91@gmail.com>"]
 description = "This is a Twitter bot, which can tweet pictures of random fractals."
 homepage = "https://twitter.com/AFractalADay"
 
+[[bin]]
+name = "a_fractal_a_day"
+doc = false
+
 [dependencies]
 png = "*"
 num = "*"
