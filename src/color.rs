@@ -56,5 +56,5 @@ pub fn color_variance(pixels: &[HSV]) -> f64 {
 
 
     let tmp = (var_h, if var_s > var_v {var_s} else {var_v});
-    if tmp.0 < tmp.1 {tmp.0} else {tmp.1}
+    (tmp.0 * tmp.1).sqrt()
 }
