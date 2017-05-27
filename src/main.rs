@@ -111,10 +111,10 @@ fn render_fractal(filename: &str, seed: usize) -> NewtonFractal {
         a = NewtonFractal::new(None, Some(&[seed + ctr]));
         info!("{}", a.formula);
 
-        // ensure that we do at least 10 million iterations
+        // ensure that the image has some variance
         // otherwise the images are probably boring
         match a.render((2048-2, 1024-2), filename) {
-            Ok(x) => finished = x > 10000000,
+            Ok(variance) => finished = variance > 0.01,
             Err(x) => error!("creation of fractal failed {:?}", x)
         }
 

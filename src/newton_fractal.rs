@@ -86,8 +86,8 @@ impl NewtonFractal {
     }
 
     fn random_formula(rng: &mut rand::StdRng) -> IterationDetails {
-        // use up to 3 terms but at least 1
-        let num_terms = (rng.gen_range(0f64, 1.) * 2.).floor() as i32 + 1;
+        // use up to 4 terms but at least 1
+        let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 1;
         let mut terms: Vec<ComplexFunction> = Vec::new();
         let mut term_string: Vec<String> = Vec::new();
 
@@ -147,7 +147,35 @@ impl NewtonFractal {
               .collect()
     }
 
-    pub fn render(&mut self, resolution: (i32, i32), filename: &str) -> io::Result<i64> {
+    // color_variance is an ad-hoc measure for the interestingness of an image
+    fn color_variance(pixels: &[color::HSV]) -> f64 {
+        let n = pixels.len() as f64;
+        let mean_h = 1./n * pixels.iter()
+                                  .map(|&color::HSV(h, _, _)| h)
+                                  .sum::<f64>();
+        let mean_s = 1./n * pixels.iter()
+                                  .map(|&color::HSV(_, s, _)| s)
+                                  .sum::<f64>();
+        let mean_v = 1./n * pixels.iter()
+                                  .map(|&color::HSV(_, _, v)| v)
+                                  .sum::<f64>();
+
+        let var_h = 1./n * pixels.iter()
+                                 .map(|&color::HSV(h, _, _)| (h-mean_h) * (h-mean_h))
+                                 .sum::<f64>();
+        let var_s = 1./n * pixels.iter()
+                                 .map(|&color::HSV(_, s, _)| (s-mean_s) * (s-mean_s))
+                                 .sum::<f64>();
+        let var_v = 1./n * pixels.iter()
+                                 .map(|&color::HSV(_, _, v)| (v-mean_v) * (v-mean_v))
+                                 .sum::<f64>();
+
+
+        let tmp = (var_h, if var_s > var_v {var_s} else {var_v});
+        if tmp.0 < tmp.1 {tmp.0} else {tmp.1}
+    }
+
+    pub fn render(&mut self, resolution: (i32, i32), filename: &str) -> io::Result<f64> {
         let (x, y) = resolution;
 
         // use randomness to determine the colors
@@ -168,10 +196,15 @@ impl NewtonFractal {
         info!("rcnt {}", random_count);
         info!("rzo {}", random_zoom);
 
-        let tmp_buffer: Vec<Vec<u8>> = states.par_iter()
-                            .map(|i| {
-                                let hsv = (style.callable)(i, Some(random_color), Some(random_count));
+        let hsv: Vec<color::HSV> = states.par_iter()
+                                         .map(|i| (style.callable)(i, Some(random_color), Some(random_count)))
+                                         .collect();
 
+        let var = NewtonFractal::color_variance(&hsv);
+        info!("variance: {}", var);
+
+        let tmp_buffer: Vec<Vec<u8>> = hsv.par_iter()
+                            .map(|hsv| {
                                 let color::RGB(r, g, b) = hsv.to_rgb();
                                 let a = 255;
 
@@ -182,7 +215,8 @@ impl NewtonFractal {
                                         .flatten()
                                         .collect();
 
-        let path = Path::new(filename);
+        let tmp = filename;
+        let path = Path::new(&tmp);
         let file = File::create(path)?;
         let w = io::BufWriter::new(file);
 
@@ -192,6 +226,6 @@ impl NewtonFractal {
 
         writer.write_image_data(&buffer)?; // Save
 
-        Ok(total_iterations)
+        Ok(var)
     }
 }
