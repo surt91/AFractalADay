@@ -29,3 +29,32 @@ fn hsv2rgb(hsv: &HSV) -> RGB {
         _ => RGB(0., 0., 0.)
     }
 }
+
+
+// color_variance is an ad-hoc measure for the interestingness of an image
+pub fn color_variance(pixels: &[HSV]) -> f64 {
+    let n = pixels.len() as f64;
+    let mean_h = 1./n * pixels.iter()
+                              .map(|&HSV(h, _, _)| h)
+                              .sum::<f64>();
+    let mean_s = 1./n * pixels.iter()
+                              .map(|&HSV(_, s, _)| s)
+                              .sum::<f64>();
+    let mean_v = 1./n * pixels.iter()
+                              .map(|&HSV(_, _, v)| v)
+                              .sum::<f64>();
+
+    let var_h = 1./n * pixels.iter()
+                             .map(|&HSV(h, _, _)| (h-mean_h) * (h-mean_h))
+                             .sum::<f64>();
+    let var_s = 1./n * pixels.iter()
+                             .map(|&HSV(_, s, _)| (s-mean_s) * (s-mean_s))
+                             .sum::<f64>();
+    let var_v = 1./n * pixels.iter()
+                             .map(|&HSV(_, _, v)| (v-mean_v) * (v-mean_v))
+                             .sum::<f64>();
+
+
+    let tmp = (var_h, if var_s > var_v {var_s} else {var_v});
+    if tmp.0 < tmp.1 {tmp.0} else {tmp.1}
+}

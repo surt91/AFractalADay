@@ -22,6 +22,58 @@ pub struct Formula {
     pub readable: String
 }
 
+/// Calculates the derivative of f at z.
+///
+/// `https://en.wikipedia.org/wiki/Numerical_differentiation#Complex_variable_methods`
+///
+/// # Examples
+///
+/// ```
+/// use a_fractal_a_day::functions::*;
+/// let f: ComplexFunction = Box::new(|x| x*x);
+///
+/// assert_eq!(Cplx::new(9., 0.), f(Cplx::new(3., 0.)));
+/// assert!((Cplx::new(6., 0.) - derivative(&f, &Cplx::new(3., 0.))).norm() < 1e-2);
+/// ```
+pub fn derivative(f: &ComplexFunction, z: &Cplx) -> Cplx {
+    const H: Real = 1e-4;
+    (f(z + H) - f(z - H)) / (2. * H)
+}
+
+pub fn random_formula(rng: &mut rand::StdRng) -> Formula {
+    // use up to 4 terms but at least 1
+    let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 1;
+    let mut terms: Vec<ComplexFunction> = Vec::new();
+    let mut term_string: Vec<String> = Vec::new();
+
+    let a_real_gen = |generator: &mut rand::StdRng| (generator.gen_range(-1. as Real, 1.) * 3. * 10.).round() / 10.;
+    let a_comp_gen = |generator: &mut rand::StdRng| Complex::new(a_real_gen(generator), a_real_gen(generator));
+
+    let mut possible_terms = Terms::new();
+    // chance that all coefficients will be real
+    let always_real = rng.gen_range(0f64, 1.) < 0.5;
+
+    for _ in 0..num_terms {
+        // let a be a complex number in 30% of all cases
+        let a = if !always_real && rng.gen_range(0f64, 1.) < 0.3 {
+                    Coef::Complex(a_comp_gen(rng))
+                } else {
+                    Coef::Real(a_real_gen(rng))
+                };
+
+        let neo = possible_terms.choice(a, rng);
+        terms.push(neo.callable);
+        term_string.push(neo.readable);
+    }
+
+    let f = move |x| terms.iter()
+                          .map(move |f| f(x))
+                          .fold(Complex {re: 0., im: 0.}, |sum, x| sum + x);
+
+    Formula {callable: Box::new(f),
+             readable: "z ↦ ".to_string() + &term_string.join(" + ")}
+}
+
 #[derive(Default)]
 pub struct Terms {
     pub candidates_real: Vec<Box<Fn(Real) -> Formula>>,
