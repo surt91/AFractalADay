@@ -101,15 +101,15 @@ fn prepare(filename: &str) -> String {
     format!("img/{}.png", filename)
 }
 
-fn render_fractal(filename: &str, seed: usize) -> NewtonFractal {
+fn render_fractal(filename: &str, seed: usize) -> String{
     let mut finished = false;
 
-    let mut a;
+    let mut description;
     let mut ctr = 0;
     // hacky do while loop
     while {
-        a = NewtonFractal::new(None, Some(&[seed + ctr]));
-        info!("{}", a.formula);
+        let mut a = NewtonFractalBuilder::new().seed(seed+ctr)
+                                               .build();
 
         // ensure that the image has some variance
         // otherwise the images are probably boring
@@ -118,17 +118,20 @@ fn render_fractal(filename: &str, seed: usize) -> NewtonFractal {
             Err(x) => error!("creation of fractal failed {:?}", x)
         }
 
+        info!("{}", a.description);
+        description = a.description;
+
         ctr += 1;
         ! finished
     } {}
 
     postprocess_image(filename);
 
-    a
+    description
 }
 
-fn tweet(filename: &str, fractal: &NewtonFractal) {
-    twitter::tweet_image(&fractal.formula, filename)
+fn tweet(filename: &str, description: &str) {
+    twitter::tweet_image(&description, filename)
             .expect("Uploading to twitter failed!");
 }
 
@@ -146,13 +149,13 @@ fn main() {
 
     info!("start generation with seed {}", seed);
 
-    let fractal = render_fractal(&filename, seed);
+    let description = render_fractal(&filename, seed);
 
     info!("image saved as {}", filename);
 
     if opt.tweet {
         info!("start upload to twitter");
-        tweet(&filename, &fractal);
+        tweet(&filename, &description);
         info!("tweeted");
     }
     info!("Success!");

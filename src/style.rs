@@ -1,3 +1,6 @@
+extern crate rand;
+
+use self::rand::Rng;
 use std::fmt;
 
 use color;
@@ -32,6 +35,10 @@ impl Style {
             4 => Style::pastell(),
             1 | _ => Style::vibrant(),
         }
+    }
+
+    pub fn random_style(rng: &mut rand::StdRng) -> Style {
+        Style::index(rng.gen_range(0, Style::num()))
     }
 }
 

@@ -16,21 +16,94 @@ use itertools::Itertools;
 
 use self::rayon::prelude::*;
 
-use functions::{Terms, Coef, Real, Cplx, ComplexFunction};
+use functions::{Terms, Coef, Real, Cplx, ComplexFunction, Formula};
 use color;
 
 use style::Style;
 
-pub struct IterationDetails {
-    pub f: ComplexFunction,
-    pub a: Coef,
-    pub formula: String,
-    pub prefix: String
-}
-
 pub struct Convergence {
     pub count: i64,
     pub value: Cplx
+}
+
+pub struct NewtonFractalBuilder {
+    a: Option<Coef>,
+    f: Option<Formula>,
+    seed: Option<usize>,
+    style: Option<Style>
+}
+
+// Builder Pattern to create a NewtonFractal
+impl NewtonFractalBuilder {
+    pub fn new() -> NewtonFractalBuilder {
+        NewtonFractalBuilder {
+            a: None,
+            f: None,
+            seed: None,
+            style: None
+        }
+    }
+
+    pub fn coefficient(mut self, a: Coef) -> NewtonFractalBuilder {
+        self.a = Some(a);
+        self
+    }
+
+    pub fn formula(mut self, f: Formula) -> NewtonFractalBuilder {
+        self.f = Some(f);
+        self
+    }
+
+    pub fn seed(mut self, seed: usize) -> NewtonFractalBuilder {
+        self.seed = Some(seed);
+        self
+    }
+
+    pub fn style(mut self, style: Style) -> NewtonFractalBuilder {
+        self.style = Some(style);
+        self
+    }
+
+    pub fn build(self) -> NewtonFractal {
+        let mut rng: rand::StdRng = match self.seed {
+            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
+            None => rand::StdRng::new().unwrap()
+        };
+
+        // fill in defaults, if members are not given
+        // most defaults will be random
+        let f = match self.f {
+            Some(x) => x,
+            None => NewtonFractal::random_formula(&mut rng)
+        };
+
+        let a = match self.a {
+            Some(x) => x,
+            None => NewtonFractal::random_coef(&mut rng)
+        };
+
+        let style = match self.style {
+            Some(x) => x,
+            None => Style::random_style(&mut rng)
+        };
+
+
+        let mut description = match a {
+            Coef::Real(x) if (1. - x).abs() < 1e-4 => "Newton Fractal".to_string(),
+            Coef::Real(x) => format!("Generalized Newton Fractal (x = {}) of ", x),
+            Coef::Complex(y) => format!("Generalized Newton Fractal (x = {}) of ", y)
+        };
+        description += &f.readable;
+
+        NewtonFractal {
+            a,
+            f: f.callable,
+            description,
+            h: 1e-4,
+            rng,
+            style
+        }
+    }
 }
 
 pub struct NewtonFractal {
@@ -38,24 +111,11 @@ pub struct NewtonFractal {
     pub f: ComplexFunction,
     h: Real,
     rng: rand::StdRng,
-    pub formula: String,
+    pub description: String,
     style: Style
 }
 
 impl NewtonFractal {
-    pub fn new(f: Option<ComplexFunction>, seed: Option<&[usize]>) -> NewtonFractal {
-        let mut rng: rand::StdRng = match seed {
-            Some(x) => rand::SeedableRng::from_seed(x),
-            None => rand::StdRng::new().unwrap()
-        };
-        let formula = match f {
-            Some(x) => IterationDetails {f: x, a: Coef::Real(1.), formula: "n/a".to_string(), prefix: "Newton Fractal of".to_string()},
-            None => NewtonFractal::random_formula(&mut rng)
-        };
-
-        NewtonFractal {a: formula.a, f: formula.f, h: 1e-4, rng, formula: formula.prefix + &formula.formula, style: Style::vibrant()}
-    }
-
     pub fn style(&mut self, s: Style) {
         self.style = s;
     }
@@ -85,28 +145,28 @@ impl NewtonFractal {
         ((self.f)(x + self.h) - (self.f)(x - self.h)) / (2. * self.h)
     }
 
-    fn random_formula(rng: &mut rand::StdRng) -> IterationDetails {
+    fn random_coef(rng: &mut rand::StdRng) -> Coef {
+        let a_re = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
+        let a_im = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
+        if rng.gen::<f64>() < 0.1 {
+            let tmp = Complex::new(a_re, a_im);
+            // prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
+            Coef::Complex(tmp)
+        } else if rng.gen::<f64>() < 0.4 {
+            let tmp = a_re;
+            // prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
+            Coef::Real(tmp)
+        } else {
+            // prefix = "Newton Fractal of ".to_string();
+            Coef::Real(1.)
+        }
+    }
+
+    fn random_formula(rng: &mut rand::StdRng) -> Formula {
         // use up to 4 terms but at least 1
         let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 1;
         let mut terms: Vec<ComplexFunction> = Vec::new();
         let mut term_string: Vec<String> = Vec::new();
-
-        let mut prefix;
-        let a_re = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
-        let a_im = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
-        let alpha = if rng.gen::<f64>() < 0.1 {
-            let tmp = Complex::new(a_re, a_im);
-            prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
-            Coef::Complex(tmp)
-        } else if rng.gen::<f64>() < 0.4 {
-            let tmp = a_re;
-            prefix = format!("Generalized Newton Fractal (a = {}) of ", tmp);
-            Coef::Real(tmp)
-        } else {
-            prefix = "Newton Fractal of ".to_string();
-            Coef::Real(1.)
-        };
-        prefix += "z ↦ ";
 
         let a_real_gen = |generator: &mut rand::StdRng| (generator.gen_range(-1. as Real, 1.) * 3. * 10.).round() / 10.;
         let a_comp_gen = |generator: &mut rand::StdRng| Complex::new(a_real_gen(generator), a_real_gen(generator));
@@ -132,7 +192,8 @@ impl NewtonFractal {
                               .map(move |f| f(x))
                               .fold(Complex {re: 0., im: 0.}, |sum, x| sum + x);
 
-        IterationDetails {f: Box::new(f), a: alpha, formula: term_string.join(" + "), prefix: prefix}
+        Formula {callable: Box::new(f),
+                 readable: "z ↦ ".to_string() + &term_string.join(" + ")}
     }
 
     pub fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
