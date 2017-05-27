@@ -1,7 +1,7 @@
 extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
-use newton_fractal::NewtonFractal;
+use newton_fractal::NewtonFractalBuilder;
 
 use std::fs;
 use std::fmt;
@@ -131,7 +131,7 @@ fn render_fractal(filename: &str, seed: usize) -> String{
 }
 
 fn tweet(filename: &str, description: &str) {
-    twitter::tweet_image(&description, filename)
+    twitter::tweet_image(description, filename)
             .expect("Uploading to twitter failed!");
 }
 

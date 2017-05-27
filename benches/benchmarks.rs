@@ -5,7 +5,7 @@ extern crate num;
 
 use num::Complex;
 use a_fractal_a_day::functions::{Terms, Cplx, Real};
-use a_fractal_a_day::newton_fractal::NewtonFractal;
+use a_fractal_a_day::newton_fractal::NewtonFractalBuilder;
 use test::Bencher;
 
 #[bench]
@@ -40,6 +40,6 @@ fn bench_run_all_complex_im0(b: &mut Bencher) {
 
 #[bench]
 fn bench_raster(b: &mut Bencher) {
-    let nf = NewtonFractal::new(None, Some(&[1]));
+    let nf = NewtonFractalBuilder::new().seed(4).build();
     b.iter(|| nf.raster(100, 100, 1e-2, 1e-2));
 }
