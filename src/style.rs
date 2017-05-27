@@ -46,7 +46,8 @@ fn style_pastell(info: &Convergence, random_color: Option<f64>, random_count: Op
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (info.value.norm() as f64 * 10. * random_color) % 1.;
+    let hue = (info.value.norm() as f64 * 10. * random_color).fract();
+    let hue = if hue.is_nan() {0.} else {hue};
     let value = 1f64;
     let tmp = info.count as f64 / (10. + 40. * random_count);
     let saturation = 1f64.min(tmp);
@@ -58,7 +59,8 @@ fn style_vibrant(info: &Convergence, random_color: Option<f64>, random_count: Op
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (info.value.norm() as f64 * 10. * (random_color + 0.1)) % 1.;
+    let hue = (info.value.norm() as f64 * 10. * (random_color + 0.1)).fract();
+    let hue = if hue.is_nan() {0.} else {hue};
     let value = 1f64;
     let tmp = info.count as f64 / (10. + 40. * random_count);
     let saturation = 1. - 1f64.min(tmp);
@@ -70,7 +72,8 @@ fn style_strong(info: &Convergence, random_color: Option<f64>, random_count: Opt
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (info.value.norm() as f64 * 10. * random_color) % 1.;
+    let hue = (info.value.norm() as f64 * 10. * random_color).fract();
+    let hue = if hue.is_nan() {0.} else {hue};
     let saturation = 1f64;
     let tmp = info.count as f64 / (10. + 100. * random_count);
     let value = 1f64.min(tmp.powf(0.7));
@@ -82,7 +85,8 @@ fn style_spooky(info: &Convergence, random_color: Option<f64>, random_count: Opt
     let random_color = random_color.unwrap_or(1.);
     let random_count = random_count.unwrap_or(1.);
 
-    let hue = (info.value.norm() as f64 * 10. * random_color) % 1.;
+    let hue = (info.value.norm() as f64 * 10. * random_color).fract();
+    let hue = if hue.is_nan() {0.} else {hue};
     let saturation = 1f64;
     let tmp = info.count as f64 / (10. + 50. * random_count);
     let value = 1f64.min(tmp);

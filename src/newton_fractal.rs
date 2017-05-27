@@ -76,7 +76,7 @@ impl NewtonFractal {
             state = kernel(state);
             ctr += 1;
 
-            (state - tmp).norm() > threshold && ctr < 1000
+            (state - tmp).norm() > threshold && ctr < 1000 && !state.re.is_nan() && !state.im.is_nan()
         } {}
         Convergence {count: ctr, value: state}
     }
