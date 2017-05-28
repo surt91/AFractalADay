@@ -2,13 +2,15 @@ extern crate std;
 extern crate num;
 
 extern crate rand;
+use self::rand::Rng;
 
 use super::{IteratedFractal, Convergence};
 use super::iterated_fractal_builder::IteratedFractalBuilder;
 use numbers::{Coef, Cplx, ComplexFunction};
 use self::functions::{derivative, random_formula, random_coef};
 
-use iterated_fractal::style::Style;
+use iterated_fractal::style::{Style, Stylable};
+use color;
 
 mod functions;
 
@@ -17,7 +19,9 @@ pub struct NewtonFractal {
     f: ComplexFunction,
     rng: rand::StdRng,
     pub description: String,
-    style: Style
+    style: Style,
+    random_color: f64,
+    random_count: f64
 }
 
 impl IteratedFractalBuilder {
@@ -53,14 +57,34 @@ impl IteratedFractalBuilder {
         description += &f.readable;
 
         info!("Will render {}", description);
+        info!("use style '{}'", style);
+
+        // use randomness to determine the colors
+        let random_color = rng.gen_range(0f64, 1.);
+        let random_count = rng.gen_range(0f64, 1.);
+
+        info!("rcol {}", random_color);
+        info!("rcnt {}", random_count);
 
         NewtonFractal {
             a,
             f: f.callable,
             description,
             rng,
-            style
+            style,
+            random_color,
+            random_count
         }
+    }
+}
+
+impl Stylable for NewtonFractal {
+    fn style(&self, conv: &Convergence) -> color::HSV {
+        (self.style.callable)(conv, Some(self.random_color), Some(self.random_count))
+    }
+
+    fn style_name(&self) -> &str {
+        &self.style.readable
     }
 }
 
@@ -88,9 +112,5 @@ impl IteratedFractal for NewtonFractal {
 
     fn get_rng(&mut self) -> &mut rand::StdRng {
         &mut self.rng
-    }
-
-    fn get_style(&self) -> &Style {
-        &self.style
     }
 }

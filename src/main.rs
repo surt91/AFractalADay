@@ -55,7 +55,7 @@ fn render_fractal(filename: &str, seed: usize) -> String{
 
         // ensure that the image has some variance
         // otherwise the images are probably boring
-        match a.render((2048-2, 1024-2), filename) {
+        match a.render((2048-2, 1024-2), None, None, filename) {
             Ok(variance) => finished = variance > 0.01,
             Err(x) => error!("creation of fractal failed {:?}", x)
         }

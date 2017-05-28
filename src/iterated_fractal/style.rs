@@ -6,9 +6,14 @@ use std::fmt;
 use color;
 use super::Convergence;
 
+pub trait Stylable {
+    fn style(&self, &Convergence) -> color::HSV;
+    fn style_name(&self) -> &str;
+}
+
 pub struct Style {
     pub callable: fn(&Convergence, Option<f64>, Option<f64>) -> color::HSV,
-    pub readable: String
+    pub readable: String,
 }
 
 impl fmt::Debug for Style {

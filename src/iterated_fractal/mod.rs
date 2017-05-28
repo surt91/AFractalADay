@@ -3,7 +3,6 @@ pub mod iterated_fractal_builder;
 pub mod style;
 
 extern crate rand;
-use self::rand::Rng;
 
 extern crate rayon;
 use self::rayon::prelude::*;
@@ -19,7 +18,7 @@ use std::io;
 
 use numbers::{Real, Cplx};
 use color;
-use self::style::Style;
+use self::style::Stylable;
 
 pub struct Convergence {
     pub count: i64,
@@ -29,45 +28,46 @@ pub struct Convergence {
 /// The IteratedFractal trait applies to all ``Julia set type'' fractals, i.e., all fractals
 /// that can be visualized by assigning every pixel a color dependent on a value and an iteration
 /// count.
-pub trait IteratedFractal : Sync {
+pub trait IteratedFractal : Sync + Stylable {
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut rand::StdRng;
-    fn get_style(&self) -> &Style;
 
-    fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
+    fn raster(&self, resolution: (i32, i32), xscale: f64, yscale: f64, center: (f64, f64)) -> Vec<Convergence> {
+        let (x, y) = resolution;
+        let (cx, cy) = center;
         let pixels: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();
         pixels.par_iter()
               .map(|&(j, i)| {
-                  let xp = (i-x/2) as f64 * xscale;
-                  let yp = (j-y/2) as f64 * yscale;
+                  let xp = (i-x/2) as f64 * xscale + cx;
+                  let yp = (j-y/2) as f64 * yscale + cy;
                   let p = Cplx {re: xp as Real, im: yp as Real};
                   self.iterate(p)
               })
               .collect()
     }
 
-    fn render(&mut self, resolution: (i32, i32), filename: &str) -> io::Result<f64> {
-        let (x, y) = resolution;
+    fn render(&mut self, resolution: (i32, i32),
+                         scale: Option<f64>,
+                         center: Option<(f64, f64)>,
+                         filename: &str) -> io::Result<f64> {
+        let scale = match scale {
+            Some(x) => x,
+            None => 1. / resolution.1 as f64
+        };
 
-        // use randomness to determine the colors
-        let random_color = self.get_rng().gen_range(0f64, 1.);
-        let random_count = self.get_rng().gen_range(0f64, 1.);
-        let random_zoom = self.get_rng().gen_range(0.1f64, 2.);
-        let scale = 4e-3 * random_zoom;
+        let center = match center {
+            Some(x) => x,
+            None => (0., 0.)
+        };
 
-        let states = self.raster(x, y, scale, scale);
+        let states = self.raster(resolution, scale, scale, center);
         let total_iterations: i64 = states.par_iter()
                                      .map(|i| i.count)
                                      .sum();
         info!("{:.2}M iterations", total_iterations as f64/1e6);
 
-        info!("use style '{}'", self.get_style());
-        info!("rcol {}", random_color);
-        info!("rcnt {}", random_count);
-        info!("rzo {}", random_zoom);
-
         let hsv: Vec<color::HSV> = states.par_iter()
-                                         .map(|i| (self.get_style().callable)(i, Some(random_color), Some(random_count)))
+                                         .map(|i| self.style(i))
                                          .collect();
 
         let var = color::color_variance(&hsv);
@@ -88,6 +88,7 @@ pub trait IteratedFractal : Sync {
         let file = File::create(path)?;
         let w = io::BufWriter::new(file);
 
+        let (x, y) = resolution;
         let mut encoder = png::Encoder::new(w, x as u32, y as u32);
         encoder.set(png::ColorType::RGBA).set(png::BitDepth::Eight);
         let mut writer = encoder.write_header()?;
