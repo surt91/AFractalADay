@@ -19,6 +19,7 @@ use my_twitter::twitter as twitter;
 
 mod parse_cl;
 use parse_cl::parse_cl;
+use iterated_fractal::style::Style;
 
 
 // only log errors to stdout, but everything to a log file
@@ -43,15 +44,20 @@ fn prepare(filename: &str) -> String {
     format!("img/{}.png", filename)
 }
 
-fn render_fractal(filename: &str, seed: usize) -> String{
+fn render_fractal(filename: &str, seed: usize, style: Option<String>) -> String{
     let mut finished = false;
 
     let mut description;
     let mut ctr = 0;
     // hacky do while loop
     while {
-        let mut a = IteratedFractalBuilder::new().seed(seed+ctr)
-                                                 .newton();
+        let mut a = IteratedFractalBuilder::new().seed(seed+ctr);
+        a = match style {
+            // the parser made sure that this is a valid value, unwrap should be fine
+            Some(ref x) => a.style(Style::from_string(x).unwrap()),
+            None => a
+        };
+        let mut a = a.newton();
 
         // ensure that the image has some variance
         // otherwise the images are probably boring
@@ -91,7 +97,7 @@ fn main() {
 
     info!("start generation with seed {}", seed);
 
-    let description = render_fractal(&filename, seed);
+    let description = render_fractal(&filename, seed, opt.style);
 
     info!("image saved as {}", filename);
 

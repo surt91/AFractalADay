@@ -8,7 +8,7 @@ use iterated_fractal::style::Style;
 pub struct Options {
     pub seed: Option<usize>,
     pub filename: Option<String>,
-    pub style: Option<Style>,
+    pub style: Option<String>,
     pub tweet: bool,
     pub quiet: bool
 }
@@ -18,7 +18,7 @@ impl fmt::Display for Options {
         write!(f, "Options: seed: {}, name:  {}, style: {}, tweet: {}, quiet: {}",
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
-                  self.style.as_ref().map_or("random".to_string(), |s| s.readable.clone()),
+                  self.style.as_ref().unwrap_or(&"random".to_string()),
                   self.tweet,
                   self.quiet
               )
@@ -66,11 +66,13 @@ pub fn parse_cl() -> Options {
     let filename = matches.value_of("filename")
                           .and_then(|f| Some(f.to_string()))
                           .or_else(|| None);
-    let style = match matches.value_of("style")
-                {
-                    Some(x) => Some(Style::from_string(x).expect(&format!("Invalid Style {}", x))),
-                    None => None
-                };
+    // test if style is valid
+    match matches.value_of("style")
+    {
+        Some(x) => Some(Style::from_string(x).expect(&format!("Invalid Style {}", x))),
+        None => None
+    };
+    let style = matches.value_of("style").map(|x| x.to_string());
     let seed = matches.value_of("seed")
                       .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be and integer")))
                       .or_else(|| None);
