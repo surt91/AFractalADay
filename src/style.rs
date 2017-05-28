@@ -11,7 +11,22 @@ pub struct Style {
     pub readable: String
 }
 
+impl fmt::Debug for Style {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Style: {}", self.readable)
+    }
+}
+
 impl Style {
+    pub fn from_string(s: &str) -> Option<Style> {
+        match s {
+            "vibrant" => Some(Style::vibrant()),
+            "spooky" => Some(Style::spooky()),
+            "strong" => Some(Style::strong()),
+            "pastell" => Some(Style::pastell()),
+            _ => None
+        }
+    }
     pub fn vibrant() -> Style {
         Style { callable: style_vibrant, readable: "vibrant".to_string() }
     }

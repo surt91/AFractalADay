@@ -2,20 +2,23 @@ use std::fmt;
 
 extern crate clap;
 use self::clap::{App, Arg};
+use a_fractal_a_day::style::Style;
 
 #[derive(Debug)]
 pub struct Options {
     pub seed: Option<usize>,
     pub filename: Option<String>,
+    pub style: Option<Style>,
     pub tweet: bool,
     pub quiet: bool
 }
 
 impl fmt::Display for Options {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Options: seed: {}, name:  {}, tweet: {}, quiet: {}",
+        write!(f, "Options: seed: {}, name:  {}, style: {}, tweet: {}, quiet: {}",
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
+                  self.style.as_ref().map_or("random".to_string(), |s| s.readable.clone()),
                   self.tweet,
                   self.quiet
               )
@@ -33,7 +36,7 @@ pub fn parse_cl() -> Options {
                     .help("do tweet the generated image")
               )
               .arg(Arg::with_name("seed")
-                    .short("s")
+                    .short("x")
                     .long("seed")
                     .takes_value(true)
                     .help("the seed for the random number generator ")
@@ -43,6 +46,12 @@ pub fn parse_cl() -> Options {
                     .long("filename")
                     .takes_value(true)
                     .help("the name of the outputted image")
+              )
+              .arg(Arg::with_name("style")
+                    .short("s")
+                    .long("style")
+                    .takes_value(true)
+                    .help("the name of the style applied to visualize")
               )
               .arg(Arg::with_name("quiet")
                     .short("q")
@@ -56,9 +65,20 @@ pub fn parse_cl() -> Options {
     let filename = matches.value_of("filename")
                           .and_then(|f| Some(f.to_string()))
                           .or_else(|| None);
+    let style = match matches.value_of("style")
+                {
+                    Some(x) => Some(Style::from_string(x).expect(&format!("Invalid Style {}", x))),
+                    None => None
+                };
     let seed = matches.value_of("seed")
                       .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be and integer")))
                       .or_else(|| None);
 
-    Options {seed: seed, filename: filename, tweet: tweet, quiet: quiet}
+    Options {
+        seed,
+        filename,
+        style,
+        tweet,
+        quiet
+    }
 }

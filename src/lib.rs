@@ -5,7 +5,7 @@ pub mod iterated_fractal;
 pub mod newton_fractal;
 pub mod functions;
 pub mod color;
-mod style;
+pub mod style;
 
 use std::process::Command;
 
