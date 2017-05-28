@@ -6,8 +6,8 @@ use std::fmt::Display;
 use numbers::{Cplx, Real, Coef, ComplexFunction, Formula};
 
 pub fn random_coef(rng: &mut rand::StdRng) -> Coef {
-    let a_re = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
-    let a_im = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
+    let a_re = ((rng.gen_range(1f64, 2.) * 10.).floor() / 10.) as Real;
+    let a_im = ((rng.gen_range(1f64, 2.) * 10.).floor() / 10.) as Real;
     if rng.gen::<f64>() < 0.1 {
         let tmp = Cplx::new(a_re, a_im);
         Coef::Complex(tmp)
@@ -43,7 +43,7 @@ pub fn random_formula(rng: &mut rand::StdRng) -> Formula {
     let mut terms: Vec<ComplexFunction> = Vec::new();
     let mut term_string: Vec<String> = Vec::new();
 
-    let a_real_gen = |generator: &mut rand::StdRng| (generator.gen_range(-1. as Real, 1.) * 3. * 10.).round() / 10.;
+    let a_real_gen = |generator: &mut rand::StdRng| ((generator.gen_range(-1f64, 1.) * 3. * 10.).round() / 10.) as Real;
     let a_comp_gen = |generator: &mut rand::StdRng| Cplx::new(a_real_gen(generator), a_real_gen(generator));
 
     let mut possible_terms = Terms::new();
