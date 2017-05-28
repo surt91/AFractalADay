@@ -25,6 +25,7 @@ impl fmt::Display for Options {
     }
 }
 
+// FIXME: return result with an clError, instead of panicing
 pub fn parse_cl() -> Options {
     let matches = App::new(env!("CARGO_PKG_NAME"))
               .version(env!("CARGO_PKG_VERSION"))
