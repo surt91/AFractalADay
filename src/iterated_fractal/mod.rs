@@ -17,7 +17,7 @@ use std::path::Path;
 use std::fs::File;
 use std::io;
 
-use numbers::{Coef, Real, Cplx};
+use numbers::{Real, Cplx};
 use color;
 use self::style::Style;
 
@@ -33,20 +33,6 @@ pub trait IteratedFractal : Sync {
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut rand::StdRng;
     fn get_style(&self) -> &Style;
-
-    fn random_coef(rng: &mut rand::StdRng) -> Coef {
-        let a_re = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
-        let a_im = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
-        if rng.gen::<f64>() < 0.1 {
-            let tmp = Cplx::new(a_re, a_im);
-            Coef::Complex(tmp)
-        } else if rng.gen::<f64>() < 0.4 {
-            let tmp = a_re;
-            Coef::Real(tmp)
-        } else {
-            Coef::Real(1.)
-        }
-    }
 
     fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
         let pixels: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();

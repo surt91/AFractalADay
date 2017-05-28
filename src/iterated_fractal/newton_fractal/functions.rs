@@ -5,6 +5,19 @@ use std::fmt::Display;
 
 use numbers::{Cplx, Real, Coef, ComplexFunction, Formula};
 
+pub fn random_coef(rng: &mut rand::StdRng) -> Coef {
+    let a_re = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
+    let a_im = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
+    if rng.gen::<f64>() < 0.1 {
+        let tmp = Cplx::new(a_re, a_im);
+        Coef::Complex(tmp)
+    } else if rng.gen::<f64>() < 0.4 {
+        let tmp = a_re;
+        Coef::Real(tmp)
+    } else {
+        Coef::Real(1.)
+    }
+}
 
 /// Calculates the derivative of f at z.
 ///
