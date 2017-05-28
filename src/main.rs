@@ -1,7 +1,8 @@
 extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
-use newton_fractal::{NewtonFractalBuilder, IteratedFractal};
+use iterated_fractal::IteratedFractal;
+use newton_fractal::NewtonFractalBuilder;
 
 use std::fs;
 use std::fmt;

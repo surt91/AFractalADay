@@ -4,7 +4,7 @@ use self::rand::Rng;
 use std::fmt;
 
 use color;
-use newton_fractal::Convergence;
+use iterated_fractal::Convergence;
 
 pub struct Style {
     pub callable: fn(&Convergence, Option<f64>, Option<f64>) -> color::HSV,

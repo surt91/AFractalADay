@@ -1,6 +1,7 @@
 #[macro_use] extern crate itertools;
 #[macro_use] extern crate log;
 
+pub mod iterated_fractal;
 pub mod newton_fractal;
 pub mod functions;
 pub mod color;
