@@ -73,17 +73,15 @@ pub trait IteratedFractal : Sync {
         let var = color::color_variance(&hsv);
         info!("variance: {}", var);
 
-        let tmp_buffer: Vec<Vec<u8>> = hsv.par_iter()
-                            .map(|hsv| {
-                                let color::RGB(r, g, b) = hsv.to_rgb();
-                                let a = 255;
+        let buffer: Vec<u8> = hsv.iter()
+                                .map(|hsv| {
+                                    let color::RGB(r, g, b) = hsv.to_rgb();
+                                    let a = 255;
 
-                                vec![(r * 255.) as u8, (g * 255.) as u8, (b * 255.) as u8, a]
-                            })
-                            .collect();
-        let buffer: Vec<u8> = tmp_buffer.into_iter()
-                                        .flatten()
-                                        .collect();
+                                    vec![(r * 255.) as u8, (g * 255.) as u8, (b * 255.) as u8, a]
+                                })
+                                .flatten()
+                                .collect();
 
         let tmp = filename;
         let path = Path::new(&tmp);
