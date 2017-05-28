@@ -45,10 +45,10 @@ impl Style {
     }
     pub fn index(i: usize) -> Style {
         match i {
-            2 => Style::spooky(),
-            3 => Style::strong(),
-            4 => Style::pastell(),
-            1 | _ => Style::vibrant(),
+            1 => Style::spooky(),
+            2 => Style::strong(),
+            3 => Style::pastell(),
+            0 | _ => Style::vibrant(),
         }
     }
 
