@@ -5,7 +5,7 @@ extern crate rand;
 
 use numbers::{Coef, Formula};
 
-use iterated_fractal::style::Style;
+use super::style::Style;
 
 pub struct IteratedFractalBuilder {
     pub a: Option<Coef>,

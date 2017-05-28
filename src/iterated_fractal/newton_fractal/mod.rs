@@ -3,10 +3,10 @@ extern crate num;
 
 extern crate rand;
 
-use iterated_fractal::{IteratedFractal, Convergence};
-use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
+use super::{IteratedFractal, Convergence};
+use super::iterated_fractal_builder::IteratedFractalBuilder;
 use numbers::{Coef, Cplx, ComplexFunction};
-use self::functions::{derivative, random_formula};
+use self::functions::{derivative, random_formula, random_coef};
 
 use iterated_fractal::style::Style;
 
@@ -36,7 +36,7 @@ impl IteratedFractalBuilder {
 
         let a = match self.a {
             Some(x) => x,
-            None => NewtonFractal::random_coef(&mut rng)
+            None => random_coef(&mut rng)
         };
 
         let style = match self.style {

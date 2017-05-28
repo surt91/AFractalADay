@@ -19,7 +19,7 @@ use std::io;
 
 use numbers::{Coef, Real, Cplx};
 use color;
-use iterated_fractal::style::Style;
+use self::style::Style;
 
 pub struct Convergence {
     pub count: i64,
