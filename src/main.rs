@@ -2,7 +2,7 @@ extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
 use iterated_fractal::IteratedFractal;
-use newton_fractal::NewtonFractalBuilder;
+use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
 
 use std::fs;
 
@@ -50,8 +50,8 @@ fn render_fractal(filename: &str, seed: usize) -> String{
     let mut ctr = 0;
     // hacky do while loop
     while {
-        let mut a = NewtonFractalBuilder::new().seed(seed+ctr)
-                                               .build();
+        let mut a = IteratedFractalBuilder::new().seed(seed+ctr)
+                                                 .newton();
 
         // ensure that the image has some variance
         // otherwise the images are probably boring

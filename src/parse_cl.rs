@@ -2,7 +2,7 @@ use std::fmt;
 
 extern crate clap;
 use self::clap::{App, Arg};
-use a_fractal_a_day::style::Style;
+use iterated_fractal::style::Style;
 
 #[derive(Debug)]
 pub struct Options {

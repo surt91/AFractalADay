@@ -2,10 +2,8 @@
 #[macro_use] extern crate log;
 
 pub mod iterated_fractal;
-pub mod newton_fractal;
-pub mod functions;
 pub mod color;
-pub mod style;
+pub mod numbers;
 
 use std::process::Command;
 

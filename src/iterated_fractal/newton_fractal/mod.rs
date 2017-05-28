@@ -4,50 +4,24 @@ extern crate num;
 extern crate rand;
 
 use iterated_fractal::{IteratedFractal, Convergence};
-use functions::{Coef, Cplx, ComplexFunction, Formula, derivative, random_formula};
+use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
+use numbers::{Coef, Cplx, ComplexFunction};
+use self::functions::{derivative, random_formula};
 
-use style::Style;
+use iterated_fractal::style::Style;
 
+mod functions;
 
-pub struct NewtonFractalBuilder {
-    a: Option<Coef>,
-    f: Option<Formula>,
-    seed: Option<usize>,
-    style: Option<Style>
+pub struct NewtonFractal {
+    a: Coef,
+    f: ComplexFunction,
+    rng: rand::StdRng,
+    pub description: String,
+    style: Style
 }
 
-// Builder Pattern to create a NewtonFractal
-impl NewtonFractalBuilder {
-    pub fn new() -> NewtonFractalBuilder {
-        NewtonFractalBuilder {
-            a: None,
-            f: None,
-            seed: None,
-            style: None
-        }
-    }
-
-    pub fn coefficient(mut self, a: Coef) -> NewtonFractalBuilder {
-        self.a = Some(a);
-        self
-    }
-
-    pub fn formula(mut self, f: Formula) -> NewtonFractalBuilder {
-        self.f = Some(f);
-        self
-    }
-
-    pub fn seed(mut self, seed: usize) -> NewtonFractalBuilder {
-        self.seed = Some(seed);
-        self
-    }
-
-    pub fn style(mut self, style: Style) -> NewtonFractalBuilder {
-        self.style = Some(style);
-        self
-    }
-
-    pub fn build(self) -> NewtonFractal {
+impl IteratedFractalBuilder {
+    pub fn newton(self) -> NewtonFractal {
         let mut rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
             None => rand::StdRng::new().unwrap()
@@ -88,14 +62,6 @@ impl NewtonFractalBuilder {
             style
         }
     }
-}
-
-pub struct NewtonFractal {
-    a: Coef,
-    f: ComplexFunction,
-    rng: rand::StdRng,
-    pub description: String,
-    style: Style
 }
 
 impl IteratedFractal for NewtonFractal {

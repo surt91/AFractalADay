@@ -1,26 +1,10 @@
 extern crate rand;
 use self::rand::Rng;
 
-extern crate num;
-use self::num::complex::Complex;
-
 use std::fmt::Display;
 
-// adjust precision here
-pub type Real = f32;
-pub type Cplx = Complex<Real>;
+use numbers::{Cplx, Real, Coef, ComplexFunction, Formula};
 
-pub type ComplexFunction = Box<Fn(Cplx) -> Cplx + Sync>;
-
-pub enum Coef {
-    Real(Real),
-    Complex(Cplx)
-}
-
-pub struct Formula {
-    pub callable: ComplexFunction,
-    pub readable: String
-}
 
 /// Calculates the derivative of f at z.
 ///
@@ -47,7 +31,7 @@ pub fn random_formula(rng: &mut rand::StdRng) -> Formula {
     let mut term_string: Vec<String> = Vec::new();
 
     let a_real_gen = |generator: &mut rand::StdRng| (generator.gen_range(-1. as Real, 1.) * 3. * 10.).round() / 10.;
-    let a_comp_gen = |generator: &mut rand::StdRng| Complex::new(a_real_gen(generator), a_real_gen(generator));
+    let a_comp_gen = |generator: &mut rand::StdRng| Cplx::new(a_real_gen(generator), a_real_gen(generator));
 
     let mut possible_terms = Terms::new();
     // chance that all coefficients will be real
@@ -68,7 +52,7 @@ pub fn random_formula(rng: &mut rand::StdRng) -> Formula {
 
     let f = move |x| terms.iter()
                           .map(move |f| f(x))
-                          .fold(Complex {re: 0., im: 0.}, |sum, x| sum + x);
+                          .fold(Cplx {re: 0., im: 0.}, |sum, x| sum + x);
 
     Formula {callable: Box::new(f),
              readable: "z ↦ ".to_string() + &term_string.join(" + ")}

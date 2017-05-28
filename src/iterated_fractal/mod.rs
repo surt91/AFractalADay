@@ -1,3 +1,7 @@
+mod newton_fractal;
+pub mod iterated_fractal_builder;
+pub mod style;
+
 extern crate rand;
 use self::rand::Rng;
 
@@ -13,9 +17,9 @@ use std::path::Path;
 use std::fs::File;
 use std::io;
 
-use functions::{Coef, Real, Cplx};
+use numbers::{Coef, Real, Cplx};
 use color;
-use style::Style;
+use iterated_fractal::style::Style;
 
 pub struct Convergence {
     pub count: i64,
