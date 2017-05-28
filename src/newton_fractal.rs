@@ -115,7 +115,7 @@ pub struct NewtonFractal {
     style: Style
 }
 
-impl NewtonFractal {
+impl IteratedFractal for NewtonFractal {
     fn iterate(&self, mut state: Cplx) -> Convergence {
         let mut ctr = 0;
         let threshold = 1e-4;
@@ -137,6 +137,23 @@ impl NewtonFractal {
         Convergence {count: ctr, value: state}
     }
 
+    fn get_rng(&mut self) -> &mut rand::StdRng {
+        &mut self.rng
+    }
+
+    fn get_style(&self) -> &Style {
+        &self.style
+    }
+}
+
+/// The IteratedFractal trait applies to all ``Julia set type'' fractals, i.e., all fractals
+/// that can be visualized by assigning every pixel a color dependent on a value and an iteration
+/// count.
+pub trait IteratedFractal : Sync {
+    fn iterate(&self, state: Cplx) -> Convergence;
+    fn get_rng(&mut self) -> &mut rand::StdRng;
+    fn get_style(&self) -> &Style;
+
     fn random_coef(rng: &mut rand::StdRng) -> Coef {
         let a_re = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
         let a_im = (rng.gen_range(1. as Real, 2.) * 10.).floor() / 10.;
@@ -151,7 +168,7 @@ impl NewtonFractal {
         }
     }
 
-    pub fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
+    fn raster(&self, x: i32, y: i32, xscale: f64, yscale: f64) -> Vec<Convergence> {
         let pixels: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();
         pixels.par_iter()
               .map(|&(j, i)| {
@@ -163,13 +180,13 @@ impl NewtonFractal {
               .collect()
     }
 
-    pub fn render(&mut self, resolution: (i32, i32), filename: &str) -> io::Result<f64> {
+    fn render(&mut self, resolution: (i32, i32), filename: &str) -> io::Result<f64> {
         let (x, y) = resolution;
 
         // use randomness to determine the colors
-        let random_color = self.rng.gen_range(0f64, 1.);
-        let random_count = self.rng.gen_range(0f64, 1.);
-        let random_zoom = self.rng.gen_range(0.1f64, 2.);
+        let random_color = self.get_rng().gen_range(0f64, 1.);
+        let random_count = self.get_rng().gen_range(0f64, 1.);
+        let random_zoom = self.get_rng().gen_range(0.1f64, 2.);
         let scale = 4e-3 * random_zoom;
 
         let states = self.raster(x, y, scale, scale);
@@ -178,13 +195,13 @@ impl NewtonFractal {
                                      .sum();
         info!("{:.2}M iterations", total_iterations as f64/1e6);
 
-        info!("use style '{}'", self.style);
+        info!("use style '{}'", self.get_style());
         info!("rcol {}", random_color);
         info!("rcnt {}", random_count);
         info!("rzo {}", random_zoom);
 
         let hsv: Vec<color::HSV> = states.par_iter()
-                                         .map(|i| (self.style.callable)(i, Some(random_color), Some(random_count)))
+                                         .map(|i| (self.get_style().callable)(i, Some(random_color), Some(random_count)))
                                          .collect();
 
         let var = color::color_variance(&hsv);
