@@ -10,6 +10,7 @@ impl HSV {
     }
 }
 
+/// convert a hsv color representations into an rgb representation
 fn hsv2rgb(hsv: &HSV) -> RGB {
     // https://de.wikipedia.org/wiki/HSV-Farbraum#Umrechnung_HSV_in_RGB
     let &HSV(h, s, v) = hsv;
@@ -31,7 +32,7 @@ fn hsv2rgb(hsv: &HSV) -> RGB {
 }
 
 
-// color_variance is an ad-hoc measure for the interestingness of an image
+/// color_variance is an ad-hoc measure for the interestingness of an image
 pub fn color_variance(pixels: &[HSV]) -> f64 {
     let n = pixels.len() as f64;
     let mean_h = 1./n * pixels.iter()
