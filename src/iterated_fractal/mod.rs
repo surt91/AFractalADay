@@ -1,4 +1,4 @@
-mod newton_fractal;
+mod newton;
 pub mod iterated_fractal_builder;
 pub mod style;
 
