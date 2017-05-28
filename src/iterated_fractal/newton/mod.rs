@@ -90,8 +90,8 @@ impl Stylable for NewtonFractal {
 
 impl IteratedFractal for NewtonFractal {
     fn iterate(&self, mut state: Cplx) -> Convergence {
-        let mut ctr = 0;
-        let threshold = 1e-4;
+        let mut ctr = 0.;
+        let threshold = 1e-12;
         let mut tmp;
 
         let kernel: Box<Fn(Cplx) -> Cplx> = match self.a {
@@ -103,11 +103,15 @@ impl IteratedFractal for NewtonFractal {
         while {
             tmp = state;
             state = kernel(state);
-            ctr += 1;
+            ctr += 1.;
 
-            (state - tmp).norm() > threshold && ctr < 1000 && !state.re.is_nan() && !state.im.is_nan()
+            (state - tmp).norm_sqr() > threshold && ctr < 1000. && !state.re.is_nan() && !state.im.is_nan()
         } {}
-        Convergence {count: ctr, value: state}
+        // for smooth color, add a normalized distance
+        if (state - tmp).norm_sqr() < threshold {
+            ctr += (state - tmp).norm_sqr() / threshold;
+        }
+        Convergence {count: ctr as f64, value: state}
     }
 
     fn get_rng(&mut self) -> &mut rand::StdRng {

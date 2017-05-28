@@ -21,7 +21,7 @@ use color;
 use self::style::Stylable;
 
 pub struct Convergence {
-    pub count: i64,
+    pub count: f64,
     pub value: Cplx
 }
 
@@ -62,7 +62,7 @@ pub trait IteratedFractal : Sync + Stylable {
 
         let states = self.raster(resolution, scale, scale, center);
         let total_iterations: i64 = states.par_iter()
-                                     .map(|i| i.count)
+                                     .map(|i| i.count as i64)
                                      .sum();
         info!("{:.2}M iterations", total_iterations as f64/1e6);
 
