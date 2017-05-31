@@ -7,12 +7,10 @@ use self::rand::Rng;
 use super::{IteratedFractal, Convergence};
 use super::iterated_fractal_builder::IteratedFractalBuilder;
 use numbers::{Coef, Cplx, ComplexFunction};
-use self::functions::{derivative, random_formula, random_coef};
+use functions::{derivative, random_formula, random_coef};
 
 use iterated_fractal::style::{Style, Stylable};
 use color;
-
-mod functions;
 
 pub struct NewtonFractal {
     a: Coef,

@@ -4,6 +4,7 @@
 pub mod iterated_fractal;
 pub mod color;
 pub mod numbers;
+pub mod functions;
 
 use std::process::Command;
 

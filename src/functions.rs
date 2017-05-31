@@ -27,6 +27,7 @@ pub fn random_coef(rng: &mut rand::StdRng) -> Coef {
 ///
 /// ```
 /// use a_fractal_a_day::functions::*;
+/// use a_fractal_a_day::numbers::{Cplx, ComplexFunction};
 /// let f: ComplexFunction = Box::new(|x| x*x);
 ///
 /// assert_eq!(Cplx::new(9., 0.), f(Cplx::new(3., 0.)));
