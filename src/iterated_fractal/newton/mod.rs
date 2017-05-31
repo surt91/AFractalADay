@@ -87,6 +87,10 @@ impl Stylable for NewtonFractal {
 }
 
 impl IteratedFractal for NewtonFractal {
+    fn description(&self) -> &str {
+        &self.description
+    }
+
     fn iterate(&self, mut state: Cplx) -> Convergence {
         let mut ctr = 0.;
         let threshold = 1e-12;

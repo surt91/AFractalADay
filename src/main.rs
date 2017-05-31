@@ -1,13 +1,13 @@
 extern crate a_fractal_a_day;
 
+
 use a_fractal_a_day::*;
 use iterated_fractal::IteratedFractal;
 use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
 
 use std::fs;
 
-#[macro_use]
-extern crate log;
+#[macro_use] extern crate log;
 extern crate log_panics;
 extern crate simplelog;
 use simplelog::{ CombinedLogger, SimpleLogger, WriteLogger, LogLevelFilter, Config};
@@ -44,11 +44,33 @@ fn prepare(filename: &str) -> String {
     format!("img/{}.png", filename)
 }
 
-fn render_fractal(filename: &str, seed: usize, style: Option<String>) -> String{
+fn render_fractal<T: IteratedFractal>(fractal: &mut T, filename: &str) -> (bool, String) {
     let mut finished = false;
+    // ensure that the image has some variance
+    // otherwise the images are probably boring
+    match fractal.render((2048-2, 1024-2), None, None, filename) {
+        Ok(variance) => finished = variance > 0.01,
+        Err(x) => error!("creation of fractal failed {:?}", x)
+    }
 
+    let description = fractal.description().to_string();
+    info!("{}", description);
+
+    (finished, description)
+}
+
+fn build_fractal(filename: &str,
+                  mut fractal_type: FractalType,
+                  seed: usize,
+                  style: Option<String>) -> String{
     let mut description;
     let mut ctr = 0;
+
+    match fractal_type {
+        FractalType::Random => fractal_type = if seed % 2 == 0 {FractalType::Julia} else {FractalType::Newton},
+        _ => ()
+    };
+
     // hacky do while loop
     while {
         let mut a = IteratedFractalBuilder::new().seed(seed+ctr);
@@ -57,18 +79,14 @@ fn render_fractal(filename: &str, seed: usize, style: Option<String>) -> String{
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
-        let mut a = a.newton();
 
-        // ensure that the image has some variance
-        // otherwise the images are probably boring
-        match a.render((2048-2, 1024-2), None, None, filename) {
-            Ok(variance) => finished = variance > 0.01,
-            Err(x) => error!("creation of fractal failed {:?}", x)
-        }
+        let (finished, tmp_description) = match fractal_type {
+            FractalType::Newton => render_fractal(&mut a.newton(), filename),
+            FractalType::Julia => render_fractal(&mut a.julia(), filename),
+            FractalType::Random => unreachable!()
+        };
 
-        info!("{}", a.description);
-        description = a.description;
-
+        description = tmp_description;
         ctr += 1;
         ! finished
     } {}
@@ -97,7 +115,7 @@ fn main() {
 
     info!("start generation with seed {}", seed);
 
-    let description = render_fractal(&filename, seed, opt.style);
+    let description = build_fractal(&filename, opt.fractal_type, seed, opt.style);
 
     info!("image saved as {}", filename);
 

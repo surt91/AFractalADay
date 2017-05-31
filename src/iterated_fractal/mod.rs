@@ -26,10 +26,11 @@ pub struct Convergence {
     pub value: Cplx
 }
 
-/// The IteratedFractal trait applies to all ``Julia set type'' fractals, i.e., all fractals
+/// The `IteratedFractal` trait applies to all ``Julia set type'' fractals, i.e., all fractals
 /// that can be visualized by assigning every pixel a color dependent on a value and an iteration
 /// count.
 pub trait IteratedFractal : Sync + Stylable {
+    fn description(&self) -> &str;
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut rand::StdRng;
 

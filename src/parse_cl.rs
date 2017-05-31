@@ -1,8 +1,9 @@
-use std::fmt;
-
 extern crate clap;
+
+use std::fmt;
 use self::clap::{App, Arg};
 use iterated_fractal::style::Style;
+use FractalType;
 
 #[derive(Debug)]
 pub struct Options {
@@ -10,12 +11,14 @@ pub struct Options {
     pub filename: Option<String>,
     pub style: Option<String>,
     pub tweet: bool,
-    pub quiet: bool
+    pub quiet: bool,
+    pub fractal_type: FractalType,
 }
 
 impl fmt::Display for Options {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Options: seed: {}, name:  {}, style: {}, tweet: {}, quiet: {}",
+        write!(f, "Options: type: {}, seed: {}, name:  {}, style: {}, tweet: {}, quiet: {}",
+                  self.fractal_type,
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
                   self.style.as_ref().unwrap_or(&"random".to_string()),
@@ -59,6 +62,18 @@ pub fn parse_cl() -> Options {
                     .long("quiet")
                     .help("do only print error messages")
               )
+              .arg(Arg::with_name("newton")
+                    .long("newton")
+                    .conflicts_with("type")
+                    .conflicts_with("julia")
+                    .help("render a newton fractal")
+              )
+              .arg(Arg::with_name("julia")
+                    .long("julia")
+                    .conflicts_with("type")
+                    .conflicts_with("newton")
+                    .help("render a julia fractal")
+              )
               .get_matches();
 
     let tweet = matches.is_present("tweet");
@@ -77,11 +92,20 @@ pub fn parse_cl() -> Options {
                       .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be and integer")))
                       .or_else(|| None);
 
+    let fractal_type = if matches.is_present("newton") {
+        FractalType::Newton
+    } else if matches.is_present("julia") {
+        FractalType::Julia
+    } else {
+        FractalType::Random
+    };
+
     Options {
         seed,
         filename,
         style,
         tweet,
-        quiet
+        quiet,
+        fractal_type
     }
 }

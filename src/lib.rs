@@ -8,6 +8,21 @@ pub mod functions;
 
 use std::process::Command;
 
+use std::fmt;
+
+#[derive(Debug)]
+pub enum FractalType {
+    Random,
+    Newton,
+    Julia
+}
+
+impl fmt::Display for FractalType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 pub fn postprocess_image(filename: &str) {
     // since twitter will convert the pictures to jpg with artifacts,
     // add a transparent border to suppress the conversion

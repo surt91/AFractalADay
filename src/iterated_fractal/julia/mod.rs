@@ -79,6 +79,10 @@ impl Stylable for JuliaFractal {
 }
 
 impl IteratedFractal for JuliaFractal {
+    fn description(&self) -> &str {
+        &self.description
+    }
+
     fn iterate(&self, mut state: Cplx) -> Convergence {
         let mut ctr = 0;
         // threshold is 2^2, since we compare to the square of the norm
