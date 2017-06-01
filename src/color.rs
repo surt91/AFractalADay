@@ -1,3 +1,4 @@
+// TODO: longterm change this to (u8, u8, u8)
 #[derive(Debug, PartialEq)]
 pub struct HSV(pub f64, pub f64, pub f64);
 
@@ -31,10 +32,49 @@ fn hsv2rgb(hsv: &HSV) -> RGB {
     }
 }
 
+pub fn count_same(pixels: &[HSV]) -> usize {
+    use std::collections::hash_map::HashMap;
+    let mut m: HashMap<(u8, u8, u8), usize> = HashMap::new();
 
-/// color_variance is an ad-hoc measure for the interestingness of an image
+    for i in pixels {
+        let &HSV(h, s, v) = i;
+        let col: (u8, u8, u8) = ((h*255.).floor() as u8,
+                                 (s*255.).floor() as u8,
+                                 (v*255.).floor() as u8);
+        let counter = m.entry(col).or_insert(0);
+        *counter += 1;
+    }
+
+    *m.values().max().unwrap_or(&0)
+}
+
+/// `color_variance` is an ad-hoc measure for the interestingness of an image
 pub fn color_variance(pixels: &[HSV]) -> f64 {
+    // TODO: long term I want to try to replace this function by a neural network classifier
+    // maybe using https://crates.io/crates/leaf ?
     let n = pixels.len() as f64;
+
+    let num_black = pixels.iter()
+                          .filter(|&&HSV(_, _, v)| v < 1e-3)
+                          .count();
+    let num_white = pixels.iter()
+                          .filter(|&&HSV(_, s, _)| s < 1e-3)
+                          .count();
+
+    // if more than 60% of pixels are black or white, reject
+    info!("{:3.2}% of pixels are black or white", (num_black + num_white) as f64 / n * 100.);
+    if (num_black + num_white) as f64 > 0.6 * n {
+        return -1.
+    }
+
+    // if more than 60% of pixels have the same color, reject
+    let num_same = count_same(pixels);
+    info!("{:3.2}% of pixels have the same color", (num_same) as f64 / n * 100.);
+    if num_same as f64 > 0.6 * n {
+        return -2.
+    }
+
+    // otherwise use the variance as a method to estimate the interestingness
     let mean_h = 1./n * pixels.iter()
                               .map(|&HSV(h, _, _)| h)
                               .sum::<f64>();
@@ -55,7 +95,6 @@ pub fn color_variance(pixels: &[HSV]) -> f64 {
                              .map(|&HSV(_, _, v)| (v-mean_v) * (v-mean_v))
                              .sum::<f64>();
 
-    // TODO: also avoid images where more than half pixels are black
     let tmp = (var_h, if var_s > var_v {var_s} else {var_v});
     (tmp.0 + tmp.1) / 2.
 }
