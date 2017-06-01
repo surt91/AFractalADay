@@ -1,11 +1,14 @@
 extern crate a_fractal_a_day;
 
-
 use a_fractal_a_day::*;
 use iterated_fractal::IteratedFractal;
 use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
 
 use std::fs;
+
+extern crate rand;
+use self::rand::Rng;
+use self::rand::StdRng;
 
 #[macro_use] extern crate log;
 extern crate log_panics;
@@ -66,10 +69,16 @@ fn build_fractal(filename: &str,
     let mut description;
     let mut ctr = 0;
 
-    match fractal_type {
-        // FIXME: this is bad, especially since it is called via cron at the same second every day
-        FractalType::Random => fractal_type = if seed % 2 == 0 {FractalType::Julia} else {FractalType::Newton},
-        _ => ()
+    let tmp: &[_] = &[seed];
+    let mut rng: StdRng = rand::SeedableRng::from_seed(tmp);
+
+    if let FractalType::Random = fractal_type {
+        fractal_type = match rng.gen_range(0, 2) {
+            0 => FractalType::Julia,
+            1 => FractalType::Mandelbrot,
+            2 => FractalType::Newton,
+            _ => unreachable!()
+        }
     };
 
     // hacky do while loop
