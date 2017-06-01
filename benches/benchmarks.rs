@@ -6,7 +6,8 @@ extern crate num;
 use num::Complex;
 use a_fractal_a_day::functions::Terms;
 use a_fractal_a_day::numbers::{Cplx, Real};
-// use a_fractal_a_day::newton_fractal::NewtonFractalBuilder;
+use a_fractal_a_day::iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
+use a_fractal_a_day::iterated_fractal::IteratedFractal;
 use test::Bencher;
 
 #[bench]
@@ -39,11 +40,17 @@ fn bench_run_all_complex_im0(b: &mut Bencher) {
     }
 }
 
-// #[bench]
-// fn bench_raster(b: &mut Bencher) {
-//     let nf = NewtonFractalBuilder::new().seed(4).build();
-//     b.iter(|| nf.raster(100, 100, 1e-2, 1e-2));
-// }
+#[bench]
+fn bench_raster_newton(b: &mut Bencher) {
+    let nf = IteratedFractalBuilder::new().seed(4).newton();
+    b.iter(|| nf.raster((100, 100), (1e-2, 1e-2), (0., 0.)));
+}
+
+#[bench]
+fn bench_raster_mandelbrot(b: &mut Bencher) {
+    let mb = IteratedFractalBuilder::new().seed(9).mandelbrot();
+    b.iter(|| mb.raster((100, 100), (1e-2, 1e-2), (0., 0.)));
+}
 
 #[bench]
 fn mandelbrot_complex(b: &mut Bencher) {
