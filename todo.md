@@ -14,3 +14,4 @@ TODO
     * save seed
     * load seed and generate the same image
     * parse function from cla
+    * neural net classifier: interesting <-> not interesting

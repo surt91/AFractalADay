@@ -55,7 +55,7 @@ pub fn color_variance(pixels: &[HSV]) -> f64 {
                              .map(|&HSV(_, _, v)| (v-mean_v) * (v-mean_v))
                              .sum::<f64>();
 
-
+    // TODO: also avoid images where more than half pixels are black
     let tmp = (var_h, if var_s > var_v {var_s} else {var_v});
     (tmp.0 + tmp.1) / 2.
 }
