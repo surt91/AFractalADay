@@ -67,6 +67,7 @@ fn build_fractal(filename: &str,
     let mut ctr = 0;
 
     match fractal_type {
+        // FIXME: this is bad, especially since it is called via cron at the same second every day
         FractalType::Random => fractal_type = if seed % 2 == 0 {FractalType::Julia} else {FractalType::Newton},
         _ => ()
     };
@@ -83,6 +84,7 @@ fn build_fractal(filename: &str,
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_fractal(&mut a.newton(), filename),
             FractalType::Julia => render_fractal(&mut a.julia(), filename),
+            FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename),
             FractalType::Random => unreachable!()
         };
 

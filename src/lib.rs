@@ -14,7 +14,8 @@ use std::fmt;
 pub enum FractalType {
     Random,
     Newton,
-    Julia
+    Julia,
+    Mandelbrot
 }
 
 impl fmt::Display for FractalType {

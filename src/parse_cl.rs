@@ -66,13 +66,22 @@ pub fn parse_cl() -> Options {
                     .long("newton")
                     .conflicts_with("type")
                     .conflicts_with("julia")
+                    .conflicts_with("mandelbrot")
                     .help("render a newton fractal")
               )
               .arg(Arg::with_name("julia")
                     .long("julia")
                     .conflicts_with("type")
                     .conflicts_with("newton")
+                    .conflicts_with("mandelbrot")
                     .help("render a julia fractal")
+              )
+              .arg(Arg::with_name("mandelbrot")
+                    .long("mandelbrot")
+                    .conflicts_with("type")
+                    .conflicts_with("newton")
+                    .conflicts_with("julia")
+                    .help("render a mandelbrot fractal")
               )
               .get_matches();
 
@@ -96,6 +105,8 @@ pub fn parse_cl() -> Options {
         FractalType::Newton
     } else if matches.is_present("julia") {
         FractalType::Julia
+    } else if matches.is_present("mandelbrot") {
+        FractalType::Mandelbrot
     } else {
         FractalType::Random
     };

@@ -1,5 +1,6 @@
 mod newton;
 mod julia;
+mod mandelbrot;
 pub mod iterated_fractal_builder;
 pub mod style;
 
