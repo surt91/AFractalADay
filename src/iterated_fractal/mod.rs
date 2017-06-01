@@ -35,8 +35,9 @@ pub trait IteratedFractal : Sync + Stylable {
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut rand::StdRng;
 
-    fn raster(&self, resolution: (i32, i32), xscale: f64, yscale: f64, center: (f64, f64)) -> Vec<Convergence> {
+    fn raster(&self, resolution: (i32, i32), scale: (f64, f64), center: (f64, f64)) -> Vec<Convergence> {
         let (x, y) = resolution;
+        let (xscale, yscale) = scale;
         let (cx, cy) = center;
         let pixels: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();
         pixels.par_iter()
@@ -54,8 +55,11 @@ pub trait IteratedFractal : Sync + Stylable {
                          center: Option<(f64, f64)>,
                          filename: &str) -> io::Result<f64> {
         let scale = match scale {
-            Some(x) => x,
-            None => 1. / resolution.1 as f64
+            Some(x) => (x, x),
+            None => {
+                let x = 1. / resolution.1 as f64;
+                (x, x)
+            }
         };
 
         let center = match center {
@@ -63,7 +67,7 @@ pub trait IteratedFractal : Sync + Stylable {
             None => (0., 0.)
         };
 
-        let states = self.raster(resolution, scale, scale, center);
+        let states = self.raster(resolution, scale, center);
         let total_iterations: i64 = states.par_iter()
                                      .map(|i| i.count as i64)
                                      .sum();
