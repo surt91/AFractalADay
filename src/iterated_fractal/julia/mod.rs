@@ -61,7 +61,7 @@ impl Stylable for JuliaFractal {
         } else {
             conv.count as f64 - fractional
         };
-        let mut h = 0.1 * c;
+        let mut h = (c / 10.).sin().abs();
         let s = 1f64;
         let mut v = 1f64;
 
