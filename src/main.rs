@@ -34,6 +34,7 @@ fn init_logging(quiet: bool) {
             SimpleLogger::new(level, Config::default()),
             WriteLogger::new(LogLevelFilter::Info, Config::default(),
                              fs::OpenOptions::new().append(true)
+                                                   .create(true)
                                                    .open("fractals.log")
                                                    .expect("Failed to create log file!"))
         ]
