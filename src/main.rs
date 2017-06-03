@@ -21,7 +21,7 @@ extern crate my_twitter;
 use my_twitter::twitter as twitter;
 
 mod parse_cl;
-use parse_cl::parse_cl;
+use parse_cl::{parse_cl, Options};
 use iterated_fractal::style::Style;
 
 
@@ -48,11 +48,12 @@ fn prepare(filename: &str) -> String {
     format!("img/{}.png", filename)
 }
 
-fn render_fractal<T: IteratedFractal>(fractal: &mut T, filename: &str) -> (bool, String) {
+fn render_fractal<T: IteratedFractal>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
     let mut finished = false;
     // ensure that the image has some variance
     // otherwise the images are probably boring
-    match fractal.render((2048-2, 1024-2), None, None, filename) {
+    let &(w, h) = dim;
+    match fractal.render((w, h), None, None, filename) {
         Ok(variance) => finished = variance > 0.01,
         Err(x) => error!("creation of fractal failed {:?}", x)
     }
@@ -64,11 +65,11 @@ fn render_fractal<T: IteratedFractal>(fractal: &mut T, filename: &str) -> (bool,
 }
 
 fn build_fractal(filename: &str,
-                  mut fractal_type: FractalType,
                   seed: usize,
-                  style: Option<String>) -> String{
+                  opt: &Options) -> String{
     let mut description;
     let mut ctr = 0;
+    let mut fractal_type: FractalType = opt.fractal_type.clone();
 
     let tmp: &[_] = &[seed];
     let mut rng: StdRng = rand::SeedableRng::from_seed(tmp);
@@ -85,16 +86,17 @@ fn build_fractal(filename: &str,
     // hacky do while loop
     while {
         let mut a = IteratedFractalBuilder::new().seed(seed+ctr);
-        a = match style {
+        a = match opt.style {
             // the parser made sure that this is a valid value, unwrap should be fine
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
 
+        let dim = (opt.width.unwrap_or(2046), opt.height.unwrap_or(1022));
         let (finished, tmp_description) = match fractal_type {
-            FractalType::Newton => render_fractal(&mut a.newton(), filename),
-            FractalType::Julia => render_fractal(&mut a.julia(), filename),
-            FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename),
+            FractalType::Newton => render_fractal(&mut a.newton(), filename, &dim),
+            FractalType::Julia => render_fractal(&mut a.julia(), filename, &dim),
+            FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename, &dim),
             FractalType::Random => unreachable!()
         };
 
@@ -122,12 +124,12 @@ fn main() {
     info!("{}", opt);
 
     let seed = opt.seed.unwrap_or(timestamp as usize);
-    let filename = opt.filename.unwrap_or_else(|| timestamp.to_string());
+    let filename = opt.filename.clone().unwrap_or_else(|| timestamp.to_string());
     let filename = prepare(&filename);
 
     info!("start generation with seed {}", seed);
 
-    let description = build_fractal(&filename, opt.fractal_type, seed, opt.style);
+    let description = build_fractal(&filename, seed, &opt);
 
     info!("image saved as {}", filename);
 

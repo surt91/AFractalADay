@@ -10,6 +10,8 @@ pub struct Options {
     pub seed: Option<usize>,
     pub filename: Option<String>,
     pub style: Option<String>,
+    pub height: Option<u32>,
+    pub width: Option<u32>,
     pub tweet: bool,
     pub quiet: bool,
     pub fractal_type: FractalType,
@@ -40,7 +42,6 @@ pub fn parse_cl() -> Options {
                     .help("do tweet the generated image")
               )
               .arg(Arg::with_name("seed")
-                    .short("x")
                     .long("seed")
                     .takes_value(true)
                     .help("the seed for the random number generator ")
@@ -56,6 +57,18 @@ pub fn parse_cl() -> Options {
                     .long("style")
                     .takes_value(true)
                     .help("the name of the style applied to visualize")
+              )
+              .arg(Arg::with_name("height")
+                    .short("y")
+                    .long("height")
+                    .takes_value(true)
+                    .help("the height of the output image in px")
+              )
+              .arg(Arg::with_name("width")
+                    .short("x")
+                    .long("width")
+                    .takes_value(true)
+                    .help("the width of the output image in px")
               )
               .arg(Arg::with_name("quiet")
                     .short("q")
@@ -101,6 +114,13 @@ pub fn parse_cl() -> Options {
                       .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be and integer")))
                       .or_else(|| None);
 
+    let height = matches.value_of("height")
+                        .and_then(|s| Some(s.parse::<u32>().expect("height needs to be and integer")))
+                        .or_else(|| None);;
+    let width = matches.value_of("width")
+                       .and_then(|s| Some(s.parse::<u32>().expect("width needs to be and integer")))
+                       .or_else(|| None);;
+
     let fractal_type = if matches.is_present("newton") {
         FractalType::Newton
     } else if matches.is_present("julia") {
@@ -117,6 +137,8 @@ pub fn parse_cl() -> Options {
         style,
         tweet,
         quiet,
-        fractal_type
+        fractal_type,
+        height,
+        width
     }
 }

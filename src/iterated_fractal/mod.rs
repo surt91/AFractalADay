@@ -35,8 +35,9 @@ pub trait IteratedFractal : Sync + Stylable {
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut rand::StdRng;
 
-    fn raster(&self, resolution: (i32, i32), scale: (f64, f64), center: (f64, f64)) -> Vec<Convergence> {
+    fn raster(&self, resolution: (u32, u32), scale: (f64, f64), center: (f64, f64)) -> Vec<Convergence> {
         let (x, y) = resolution;
+        let (x, y) = (x as i32, y as i32);
         let (xscale, yscale) = scale;
         let (cx, cy) = center;
         let pixels: Vec<(i32, i32)> = iproduct!(0..y, 0..x).collect();
@@ -50,7 +51,7 @@ pub trait IteratedFractal : Sync + Stylable {
               .collect()
     }
 
-    fn render(&mut self, resolution: (i32, i32),
+    fn render(&mut self, resolution: (u32, u32),
                          scale: Option<f64>,
                          center: Option<(f64, f64)>,
                          filename: &str) -> io::Result<f64> {
