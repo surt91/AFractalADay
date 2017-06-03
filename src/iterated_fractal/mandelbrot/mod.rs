@@ -50,9 +50,8 @@ impl IteratedFractalBuilder {
             Cplx::new(x, y)
         };
 
-        let zoom = 2.pow(rng.gen_range(0, 20));
+        let zoom = 2.pow(rng.gen_range(0, 14));
 
-        // TODO: write the position and zoom in description
         let description = format!("Mandelbrot Fractal at ~({:.2}), zoom {}x", shift, zoom);
 
         info!("Will render {}", description);
@@ -61,7 +60,7 @@ impl IteratedFractalBuilder {
         MandelbrotFractal {
             description,
             rng,
-            max_count: max(1000, zoom),
+            max_count: max(1000, 4*zoom),
             shift,
             zoom: zoom as f32
         }
@@ -101,12 +100,10 @@ impl IteratedFractal for MandelbrotFractal {
         // threshold is 2^2, since we compare to the square of the norm
         // as soon as the norm is >= 2 it is sure to diverge
         let threshold = 4.;
-        // state = (state - self.shift) / self.zoom;
         state = state / self.zoom + self.shift;
         let start = state;
 
         while {
-            // right now this is a julia set, I have to look up mandelbrot, but the wifi is bad
             state = state * state + start;
             ctr += 1;
 
