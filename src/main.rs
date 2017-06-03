@@ -105,8 +105,6 @@ fn build_fractal(filename: &str,
         ! finished
     } {}
 
-    postprocess_image(filename);
-
     description
 }
 
@@ -134,9 +132,15 @@ fn main() {
     info!("image saved as {}", filename);
 
     if opt.tweet {
+        let for_twitter = format!("{}_for_twitter.png", filename);
+        postprocess_image_for_twitter(&filename, &for_twitter);
         info!("start upload to twitter");
-        tweet(&filename, &description);
+        tweet(&for_twitter, &description);
         info!("tweeted");
+        fs::remove_file(&for_twitter).unwrap_or_else(|_| warn!("could not delete {}", for_twitter));
     }
+
+    postprocess_image(&filename);
+
     info!("Success!");
 }

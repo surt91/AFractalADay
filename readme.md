@@ -14,3 +14,4 @@ Just use cargo: `cargo run --release`
 ## Dependencies
 
     * Imagemagick (optional)
+    * optipng (optional)
