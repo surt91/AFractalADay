@@ -74,7 +74,7 @@ fn build_fractal(filename: &str,
     let mut rng: StdRng = rand::SeedableRng::from_seed(tmp);
 
     if let FractalType::Random = fractal_type {
-        fractal_type = match rng.gen_range(0, 2) {
+        fractal_type = match rng.gen_range(0, 3) {
             0 => FractalType::Julia,
             1 => FractalType::Mandelbrot,
             2 => FractalType::Newton,
