@@ -2,9 +2,8 @@ TODO
 ----
 
     * more fractal types
-        * julia maps
-        * mandelbrot set
-        * L systems
+        * L systems (https://en.wikipedia.org/wiki/L-system)
+        * fractal flame (https://en.wikipedia.org/wiki/Fractal_flame)
         * strange attractors
         * diffusion limited aggregation
         * self-avoiding walk
