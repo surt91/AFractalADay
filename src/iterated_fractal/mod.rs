@@ -51,6 +51,7 @@ pub trait IteratedFractal : Sync + Stylable {
               .collect()
     }
 
+    // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
                          scale: Option<f64>,
                          center: Option<(f64, f64)>,
@@ -91,6 +92,7 @@ pub trait IteratedFractal : Sync + Stylable {
                                 .flatten()
                                 .collect();
 
+        // TODO: save in an extra .png method
         let tmp = filename;
         let path = Path::new(&tmp);
         let file = File::create(path)?;
