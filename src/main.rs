@@ -3,6 +3,8 @@ extern crate a_fractal_a_day;
 use a_fractal_a_day::*;
 use iterated_fractal::IteratedFractal;
 use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
+use iterated_function_system::IteratedFunctionSystem;
+use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 
 use std::fs;
 
@@ -23,6 +25,7 @@ use my_twitter::twitter as twitter;
 mod parse_cl;
 use parse_cl::{parse_cl, Options};
 use iterated_fractal::style::Style;
+
 
 
 // only log errors to stdout, but everything to a log file
@@ -83,6 +86,8 @@ fn build_fractal(filename: &str,
         }
     };
 
+    let dim = (opt.width.unwrap_or(2046), opt.height.unwrap_or(1022));
+
     // hacky do while loop
     while {
         let mut a = IteratedFractalBuilder::new().seed(seed+ctr);
@@ -91,12 +96,31 @@ fn build_fractal(filename: &str,
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
+        let mut b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
+        b = b.iterations((dim.0 * dim.1 * 100) as usize);
+        // b = match opt.style {
+        //     // the parser made sure that this is a valid value, unwrap should be fine
+        //     Some(ref x) => b.style(Style::from_string(x).unwrap()),
+        //     None => b
+        // };
 
-        let dim = (opt.width.unwrap_or(2046), opt.height.unwrap_or(1022));
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_fractal(&mut a.newton(), filename, &dim),
             FractalType::Julia => render_fractal(&mut a.julia(), filename, &dim),
             FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename, &dim),
+            FractalType::HeighwayDragon => {
+                let mut f = false;
+                let mut fractal = b.heighway_dragon();
+                match fractal.render(dim, None, None, filename) {
+                    Ok(variance) => f = variance > 0.01,
+                    Err(x) => error!("creation of fractal failed {:?}", x)
+                }
+
+                let description = fractal.description().to_string();
+                info!("{}", description);
+
+                (f, description)
+            },
             FractalType::Random => unreachable!()
         };
 

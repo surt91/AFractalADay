@@ -2,6 +2,7 @@
 #[macro_use] extern crate log;
 
 pub mod iterated_fractal;
+pub mod iterated_function_system;
 pub mod color;
 pub mod numbers;
 pub mod functions;
@@ -16,7 +17,8 @@ pub enum FractalType {
     Random,
     Newton,
     Julia,
-    Mandelbrot
+    Mandelbrot,
+    HeighwayDragon
 }
 
 impl fmt::Display for FractalType {
