@@ -1,7 +1,7 @@
 extern crate clap;
 
 use std::fmt;
-use self::clap::{App, Arg};
+use self::clap::{App, Arg, ArgGroup};
 use iterated_fractal::style::Style;
 use FractalType;
 
@@ -77,25 +77,18 @@ pub fn parse_cl() -> Options {
               )
               .arg(Arg::with_name("newton")
                     .long("newton")
-                    .conflicts_with("type")
-                    .conflicts_with("julia")
-                    .conflicts_with("mandelbrot")
                     .help("render a newton fractal")
               )
               .arg(Arg::with_name("julia")
                     .long("julia")
-                    .conflicts_with("type")
-                    .conflicts_with("newton")
-                    .conflicts_with("mandelbrot")
                     .help("render a julia fractal")
               )
               .arg(Arg::with_name("mandelbrot")
                     .long("mandelbrot")
-                    .conflicts_with("type")
-                    .conflicts_with("newton")
-                    .conflicts_with("julia")
                     .help("render a mandelbrot fractal")
               )
+              .group(ArgGroup::with_name("fractal_type")
+                  .args(&["newton", "mandelbrot", "julia"]))
               .get_matches();
 
     let tweet = matches.is_present("tweet");
