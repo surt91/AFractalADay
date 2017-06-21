@@ -98,28 +98,22 @@ fn build_fractal(filename: &str,
         };
         let mut b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
         b = b.iterations((dim.0 * dim.1 * 100) as usize);
-        // b = match opt.style {
-        //     // the parser made sure that this is a valid value, unwrap should be fine
-        //     Some(ref x) => b.style(Style::from_string(x).unwrap()),
-        //     None => b
-        // };
 
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_fractal(&mut a.newton(), filename, &dim),
             FractalType::Julia => render_fractal(&mut a.julia(), filename, &dim),
             FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename, &dim),
             FractalType::HeighwayDragon => {
-                let mut f = false;
                 let mut fractal = b.heighway_dragon();
                 match fractal.render(dim, None, None, filename) {
-                    Ok(variance) => f = variance > 0.01,
+                    Ok(_) => (),
                     Err(x) => error!("creation of fractal failed {:?}", x)
                 }
 
                 let description = fractal.description().to_string();
                 info!("{}", description);
 
-                (f, description)
+                (true, description)
             },
             FractalType::Random => unreachable!()
         };

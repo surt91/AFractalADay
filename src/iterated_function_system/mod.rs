@@ -78,6 +78,7 @@ pub trait IteratedFunctionSystem : Sync {
         let states = self.raster(resolution, values);
 
         let max_val = states.iter().max().unwrap();
+        // TODO: maybe color by distance of the jump?
         let hsv: Vec<color::HSV> = states.iter()
                                          .map(|i| color::HSV(0., 0., *i as f64 / *max_val as f64))
                                          .collect();
