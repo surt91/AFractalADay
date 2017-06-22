@@ -48,7 +48,7 @@ pub fn postprocess_image(filename: &str) {
                         info!("optipng successful ({} KiB -> {} KiB), saved {:.0}%",
                               before as f32 / 1000.,
                               after as f32 / 1000.,
-                              1. - after as f32 / before as f32 * 100.)
+                              (1. - after as f32 / before as f32) * 100.)
                     },
         Err(x) => error!("optipng failed with {:?}", x)
     };
