@@ -20,7 +20,7 @@ fn affine_transformation(a: [[Real; 2]; 2], b: [Real; 2], x: [Real; 2]) -> [Real
 {
     let mut out = [0.; 2];
     out[0] = a[0][0] * x[0] + a[0][1] * x[1] + b[0];
-    out[1] = a[1][0] * x[1] + a[1][1] * x[1] + b[1];
+    out[1] = a[1][0] * x[0] + a[1][1] * x[1] + b[1];
     out
 }
 
@@ -66,7 +66,7 @@ impl IteratedFunctionSystem for BarnsleyFern {
                         _ => { p = f4(p); p },
                     }
                 })
-                .map(|x| Cplx::new(x[0], x[1]))
+                .map(|x| Cplx::new(x[0], -x[1])) // -x[1] because the png counts the wrong way... probably
                 .collect()
     }
 
