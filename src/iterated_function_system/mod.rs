@@ -47,9 +47,16 @@ pub trait IteratedFunctionSystem : Sync {
 
         let mut out = vec![0; (x_res*y_res) as usize];
 
+        // keep aspect ratio and center the fractal
+        let x_w = max_x - min_x;
+        let y_w = max_y - min_y;
+        let scale = if x_w > y_w {x_w} else {y_w};
+        let x_offset = if x_w > y_w {0.} else {(y_w - x_w)/2.};
+        let y_offset = if y_w > x_w {0.} else {(x_w - y_w)/2.};
+
         for z in values {
-            let x = ((z.re - min_x) / (max_x - min_x) * (x_res-1) as f32) as usize;
-            let y = ((z.im - min_y) / (max_y - min_y) * (y_res-1) as f32) as usize;
+            let x = ((z.re - min_x + x_offset) / scale * (x_res-1) as f32) as usize;
+            let y = ((z.im - min_y + y_offset) / scale * (y_res-1) as f32) as usize;
             out[y*x_res as usize + x] += 1;
         }
 
