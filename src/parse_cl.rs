@@ -91,8 +91,12 @@ pub fn parse_cl() -> Options {
                     .long("dragon")
                     .help("render a dragon curve fractal")
               )
+              .arg(Arg::with_name("fern")
+                    .long("fern")
+                    .help("render a Barnsley fern fractal")
+              )
               .group(ArgGroup::with_name("fractal_type")
-                  .args(&["newton", "mandelbrot", "julia", "dragon"]))
+                  .args(&["newton", "mandelbrot", "julia", "dragon", "fern"]))
               .get_matches();
 
     let tweet = matches.is_present("tweet");
@@ -126,6 +130,8 @@ pub fn parse_cl() -> Options {
         FractalType::Mandelbrot
     } else if matches.is_present("dragon") {
         FractalType::HeighwayDragon
+    } else if matches.is_present("fern") {
+        FractalType::BarnsleyFern
     } else {
         FractalType::Random
     };

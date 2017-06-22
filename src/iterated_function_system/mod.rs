@@ -1,4 +1,5 @@
 mod heighway_dragon;
+mod barnsly_fern;
 pub mod iterated_function_system_builder;
 
 extern crate rand;
@@ -80,7 +81,7 @@ pub trait IteratedFunctionSystem : Sync {
         let max_val = states.iter().max().unwrap();
         // TODO: maybe color by distance of the jump?
         let hsv: Vec<color::HSV> = states.iter()
-                                         .map(|i| color::HSV(0., 0., *i as f64 / *max_val as f64))
+                                         .map(|i| color::HSV(0., 0., (*i as f64).ln() / (*max_val as f64).ln()))
                                          .collect();
 
         let var = color::color_variance(&hsv);

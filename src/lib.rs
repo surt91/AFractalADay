@@ -18,7 +18,8 @@ pub enum FractalType {
     Newton,
     Julia,
     Mandelbrot,
-    HeighwayDragon
+    HeighwayDragon,
+    BarnsleyFern
 }
 
 impl fmt::Display for FractalType {

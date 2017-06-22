@@ -115,6 +115,18 @@ fn build_fractal(filename: &str,
 
                 (true, description)
             },
+            FractalType::BarnsleyFern => {
+                let mut fractal = b.barnsley_fern();
+                match fractal.render(dim, None, None, filename) {
+                    Ok(_) => (),
+                    Err(x) => error!("creation of fractal failed {:?}", x)
+                }
+
+                let description = fractal.description().to_string();
+                info!("{}", description);
+
+                (true, description)
+            },
             FractalType::Random => unreachable!()
         };
 
