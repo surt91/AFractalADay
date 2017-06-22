@@ -3,8 +3,7 @@ extern crate num;
 
 extern crate rand;
 
-use numbers::{Coef, Formula};
-
+#[derive(Default)]
 pub struct IteratedFunctionSystemBuilder {
     pub seed: Option<usize>,
     pub iterations: Option<usize>

@@ -105,7 +105,7 @@ fn build_fractal(filename: &str,
             FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename, &dim),
             FractalType::HeighwayDragon => {
                 let mut fractal = b.heighway_dragon();
-                match fractal.render(dim, None, None, filename) {
+                match fractal.render(dim, filename) {
                     Ok(_) => (),
                     Err(x) => error!("creation of fractal failed {:?}", x)
                 }
@@ -117,7 +117,7 @@ fn build_fractal(filename: &str,
             },
             FractalType::BarnsleyFern => {
                 let mut fractal = b.barnsley_fern();
-                match fractal.render(dim, None, None, filename) {
+                match fractal.render(dim, filename) {
                     Ok(_) => (),
                     Err(x) => error!("creation of fractal failed {:?}", x)
                 }

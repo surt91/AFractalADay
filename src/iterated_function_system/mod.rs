@@ -3,7 +3,6 @@ mod barnsly_fern;
 pub mod iterated_function_system_builder;
 
 extern crate rand;
-use self::rand::Rng;
 
 extern crate png;
 use self::png::HasParameters;
@@ -15,7 +14,7 @@ use std::io;
 use std::path::Path;
 use std::fs::File;
 
-use numbers::{Real, Cplx};
+use numbers::Cplx;
 use color;
 
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
@@ -25,8 +24,8 @@ pub trait IteratedFunctionSystem : Sync {
     fn get_rng(&mut self) -> &mut rand::StdRng;
 
     fn raster(&self, resolution: (u32, u32), values: Vec<Cplx>) -> Vec<u64> {
-        let X = resolution.0;
-        let Y = resolution.1;
+        let x_res = resolution.0;
+        let y_res = resolution.1;
         let (min_x, max_x, min_y, max_y) = values.iter()
                 .fold((f32::INFINITY, -f32::INFINITY, f32::INFINITY, -f32::INFINITY),
                     |mut extrema, z| {
@@ -46,12 +45,12 @@ pub trait IteratedFunctionSystem : Sync {
                     }
                 );
 
-        let mut out = vec![0; (X*Y) as usize];
+        let mut out = vec![0; (x_res*y_res) as usize];
 
         for z in values {
-            let x = ((z.re - min_x) / (max_x - min_x) * (X-1) as f32) as usize;
-            let y = ((z.im - min_y) / (max_y - min_y) * (Y-1) as f32) as usize;
-            out[y*X as usize + x] += 1;
+            let x = ((z.re - min_x) / (max_x - min_x) * (x_res-1) as f32) as usize;
+            let y = ((z.im - min_y) / (max_y - min_y) * (y_res-1) as f32) as usize;
+            out[y*x_res as usize + x] += 1;
         }
 
         out
@@ -59,21 +58,7 @@ pub trait IteratedFunctionSystem : Sync {
 
     // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
-                         scale: Option<f64>,
-                         center: Option<(f64, f64)>,
                          filename: &str) -> io::Result<f64> {
-        let scale = match scale {
-            Some(x) => (x, x),
-            None => {
-                let x = 1. / resolution.1 as f64;
-                (x, x)
-            }
-        };
-
-        let center = match center {
-            Some(x) => x,
-            None => (0., 0.)
-        };
 
         let values = self.iterate();
         let states = self.raster(resolution, values);

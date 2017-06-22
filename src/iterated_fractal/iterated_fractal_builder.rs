@@ -7,6 +7,7 @@ use numbers::{Coef, Formula};
 
 use super::style::Style;
 
+#[derive(Default)]
 pub struct IteratedFractalBuilder {
     pub a: Option<Coef>,
     pub f: Option<Formula>,

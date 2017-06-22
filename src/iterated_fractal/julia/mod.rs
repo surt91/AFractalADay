@@ -61,7 +61,7 @@ impl Stylable for JuliaFractal {
         } else {
             conv.count as f64 - fractional
         };
-        let mut h = (c / 10.).sin().abs();
+        let mut h = (c / 40.).sin().abs();
         let s = 1f64;
         let mut v = 1f64;
 
@@ -90,7 +90,7 @@ impl IteratedFractal for JuliaFractal {
         let threshold = 1e8;
 
         // the canonical julia set is `f = z^2 + c`,
-        // but here we will some arbitrary function
+        // but here we will use some arbitrary function
 
         while {
             state = (self.f)(state);

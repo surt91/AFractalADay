@@ -16,36 +16,36 @@ pub struct BarnsleyFern {
 }
 
 /// calculates A*x+b, for a 2x2 Matrix A
-fn affine_transformation(A: [[Real; 2]; 2], b: [Real; 2], x: [Real; 2]) -> [Real; 2]
+fn affine_transformation(a: [[Real; 2]; 2], b: [Real; 2], x: [Real; 2]) -> [Real; 2]
 {
     let mut out = [0.; 2];
-    out[0] = A[0][0] * x[0] + A[1][0] * x[1] + b[0];
-    out[1] = A[0][1] * x[1] + A[1][1] * x[1] + b[1];
+    out[0] = a[0][0] * x[0] + a[0][1] * x[1] + b[0];
+    out[1] = a[1][0] * x[1] + a[1][1] * x[1] + b[1];
     out
 }
 
 fn f1(x: [Real; 2]) -> [Real; 2] {
-    let A = [[0., 0.], [0., 0.16]];
+    let a = [[0., 0.], [0., 0.16]];
     let b = [0., 0.];
-    affine_transformation(A, b, x)
+    affine_transformation(a, b, x)
 }
 
 fn f2(x: [Real; 2]) -> [Real; 2] {
-    let A = [[0.85, 0.04], [-0.04, 0.85]];
+    let a = [[0.85, 0.04], [-0.04, 0.85]];
     let b = [0., 1.6];
-    affine_transformation(A, b, x)
+    affine_transformation(a, b, x)
 }
 
 fn f3(x: [Real; 2]) -> [Real; 2] {
-    let A = [[0.2, -0.26], [0.23, 0.22]];
+    let a = [[0.2, -0.26], [0.23, 0.22]];
     let b = [0., 1.6];
-    affine_transformation(A, b, x)
+    affine_transformation(a, b, x)
 }
 
 fn f4(x: [Real; 2]) -> [Real; 2] {
-    let A = [[-0.15, 0.28], [0.26, 0.24]];
+    let a = [[-0.15, 0.28], [0.26, 0.24]];
     let b = [0., 0.44];
-    affine_transformation(A, b, x)
+    affine_transformation(a, b, x)
 }
 
 impl IteratedFunctionSystem for BarnsleyFern {
@@ -78,7 +78,7 @@ impl IteratedFunctionSystem for BarnsleyFern {
 
 impl IteratedFunctionSystemBuilder {
     pub fn barnsley_fern(self) -> BarnsleyFern {
-        let mut rng: rand::StdRng = match self.seed {
+        let rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
             None => rand::StdRng::new().unwrap()
         };
@@ -89,7 +89,7 @@ impl IteratedFunctionSystemBuilder {
         };
 
 
-        let description = format!("Barnsley Fern");
+        let description = "Barnsley Fern".to_owned();
 
         info!("Will render {}", description);
 

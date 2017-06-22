@@ -52,7 +52,7 @@ impl IteratedFunctionSystem for HeighwayDragon {
 
 impl IteratedFunctionSystemBuilder {
     pub fn heighway_dragon(self) -> HeighwayDragon {
-        let mut rng: rand::StdRng = match self.seed {
+        let rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
             None => rand::StdRng::new().unwrap()
         };
@@ -63,7 +63,7 @@ impl IteratedFunctionSystemBuilder {
         };
 
 
-        let description = format!("Heighway Dragon");
+        let description = "Heighway Dragon".to_owned();
 
         info!("Will render {}", description);
 
