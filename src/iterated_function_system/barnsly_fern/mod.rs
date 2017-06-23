@@ -4,15 +4,15 @@ extern crate num;
 extern crate rand;
 use self::rand::Rng;
 
-use numbers::{Real, Cplx};
+use numbers::Real;
 use iterated_function_system::IteratedFunctionSystem;
 
 use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 
 pub struct BarnsleyFern {
-    iterations: usize,
     rng: rand::StdRng,
     pub description: String,
+    p: [Real; 2]
 }
 
 /// calculates A*x+b, for a 2x2 Matrix A
@@ -48,26 +48,26 @@ fn f4(x: [Real; 2]) -> [Real; 2] {
     affine_transformation(a, b, x)
 }
 
+impl Iterator for BarnsleyFern {
+    type Item = [Real; 2];
+
+    fn next(&mut self) -> Option<[Real; 2]> {
+        let r = self.rng.gen::<f32>();
+
+        match r {
+            x if x < 0.01 => { self.p = f1(self.p); self.p },
+            x if x < 0.86 => { self.p = f2(self.p); self.p },
+            x if x < 0.93 => { self.p = f3(self.p); self.p },
+            _ => { self.p = f4(self.p); self.p },
+        };
+
+        Some(self.p)
+    }
+}
+
 impl IteratedFunctionSystem for BarnsleyFern {
     fn description(&self) -> &str {
         &self.description
-    }
-
-    fn iterate(&mut self) -> Vec<Cplx>{
-        let mut p = [0., 0.];
-
-        self.rng.gen_iter::<f32>()
-                .take(self.iterations)
-                .map(|r| {
-                    match r {
-                        x if x < 0.01 => { p = f1(p); p },
-                        x if x < 0.86 => { p = f2(p); p },
-                        x if x < 0.93 => { p = f3(p); p },
-                        _ => { p = f4(p); p },
-                    }
-                })
-                .map(|x| Cplx::new(x[0], -x[1])) // -x[1] because the png counts the wrong way... probably
-                .collect()
     }
 
     fn get_rng(&mut self) -> &mut rand::StdRng {
@@ -83,20 +83,16 @@ impl IteratedFunctionSystemBuilder {
             None => rand::StdRng::new().unwrap()
         };
 
-        let iterations = match self.iterations {
-            Some(x) => x,
-            None => 1000000
-        };
-
-
         let description = "Barnsley Fern".to_owned();
 
         info!("Will render {}", description);
 
+        let p = [0., 0.];
+
         BarnsleyFern {
             description,
             rng,
-            iterations
+            p
         }
     }
 }

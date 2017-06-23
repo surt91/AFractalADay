@@ -96,8 +96,7 @@ fn build_fractal(filename: &str,
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
-        let mut b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
-        b = b.iterations((dim.0 * dim.1 * 100) as usize);
+        let b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
 
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_fractal(&mut a.newton(), filename, &dim),
@@ -105,7 +104,7 @@ fn build_fractal(filename: &str,
             FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename, &dim),
             FractalType::HeighwayDragon => {
                 let mut fractal = b.heighway_dragon();
-                match fractal.render(dim, filename) {
+                match fractal.render(dim, 100, filename) {
                     Ok(_) => (),
                     Err(x) => error!("creation of fractal failed {:?}", x)
                 }
@@ -117,7 +116,7 @@ fn build_fractal(filename: &str,
             },
             FractalType::BarnsleyFern => {
                 let mut fractal = b.barnsley_fern();
-                match fractal.render(dim, filename) {
+                match fractal.render(dim, 100, filename) {
                     Ok(_) => (),
                     Err(x) => error!("creation of fractal failed {:?}", x)
                 }
