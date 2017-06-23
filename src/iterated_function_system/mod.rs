@@ -51,17 +51,18 @@ fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32)) -
     let (min_x, max_x, min_y, max_y) = bounds;
     let x_res = resolution.0;
     let y_res = resolution.1;
+    let aspect = x_res as f32 / y_res as f32;
 
     // keep aspect ratio and center the fractal
     let x_w = max_x - min_x;
     let y_w = max_y - min_y;
     let scale = if x_w > y_w {x_w} else {y_w};
-    let x_offset = if x_w > y_w {0.} else {(y_w - x_w)/2.};
-    let y_offset = if y_w > x_w {0.} else {(x_w - y_w)/2.};
+    let x_offset = if x_w > y_w*aspect {0.} else {(y_w*aspect - x_w)/2. };
+    let y_offset = if y_w*aspect > x_w {0.} else {(x_w - y_w)/2.};
 
     let mut out = vec![0; (x_res*y_res) as usize];
     for z in vals {
-        let x = ((z[0] - min_x + x_offset) / scale * (x_res-1) as f32) as usize;
+        let x = ((z[0] - min_x + x_offset) / scale * (x_res-1) as f32 / aspect) as usize;
         let y = ((z[1] - min_y + y_offset) / scale * (y_res-1) as f32) as usize;
         // discard points outside
         if y*x_res as usize + x < out.len() {
