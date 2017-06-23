@@ -20,7 +20,7 @@ use color;
 fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
     where I: Iterator<Item=&'a [Real; 2]>
 {
-    vals.fold((f32::INFINITY, -f32::INFINITY, f32::INFINITY, -f32::INFINITY),
+    let mut bounds = vals.fold((f32::INFINITY, -f32::INFINITY, f32::INFINITY, -f32::INFINITY),
         |mut extrema, z| {
             if extrema.0 > z[0] as f32 {
                 extrema.0 = z[0] as f32
@@ -36,7 +36,13 @@ fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
             }
             extrema
         }
-    )
+    );
+    // 5% more
+    bounds.0 *= 1.05;
+    bounds.1 *= 1.05;
+    bounds.2 *= 1.05;
+    bounds.3 *= 1.05;
+    bounds
 }
 
 fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32)) -> Vec<usize>
@@ -57,7 +63,10 @@ fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32)) -
     for z in vals {
         let x = ((z[0] - min_x + x_offset) / scale * (x_res-1) as f32) as usize;
         let y = ((z[1] - min_y + y_offset) / scale * (y_res-1) as f32) as usize;
-        out[y*x_res as usize + x] += 1;
+        // discard points outside
+        if y*x_res as usize + x < out.len() {
+            out[y*x_res as usize + x] += 1;
+        }
     }
 
     out
