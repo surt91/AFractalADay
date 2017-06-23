@@ -5,6 +5,9 @@ pub struct HSV(pub f64, pub f64, pub f64);
 #[derive(Debug, PartialEq)]
 pub struct RGB(pub f64, pub f64, pub f64);
 
+#[derive(Debug, PartialEq, Clone)]
+pub struct RGBA(pub u8, pub u8, pub u8, pub u8);
+
 impl HSV {
     pub fn to_rgb(&self) -> RGB {
         hsv2rgb(self)
