@@ -55,10 +55,10 @@ impl Iterator for BarnsleyFern {
         let r = self.rng.gen::<f32>();
 
         match r {
-            x if x < 0.01 => { self.p = f1(self.p); self.p },
-            x if x < 0.86 => { self.p = f2(self.p); self.p },
-            x if x < 0.93 => { self.p = f3(self.p); self.p },
-            _ => { self.p = f4(self.p); self.p },
+            x if x < 0.01 => self.p = f1(self.p),
+            x if x < 0.86 => self.p = f2(self.p),
+            x if x < 0.93 => self.p = f3(self.p),
+            _ => self.p = f4(self.p),
         };
 
         Some(self.p)
