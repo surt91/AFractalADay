@@ -73,12 +73,6 @@ pub trait IteratedFunctionSystem : Sync + Iterator<Item=[Real; 2]> {
     fn description(&self) -> &str;
     fn get_rng(&mut self) -> &mut rand::StdRng;
 
-    fn iterate_into_histogram(&mut self, iterations: usize) -> Vec<[Real; 2]> {
-        self.take(iterations)
-            // create histogram, get bounds by a previous call to iterate
-            .collect()
-    }
-
     // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
                          samples_per_pixel: usize,
