@@ -9,17 +9,12 @@ extern crate rand;
 extern crate rayon;
 use self::rayon::prelude::*;
 
-extern crate png;
-use self::png::HasParameters;
-
-use itertools::Itertools;
-
-use std::path::Path;
-use std::fs::File;
 use std::io;
+use itertools::Itertools;
 
 use numbers::{Real, Cplx};
 use color;
+use png;
 use self::style::Stylable;
 
 pub struct Convergence {
@@ -68,6 +63,8 @@ pub trait IteratedFractal : Sync + Stylable {
             Some(x) => x,
             None => (0., 0.)
         };
+        
+        let (x, y) = resolution;
 
         let states = self.raster(resolution, scale, center);
         let total_iterations: i64 = states.par_iter()
@@ -92,19 +89,7 @@ pub trait IteratedFractal : Sync + Stylable {
                                 .flatten()
                                 .collect();
 
-        // TODO: save in an extra .png method
-        let tmp = filename;
-        let path = Path::new(&tmp);
-        let file = File::create(path)?;
-        let w = io::BufWriter::new(file);
-
-        let (x, y) = resolution;
-        let mut encoder = png::Encoder::new(w, x as u32, y as u32);
-        encoder.set(png::ColorType::RGBA).set(png::BitDepth::Eight);
-        let mut writer = encoder.write_header()?;
-
-        writer.write_image_data(&buffer)?; // Save
-
+        png::save_png(filename, x, y, &buffer)?;
         Ok(var)
     }
 }

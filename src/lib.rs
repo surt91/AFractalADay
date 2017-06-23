@@ -6,6 +6,7 @@ pub mod iterated_function_system;
 pub mod color;
 pub mod numbers;
 pub mod functions;
+pub mod png;
 
 use std::process::Command;
 

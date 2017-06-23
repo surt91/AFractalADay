@@ -4,18 +4,13 @@ pub mod iterated_function_system_builder;
 
 extern crate rand;
 
-extern crate png;
-use self::png::HasParameters;
-
 use std::{f32, f64};
-use itertools::Itertools;
-
 use std::io;
-use std::path::Path;
-use std::fs::File;
+use itertools::Itertools;
 
 use numbers::Real;
 use color;
+use png;
 
 fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
     where I: Iterator<Item=&'a [Real; 2]>
@@ -122,18 +117,7 @@ pub trait IteratedFunctionSystem : Sync + Iterator<Item=[Real; 2]> {
                                  .flatten()
                                  .collect();
 
-        // TODO: save in an extra .png method
-        let tmp = filename;
-        let path = Path::new(&tmp);
-        let file = File::create(path)?;
-        let w = io::BufWriter::new(file);
-
-        let mut encoder = png::Encoder::new(w, x as u32, y as u32);
-        encoder.set(png::ColorType::RGBA).set(png::BitDepth::Eight);
-        let mut writer = encoder.write_header()?;
-
-        writer.write_image_data(&buffer)?; // Save
-
+        png::save_png(filename, x, y, &buffer)?;
         Ok(var)
     }
 }
