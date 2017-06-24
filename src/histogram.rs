@@ -131,12 +131,20 @@ pub fn bounds90<'a, I>(vals: I) -> (f32, f32, f32, f32)
     let min_y = rs[n / 10][1];
     let max_y = rs[n - n / 10 - 1][1];
 
-    let mut bounds = (min_x, max_x, min_y, max_y);
+    // FIXME
+    // it is possible that we get nan values
+    // until I have a better idea, just choose the something arbitrary
+    let mut bounds = if min_x.is_finite() && max_x.is_finite() && min_y.is_finite() && max_y.is_finite() {
+        (min_x, max_x, min_y, max_y)
+    } else {
+        (-1., 1., -1., 1.)
+    };
+
     // 5% more
-    bounds.0 -= 0.05 * (max_x-min_x);
-    bounds.1 += 0.05 * (max_x-min_x);
-    bounds.2 -= 0.05 * (max_y-min_y);
-    bounds.3 += 0.05 * (max_y-min_y);
+    bounds.0 -= 0.05 * (bounds.1-bounds.0);
+    bounds.1 += 0.05 * (bounds.1-bounds.0);
+    bounds.2 -= 0.05 * (bounds.3-bounds.2);
+    bounds.3 += 0.05 * (bounds.3-bounds.2);
 
     bounds
 }
