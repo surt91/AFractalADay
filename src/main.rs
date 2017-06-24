@@ -1,11 +1,8 @@
 extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
-use escape_time_fractal::EscapeTimeFractal;
 use escape_time_fractal::escape_time_fractal_builder::EscapeTimeFractalBuilder;
-use iterated_function_system::IteratedFunctionSystem;
 use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
-use colored_ifs::ColoredIFS;
 use colored_ifs::colored_ifs_builder::ColoredIFSBuilder;
 
 use std::fs;
@@ -28,6 +25,8 @@ mod parse_cl;
 use parse_cl::{parse_cl, Options};
 use escape_time_fractal::style::Style;
 
+mod render_helper;
+use render_helper::{render_escape_time_fractal, render_ifs, render_fractal_flame};
 
 
 // only log errors to stdout, but everything to a log file
@@ -51,51 +50,6 @@ fn prepare(filename: &str) -> String {
     fs::create_dir_all("img").expect("could not create output directory");
 
     format!("img/{}.png", filename)
-}
-
-fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
-    let mut finished = false;
-    // ensure that the image has some variance
-    // otherwise the images are probably boring
-    match fractal.render(*dim, None, None, filename) {
-        Ok(variance) => finished = variance > 0.01,
-        Err(x) => error!("creation of fractal failed {:?}", x)
-    }
-
-    let description = fractal.description().to_string();
-    info!("{}", description);
-
-    (finished, description)
-}
-
-fn render_fractal_flame<T: ColoredIFS>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
-    let mut finished = false;
-    // ensure that the image has some variance
-    // otherwise the images are probably boring
-    match fractal.render(*dim, 300, filename) {
-        Ok(variance) => finished = variance > 0.01,
-        Err(x) => error!("creation of fractal failed {:?}", x)
-    }
-
-    let description = fractal.description().to_string();
-    info!("{}", description);
-
-    (finished, description)
-}
-
-fn render_ifs<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
-    let mut finished = false;
-    // ensure that the image has some variance
-    // otherwise the images are probably boring
-    match fractal.render(*dim, 100, filename) {
-        Ok(_) => finished = true,
-        Err(x) => error!("creation of fractal failed {:?}", x)
-    }
-
-    let description = fractal.description().to_string();
-    info!("{}", description);
-
-    (finished, description)
 }
 
 fn build_fractal(filename: &str,
