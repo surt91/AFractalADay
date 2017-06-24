@@ -1,7 +1,9 @@
 use std::f32;
 use numbers::Real;
 use color::{RGB, RGBA};
-use itertools::multizip;
+
+extern crate rayon;
+use self::rayon::prelude::*;
 
 pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
     where I: Iterator<Item=&'a [Real; 2]>
@@ -74,37 +76,37 @@ pub fn histogram_colored<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, 
     let x_offset = if x_w > y_w*aspect {0.} else {(y_w*aspect - x_w)/2. };
     let y_offset = if y_w*aspect > x_w {0.} else {(x_w - y_w)/2.};
 
-    let mut r_out = vec![0.; (x_res*y_res) as usize];
-    let mut g_out = vec![0.; (x_res*y_res) as usize];
-    let mut b_out = vec![0.; (x_res*y_res) as usize];
-    let mut a_out = vec![0u64; (x_res*y_res) as usize];
+    let mut rgba_out = vec![(0., 0., 0., 0u64); (x_res*y_res) as usize];
 
     for i in vals {
         let (z, c) = i;
         let x = ((z[0] - min_x + x_offset) / scale * (x_res-1) as f32 / aspect) as usize;
         let y = ((z[1] - min_y + y_offset) / scale * (y_res-1) as f32) as usize;
         // discard points outside
-        if y*x_res as usize + x < a_out.len() {
+        if y*x_res as usize + x < rgba_out.len() {
             let RGB(r, g, b) = c;
-            r_out[y*x_res as usize + x] += r;
-            g_out[y*x_res as usize + x] += g;
-            b_out[y*x_res as usize + x] += b;
-            a_out[y*x_res as usize + x] += 1;
+            rgba_out[y*x_res as usize + x].0 += r;
+            rgba_out[y*x_res as usize + x].1 += g;
+            rgba_out[y*x_res as usize + x].2 += b;
+            rgba_out[y*x_res as usize + x].3 += 1;
         }
     }
 
-    let max_a = a_out.iter().max().unwrap();
-    let max_a = (*max_a as f64).ln();
+    let max_a = rgba_out.par_iter()
+                        .map(|&(_, _, _, a)| a)
+                        .max()
+                        .unwrap() as f64;
+    let max_a = max_a.ln();
 
     // normalize
     let gamma = 4.;
-    multizip((&r_out, &g_out, &b_out, &a_out))
-        .map(|(r, g, b, a)| {
-            let n = 1. / *a as f64;
-            let r = ((r*n).powf(1./gamma) * 255.) as u8;
-            let g = ((g*n).powf(1./gamma) * 255.) as u8;
-            let b = ((b*n).powf(1./gamma) * 255.) as u8;
-            let a = ((*a as f64).ln() / max_a * 255.) as u8;
+    rgba_out.par_iter()
+        .map(|&(r, g, b, a)| {
+            let norm = 1. / a as f64;
+            let r = ((r*norm).powf(1./gamma) * 255.) as u8;
+            let g = ((g*norm).powf(1./gamma) * 255.) as u8;
+            let b = ((b*norm).powf(1./gamma) * 255.) as u8;
+            let a = ((a as f64).ln() / max_a * 255.) as u8;
             RGBA(r, g, b, a)
         }
     ).collect()
