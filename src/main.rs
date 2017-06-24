@@ -57,9 +57,38 @@ fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filename: &
     let mut finished = false;
     // ensure that the image has some variance
     // otherwise the images are probably boring
-    let &(w, h) = dim;
-    match fractal.render((w, h), None, None, filename) {
+    match fractal.render(*dim, None, None, filename) {
         Ok(variance) => finished = variance > 0.01,
+        Err(x) => error!("creation of fractal failed {:?}", x)
+    }
+
+    let description = fractal.description().to_string();
+    info!("{}", description);
+
+    (finished, description)
+}
+
+fn render_fractal_flame<T: ColoredIFS>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
+    let mut finished = false;
+    // ensure that the image has some variance
+    // otherwise the images are probably boring
+    match fractal.render(*dim, 300, filename) {
+        Ok(variance) => finished = variance > 0.01,
+        Err(x) => error!("creation of fractal failed {:?}", x)
+    }
+
+    let description = fractal.description().to_string();
+    info!("{}", description);
+
+    (finished, description)
+}
+
+fn render_ifs<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
+    let mut finished = false;
+    // ensure that the image has some variance
+    // otherwise the images are probably boring
+    match fractal.render(*dim, 100, filename) {
+        Ok(_) => finished = true,
         Err(x) => error!("creation of fractal failed {:?}", x)
     }
 
@@ -104,42 +133,9 @@ fn build_fractal(filename: &str,
             FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),
             FractalType::Julia => render_escape_time_fractal(&mut a.julia(), filename, &dim),
             FractalType::Mandelbrot => render_escape_time_fractal(&mut a.mandelbrot(), filename, &dim),
-            FractalType::HeighwayDragon => {
-                let mut fractal = b.heighway_dragon();
-                match fractal.render(dim, 100, filename) {
-                    Ok(_) => (),
-                    Err(x) => error!("creation of fractal failed {:?}", x)
-                }
-
-                let description = fractal.description().to_string();
-                info!("{}", description);
-
-                (true, description)
-            },
-            FractalType::BarnsleyFern => {
-                let mut fractal = b.barnsley_fern();
-                match fractal.render(dim, 100, filename) {
-                    Ok(_) => (),
-                    Err(x) => error!("creation of fractal failed {:?}", x)
-                }
-
-                let description = fractal.description().to_string();
-                info!("{}", description);
-
-                (true, description)
-            },
-            FractalType::FractalFlame => {
-                let mut fractal = c.fractal_flame();
-                match fractal.render(dim, 1000, filename) {
-                    Ok(_) => (),
-                    Err(x) => error!("creation of fractal failed {:?}", x)
-                }
-
-                let description = fractal.description().to_string();
-                info!("{}", description);
-
-                (true, description)
-            },
+            FractalType::HeighwayDragon => render_ifs(&mut b.heighway_dragon(), filename, &dim),
+            FractalType::BarnsleyFern => render_ifs(&mut b.barnsley_fern(), filename, &dim),
+            FractalType::FractalFlame => render_fractal_flame(&mut c.fractal_flame(), filename, &dim),
             FractalType::Random => unreachable!()
         };
 
