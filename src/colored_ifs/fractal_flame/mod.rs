@@ -111,6 +111,25 @@ impl ColoredIFS for FractalFlame {
     fn get_rng(&mut self) -> &mut rand::StdRng {
         &mut self.rng
     }
+
+    fn get_sampler(&mut self) -> FractalFlameSampler {
+        self.seed += 1;
+        let s: &[_] = &[self.seed];
+        let rng = rand::SeedableRng::from_seed(s);
+
+        let p = [0., 0.];
+        let r = 0.;
+        let g = 0.;
+        let b = 0.;
+
+        FractalFlameSampler {
+            rng,
+            p,
+            r,
+            g,
+            b
+        }
+    }
 }
 
 
@@ -125,18 +144,15 @@ impl ColoredIFSBuilder {
 
         info!("Will render {}", description);
 
-        let p = [0., 0.];
-        let r = 0.;
-        let g = 0.;
-        let b = 0.;
+        let seed = match self.seed {
+            Some(x) => x,
+            None => 1
+        };
 
         FractalFlame {
-            description,
             rng,
-            p,
-            r,
-            g,
-            b
+            description,
+            seed
         }
     }
 }
