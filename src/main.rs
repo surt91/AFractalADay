@@ -5,6 +5,8 @@ use iterated_fractal::IteratedFractal;
 use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
 use iterated_function_system::IteratedFunctionSystem;
 use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
+use colored_ifs::ColoredIFS;
+use colored_ifs::colored_ifs_builder::ColoredIFSBuilder;
 
 use std::fs;
 
@@ -97,6 +99,7 @@ fn build_fractal(filename: &str,
             None => a
         };
         let b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
+        let c = ColoredIFSBuilder::new().seed(seed+ctr);
 
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_fractal(&mut a.newton(), filename, &dim),
@@ -117,6 +120,18 @@ fn build_fractal(filename: &str,
             FractalType::BarnsleyFern => {
                 let mut fractal = b.barnsley_fern();
                 match fractal.render(dim, 100, filename) {
+                    Ok(_) => (),
+                    Err(x) => error!("creation of fractal failed {:?}", x)
+                }
+
+                let description = fractal.description().to_string();
+                info!("{}", description);
+
+                (true, description)
+            },
+            FractalType::FractalFlame => {
+                let mut fractal = c.fractal_flame();
+                match fractal.render(dim, 1000, filename) {
                     Ok(_) => (),
                     Err(x) => error!("creation of fractal failed {:?}", x)
                 }

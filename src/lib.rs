@@ -3,6 +3,7 @@
 
 pub mod iterated_fractal;
 pub mod iterated_function_system;
+pub mod colored_ifs;
 pub mod color;
 pub mod numbers;
 pub mod functions;
@@ -21,7 +22,8 @@ pub enum FractalType {
     Julia,
     Mandelbrot,
     HeighwayDragon,
-    BarnsleyFern
+    BarnsleyFern,
+    FractalFlame
 }
 
 impl fmt::Display for FractalType {

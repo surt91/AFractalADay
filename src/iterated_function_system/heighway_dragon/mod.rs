@@ -30,8 +30,8 @@ impl Iterator for HeighwayDragon {
         let r = self.rng.gen::<f32>();
 
         match r {
-            x if x < 0.5 => { self.p = f1(self.p); self.p },
-            _ => { self.p = f2(self.p); self.p },
+            x if x < 0.5 => self.p = f1(self.p),
+            _ => self.p = f2(self.p)
         };
 
         Some([self.p.re, self.p.im])

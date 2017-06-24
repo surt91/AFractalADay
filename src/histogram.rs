@@ -77,7 +77,7 @@ pub fn histogram_colored<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, 
     let mut r_out = vec![0.; (x_res*y_res) as usize];
     let mut g_out = vec![0.; (x_res*y_res) as usize];
     let mut b_out = vec![0.; (x_res*y_res) as usize];
-    let mut a_out = vec![0.; (x_res*y_res) as usize];
+    let mut a_out = vec![0u64; (x_res*y_res) as usize];
 
     for i in vals {
         let (z, c) = i;
@@ -89,17 +89,21 @@ pub fn histogram_colored<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, 
             r_out[y*x_res as usize + x] += r;
             g_out[y*x_res as usize + x] += g;
             b_out[y*x_res as usize + x] += b;
-            a_out[y*x_res as usize + x] += 1f64;
+            a_out[y*x_res as usize + x] += 1;
         }
     }
+
+    let max_a = a_out.iter().max().unwrap();
+    let max_a = (*max_a as f64).ln();
 
     // normalize
     multizip((&r_out, &g_out, &b_out, &a_out))
         .map(|(r, g, b, a)| {
-            let r = (r.ln() / a.ln() * 255.) as u8;
-            let g = (g.ln() / a.ln() * 255.) as u8;
-            let b = (b.ln() / a.ln() * 255.) as u8;
-            let a = 1u8;
+            let n = 1. / *a as f64;
+            let r = (r * n * 255.) as u8;
+            let g = (g * n * 255.) as u8;
+            let b = (b * n * 255.) as u8;
+            let a = ((*a as f64).ln() / max_a * 255.) as u8;
             RGBA(r, g, b, a)
         }
     ).collect()
