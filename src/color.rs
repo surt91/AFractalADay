@@ -106,6 +106,12 @@ pub fn count_same(pixels: &[HSV]) -> usize {
 
     for i in pixels {
         let &HSV(h, s, v) = i;
+
+        // only count colors, not black and white
+        if v < 3e-3 || s < 3e-3 {
+            continue;
+        }
+
         let col: (u8, u8, u8) = ((h*255.).floor() as u8,
                                  (s*255.).floor() as u8,
                                  (v*255.).floor() as u8);
@@ -129,16 +135,16 @@ pub fn color_variance(pixels: &[HSV]) -> f64 {
                           .filter(|&&HSV(_, s, v)| s < 1e-3 && v > 1e-3)
                           .count();
 
-    // if more than 60% of pixels are black or white, reject
+    // if more than 75% of pixels are black or white, reject
     info!("{:3.2}% of pixels are black or white", (num_black + num_white) as f64 / n * 100.);
-    if (num_black + num_white) as f64 > 0.6 * n {
+    if (num_black + num_white) as f64 > 0.75 * n {
         return -1.
     }
 
-    // if more than 60% of pixels have the same color, reject
+    // if more than 50% of pixels have the same color, reject
     let num_same = count_same(pixels);
     info!("{:3.2}% of pixels have the same color", (num_same) as f64 / n * 100.);
-    if num_same as f64 > 0.6 * n {
+    if num_same as f64 > 0.5 * n {
         return -2.
     }
 
