@@ -126,7 +126,7 @@ pub fn color_variance(pixels: &[HSV]) -> f64 {
                           .filter(|&&HSV(_, _, v)| v < 1e-3)
                           .count();
     let num_white = pixels.iter()
-                          .filter(|&&HSV(_, s, _)| s < 1e-3)
+                          .filter(|&&HSV(_, s, v)| s < 1e-3 && v > 1e-3)
                           .count();
 
     // if more than 60% of pixels are black or white, reject
