@@ -142,11 +142,11 @@ impl ColoredIFSBuilder {
 
         info!("Will render {}", description);
 
-        info!("number of functions    : {:?}", number_of_functions);
-        info!("cumulative probabilites: {:?}", probabilities);
-        info!("colors                 : {:?}", colors);
-        info!("affine transformations : {:?}", affine_transformations);
-        info!("Variation              : {:?}", nonlinear_transformation);
+        debug!("number of functions    : {:?}", number_of_functions);
+        debug!("cumulative probabilites: {:?}", probabilities);
+        debug!("colors                 : {:?}", colors);
+        debug!("affine transformations : {:?}", affine_transformations);
+        debug!("Variation              : {:?}", nonlinear_transformation);
 
         FractalFlame {
             rng,
