@@ -13,6 +13,11 @@ use super::colored_ifs_builder::ColoredIFSBuilder;
 pub struct FractalFlame {
     rng: rand::StdRng,
     pub description: String,
+    seed: usize
+}
+
+pub struct FractalFlameSampler {
+    rng: rand::StdRng,
     p: [Real; 2],
     r: f64,
     g: f64,
@@ -57,7 +62,7 @@ fn f4(x: [Real; 2]) -> [Real; 2] {
     affine_transformation(a, b, x)
 }
 
-impl Iterator for FractalFlame {
+impl Iterator for FractalFlameSampler {
     type Item = ([Real; 2], RGB);
 
     fn next(&mut self) -> Option<([Real; 2], RGB)> {
