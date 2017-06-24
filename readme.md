@@ -4,6 +4,8 @@
 
 This is a Twitter bot, which can tweet pictures of random fractals.
 
+Documentation at [surt91.github.io/AFractalADay](https://surt91.github.io/AFractalADay/).
+
 ## Setup
 
 This program is pure rust with an optional dependency on Imagemagick and optipng
