@@ -22,5 +22,7 @@ log = "*"
 simplelog = "*"
 log-panics = "*"
 
+assert_approx_eq = "*"
+
 [dependencies.my_twitter]
 path = "my_twitter"

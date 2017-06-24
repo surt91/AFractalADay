@@ -14,7 +14,38 @@ impl HSV {
     }
 }
 
-/// convert a hsv color representations into an rgb representation
+impl RGB {
+    pub fn to_hsv(&self) -> HSV {
+        rgb2hsv(self)
+    }
+}
+
+impl RGBA {
+    pub fn blend_black(&self) -> RGB {
+        let &RGBA(r, g, b, a) = self;
+        let alpha = a as f64 / 255.;
+        RGB(r as f64 / 255. * alpha,
+            g as f64 / 255. * alpha,
+            b as f64 / 255. * alpha)
+    }
+
+    pub fn blend_white(&self) -> RGB {
+        let &RGBA(r, g, b, a) = self;
+        let alpha = a as f64 / 255.;
+        RGB(r as f64 / 255. * alpha + (1. - alpha),
+            g as f64 / 255. * alpha + (1. - alpha),
+            b as f64 / 255. * alpha + (1. - alpha))
+    }
+
+    pub fn blend_discard(&self) -> RGB {
+        let &RGBA(r, g, b, _) = self;
+        RGB(r as f64 / 255.,
+            g as f64 / 255.,
+            b as f64 / 255.)
+    }
+}
+
+/// convert a hsv color representations into a rgb representation
 fn hsv2rgb(hsv: &HSV) -> RGB {
     // https://de.wikipedia.org/wiki/HSV-Farbraum#Umrechnung_HSV_in_RGB
     let &HSV(h, s, v) = hsv;
@@ -33,6 +64,40 @@ fn hsv2rgb(hsv: &HSV) -> RGB {
         5 => RGB(v, p, q),
         _ => RGB(0., 0., 0.)
     }
+}
+
+/// convert a rgb color representations into a hsv representation
+fn rgb2hsv(rgb: &RGB) -> HSV {
+    // https://de.wikipedia.org/wiki/HSV-Farbraum#Umrechnung_HSV_in_RGB
+    let &RGB(r, g, b) = rgb;
+    let max = if r >= g && r >= b {r} else if g >= r && g >= b {g} else {b};
+    let min = if r <= g && r <= b {r} else if g <= r && g <= b {g} else {b};
+
+    let mut h = if max == min {
+        0.
+    } else if max == r {
+        1./6. * (0. + (g-b)/(max-min))
+    } else if max == g {
+        1./6. * (2. + (b-r)/(max-min))
+    } else if max == b {
+        1./6. * (4. + (r-g)/(max-min))
+    } else {
+        unreachable!()
+    };
+
+    if h < 0. {
+        h += 1.;
+    }
+
+    let s = if max == 0. {
+        0.
+    } else {
+        (max - min) / max
+    };
+
+    let v = max;
+
+    HSV(h, s, v)
 }
 
 pub fn count_same(pixels: &[HSV]) -> usize {
