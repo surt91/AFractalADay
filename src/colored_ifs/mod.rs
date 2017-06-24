@@ -14,6 +14,12 @@ use histogram::{bounds, ColoredHistogram};
 
 use self::fractal_flame::FractalFlameSampler;
 
+
+extern crate num_cpus;
+use std::thread;
+use std::sync::mpsc::channel;
+
+// TODO: The iterators should not be self, but they should be constructed -> many parallel iterators possible
 /// The `ColoredIFS` trait applies to all ``Chaos Game type'' fractals.
 pub trait ColoredIFS : Sync {
     fn description(&self) -> &str;
@@ -32,20 +38,40 @@ pub trait ColoredIFS : Sync {
         let values: Vec<([Real; 2], RGB)> = sampler.skip(100).take((x * y) as usize).collect();
         // read bounds from sample
         let b = bounds(values.iter().map(|&(ref z, _)| z));
-        let mut hist = ColoredHistogram::new(resolution, b);
 
-        hist.feed(values.into_iter());
-        
+        // use N-1 additional threads (where N is the number of logical CPU)
+        // this way one thread is idle and can calculate the remainder and merge the results
+        let cpus = num_cpus::get();
+        let iterations_per_task = (samples_per_pixel - 1) / cpus;
+
+        let (tx, rx) = channel();
+        for _ in 0..cpus {
+            let tx = tx.clone();
+            let sampler = self.get_sampler();
+            let mut hist = ColoredHistogram::new(resolution, b);
+            thread::spawn(move || {
+                hist.feed(sampler.take((iterations_per_task) * (x * y) as usize));
+                tx.send(hist).unwrap();
+            });
+        }
+
+        // and do the remainder in the main thread
+        let remainder = (samples_per_pixel - 1) - iterations_per_task*cpus;
         let sampler = self.get_sampler();
-        hist.feed(sampler.take((samples_per_pixel - 1) * (x * y) as usize));
-        // generate histogram, using the sample and new values
-        let hist = histogram_colored(values.into_iter()
-                                           .chain(
-                                               self.take((samples_per_pixel-1) * (x * y) as usize)
-                                           ),
-                                     resolution, b);
 
-        let buffer: Vec<u8> = hist.iter()
+        let mut hist = ColoredHistogram::new(resolution, b);
+        // feed the remainder into the main histogram
+        hist.feed(sampler.take(remainder * (x * y) as usize));
+        // feed the values from the bounds estimation into the histogram
+        hist.feed(values.into_iter());
+
+        for _ in 0..cpus {
+            let h = rx.recv().unwrap();
+            hist.merge(&h);
+        }
+
+        let buffer: Vec<u8> = hist.normalize()
+                                  .iter()
                                   .map(|rgba| {
                                       let &RGBA(r, g, b, a) = rgba;
 
