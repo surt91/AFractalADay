@@ -14,18 +14,20 @@ pub struct Options {
     pub width: Option<u32>,
     pub tweet: bool,
     pub quiet: bool,
+    pub optipng: bool,
     pub fractal_type: FractalType,
 }
 
 impl fmt::Display for Options {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Options: type: {}, seed: {}, name:  {}, style: {}, tweet: {}, quiet: {}",
+        write!(f, "Options: type: {}, seed: {}, name:  {}, style: {}, tweet: {}, quiet: {}, optipng: {}",
                   self.fractal_type,
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
                   self.style.as_ref().unwrap_or(&"random".to_string()),
                   self.tweet,
-                  self.quiet
+                  self.quiet,
+                  self.optipng
               )
     }
 }
@@ -75,6 +77,11 @@ pub fn parse_cl() -> Options {
                     .long("quiet")
                     .help("do only print error messages")
               )
+              .arg(Arg::with_name("no-optipng")
+                    .short("n")
+                    .long("no-optipng")
+                    .help("do not minify the result with optipng")
+              )
               .arg(Arg::with_name("newton")
                     .long("newton")
                     .help("render a newton fractal")
@@ -105,6 +112,7 @@ pub fn parse_cl() -> Options {
 
     let tweet = matches.is_present("tweet");
     let quiet = matches.is_present("quiet");
+    let optipng = !matches.is_present("no-optipng");
     let filename = matches.value_of("filename")
                           .and_then(|f| Some(f.to_string()))
                           .or_else(|| None);
@@ -150,6 +158,7 @@ pub fn parse_cl() -> Options {
         quiet,
         fractal_type,
         height,
-        width
+        width,
+        optipng
     }
 }

@@ -184,7 +184,9 @@ fn main() {
         fs::remove_file(&for_twitter).unwrap_or_else(|_| warn!("could not delete {}", for_twitter));
     }
 
-    postprocess_image(&filename);
+    if opt.optipng {
+        postprocess_image(&filename);
+    }
 
     info!("Success!");
 }
