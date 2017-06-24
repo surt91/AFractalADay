@@ -8,8 +8,8 @@ use self::rand::Rng;
 use std::f64::consts::PI;
 use std::cmp::max;
 
-use super::{IteratedFractal, Convergence};
-use super::iterated_fractal_builder::IteratedFractalBuilder;
+use super::{EscapeTimeFractal, Convergence};
+use super::escape_time_fractal_builder::EscapeTimeFractalBuilder;
 use numbers::{Real, Cplx};
 
 use super::style::Stylable;
@@ -23,7 +23,7 @@ pub struct MandelbrotFractal {
     zoom: Real
 }
 
-impl IteratedFractalBuilder {
+impl EscapeTimeFractalBuilder {
     pub fn mandelbrot(self) -> MandelbrotFractal {
         let mut rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
@@ -90,7 +90,7 @@ impl Stylable for MandelbrotFractal {
     }
 }
 
-impl IteratedFractal for MandelbrotFractal {
+impl EscapeTimeFractal for MandelbrotFractal {
     fn description(&self) -> &str {
         &self.description
     }

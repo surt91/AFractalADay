@@ -1,7 +1,7 @@
 #[macro_use] extern crate itertools;
 #[macro_use] extern crate log;
 
-pub mod iterated_fractal;
+pub mod escape_time_fractal;
 pub mod iterated_function_system;
 pub mod colored_ifs;
 pub mod color;

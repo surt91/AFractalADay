@@ -2,7 +2,7 @@ extern crate clap;
 
 use std::fmt;
 use self::clap::{App, Arg, ArgGroup};
-use iterated_fractal::style::Style;
+use escape_time_fractal::style::Style;
 use FractalType;
 
 #[derive(Debug)]

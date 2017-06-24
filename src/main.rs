@@ -1,8 +1,8 @@
 extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
-use iterated_fractal::IteratedFractal;
-use iterated_fractal::iterated_fractal_builder::IteratedFractalBuilder;
+use escape_time_fractal::EscapeTimeFractal;
+use escape_time_fractal::escape_time_fractal_builder::EscapeTimeFractalBuilder;
 use iterated_function_system::IteratedFunctionSystem;
 use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 use colored_ifs::ColoredIFS;
@@ -26,7 +26,7 @@ use my_twitter::twitter as twitter;
 
 mod parse_cl;
 use parse_cl::{parse_cl, Options};
-use iterated_fractal::style::Style;
+use escape_time_fractal::style::Style;
 
 
 
@@ -53,7 +53,7 @@ fn prepare(filename: &str) -> String {
     format!("img/{}.png", filename)
 }
 
-fn render_fractal<T: IteratedFractal>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
+fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
     let mut finished = false;
     // ensure that the image has some variance
     // otherwise the images are probably boring
@@ -92,7 +92,7 @@ fn build_fractal(filename: &str,
 
     // hacky do while loop
     while {
-        let mut a = IteratedFractalBuilder::new().seed(seed+ctr);
+        let mut a = EscapeTimeFractalBuilder::new().seed(seed+ctr);
         a = match opt.style {
             // the parser made sure that this is a valid value, unwrap should be fine
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
@@ -102,9 +102,9 @@ fn build_fractal(filename: &str,
         let c = ColoredIFSBuilder::new().seed(seed+ctr);
 
         let (finished, tmp_description) = match fractal_type {
-            FractalType::Newton => render_fractal(&mut a.newton(), filename, &dim),
-            FractalType::Julia => render_fractal(&mut a.julia(), filename, &dim),
-            FractalType::Mandelbrot => render_fractal(&mut a.mandelbrot(), filename, &dim),
+            FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),
+            FractalType::Julia => render_escape_time_fractal(&mut a.julia(), filename, &dim),
+            FractalType::Mandelbrot => render_escape_time_fractal(&mut a.mandelbrot(), filename, &dim),
             FractalType::HeighwayDragon => {
                 let mut fractal = b.heighway_dragon();
                 match fractal.render(dim, 100, filename) {

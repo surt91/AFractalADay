@@ -3,8 +3,8 @@ extern crate num;
 
 extern crate rand;
 
-use super::{IteratedFractal, Convergence};
-use super::iterated_fractal_builder::IteratedFractalBuilder;
+use super::{EscapeTimeFractal, Convergence};
+use super::escape_time_fractal_builder::EscapeTimeFractalBuilder;
 use numbers::Cplx;
 
 use super::style::Stylable;
@@ -20,7 +20,7 @@ pub struct JuliaFractal {
     max_count: u64
 }
 
-impl IteratedFractalBuilder {
+impl EscapeTimeFractalBuilder {
     pub fn julia(self) -> JuliaFractal {
         let mut rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
@@ -78,7 +78,7 @@ impl Stylable for JuliaFractal {
     }
 }
 
-impl IteratedFractal for JuliaFractal {
+impl EscapeTimeFractal for JuliaFractal {
     fn description(&self) -> &str {
         &self.description
     }

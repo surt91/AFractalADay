@@ -1,7 +1,7 @@
 mod newton;
 mod julia;
 mod mandelbrot;
-pub mod iterated_fractal_builder;
+pub mod escape_time_fractal_builder;
 pub mod style;
 
 extern crate rand;
@@ -22,10 +22,10 @@ pub struct Convergence {
     pub value: Cplx
 }
 
-/// The `IteratedFractal` trait applies to all ``Julia set type'' fractals, i.e., all fractals
+/// The `EscapeTimeFractal` trait applies to all ``Julia set type'' fractals, i.e., all fractals
 /// that can be visualized by assigning every pixel a color dependent on a value and an iteration
 /// count.
-pub trait IteratedFractal : Sync + Stylable {
+pub trait EscapeTimeFractal : Sync + Stylable {
     fn description(&self) -> &str;
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut rand::StdRng;
@@ -63,7 +63,7 @@ pub trait IteratedFractal : Sync + Stylable {
             Some(x) => x,
             None => (0., 0.)
         };
-        
+
         let (x, y) = resolution;
 
         let states = self.raster(resolution, scale, center);

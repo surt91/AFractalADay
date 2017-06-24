@@ -8,17 +8,17 @@ use numbers::{Coef, Formula};
 use super::style::Style;
 
 #[derive(Default)]
-pub struct IteratedFractalBuilder {
+pub struct EscapeTimeFractalBuilder {
     pub a: Option<Coef>,
     pub f: Option<Formula>,
     pub seed: Option<usize>,
     pub style: Option<Style>
 }
 
-// Builder Pattern to create a NewtonFractal
-impl IteratedFractalBuilder {
-    pub fn new() -> IteratedFractalBuilder {
-        IteratedFractalBuilder {
+// Builder Pattern
+impl EscapeTimeFractalBuilder {
+    pub fn new() -> EscapeTimeFractalBuilder {
+        EscapeTimeFractalBuilder {
             a: None,
             f: None,
             seed: None,
@@ -26,22 +26,22 @@ impl IteratedFractalBuilder {
         }
     }
 
-    pub fn coefficient(mut self, a: Coef) -> IteratedFractalBuilder {
+    pub fn coefficient(mut self, a: Coef) -> EscapeTimeFractalBuilder {
         self.a = Some(a);
         self
     }
 
-    pub fn formula(mut self, f: Formula) -> IteratedFractalBuilder {
+    pub fn formula(mut self, f: Formula) -> EscapeTimeFractalBuilder {
         self.f = Some(f);
         self
     }
 
-    pub fn seed(mut self, seed: usize) -> IteratedFractalBuilder {
+    pub fn seed(mut self, seed: usize) -> EscapeTimeFractalBuilder {
         self.seed = Some(seed);
         self
     }
 
-    pub fn style(mut self, style: Style) -> IteratedFractalBuilder {
+    pub fn style(mut self, style: Style) -> EscapeTimeFractalBuilder {
         self.style = Some(style);
         self
     }

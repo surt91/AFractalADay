@@ -4,12 +4,12 @@ extern crate num;
 extern crate rand;
 use self::rand::Rng;
 
-use super::{IteratedFractal, Convergence};
-use super::iterated_fractal_builder::IteratedFractalBuilder;
+use super::{EscapeTimeFractal, Convergence};
+use super::escape_time_fractal_builder::EscapeTimeFractalBuilder;
 use numbers::{Coef, Cplx, ComplexFunction};
 use functions::{derivative, random_formula, random_coef};
 
-use iterated_fractal::style::{Style, Stylable};
+use escape_time_fractal::style::{Style, Stylable};
 use color;
 
 pub struct NewtonFractal {
@@ -22,7 +22,7 @@ pub struct NewtonFractal {
     random_count: f64
 }
 
-impl IteratedFractalBuilder {
+impl EscapeTimeFractalBuilder {
     pub fn newton(self) -> NewtonFractal {
         let mut rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
@@ -86,7 +86,7 @@ impl Stylable for NewtonFractal {
     }
 }
 
-impl IteratedFractal for NewtonFractal {
+impl EscapeTimeFractal for NewtonFractal {
     fn description(&self) -> &str {
         &self.description
     }
