@@ -97,12 +97,13 @@ pub fn histogram_colored<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, 
     let max_a = (*max_a as f64).ln();
 
     // normalize
+    let gamma = 4.;
     multizip((&r_out, &g_out, &b_out, &a_out))
         .map(|(r, g, b, a)| {
             let n = 1. / *a as f64;
-            let r = (r * n * 255.) as u8;
-            let g = (g * n * 255.) as u8;
-            let b = (b * n * 255.) as u8;
+            let r = ((r*n).powf(1./gamma) * 255.) as u8;
+            let g = ((g*n).powf(1./gamma) * 255.) as u8;
+            let b = ((b*n).powf(1./gamma) * 255.) as u8;
             let a = ((*a as f64).ln() / max_a * 255.) as u8;
             RGBA(r, g, b, a)
         }
