@@ -8,9 +8,9 @@ use std::io;
 use itertools::Itertools;
 
 use numbers::Real;
-use color::{RGB, RGBA};
+use color::{RGB, RGBA, HSV, color_variance};
 use png;
-use histogram::{bounds, bounds90, ColoredHistogram};
+use histogram::{bounds90, ColoredHistogram};
 
 use self::fractal_flame::FractalFlameSampler;
 
@@ -68,28 +68,25 @@ pub trait ColoredIFS : Sync {
             hist.merge(&h);
         }
 
-        let buffer: Vec<u8> = hist.normalize()
-                                  .iter()
-                                  .map(|rgba| {
-                                      let &RGBA(r, g, b, a) = rgba;
-                                      let alpha = a as f64 / 255.;
-                                      // black background
-                                      vec![ (r as f64 * alpha) as u8,
+        let rgb = hist.normalize();
+        let buffer: Vec<u8> = rgb.iter()
+                                 .map(|rgba| {
+                                     let &RGBA(r, g, b, a) = rgba;
+                                     let alpha = a as f64 / 255.;
+                                     // black background
+                                     vec![  (r as f64 * alpha) as u8,
                                             (g as f64 * alpha) as u8,
                                             (b as f64 * alpha) as u8,
                                             255]
-                                      //white background
-                                    //   vec![ (r as f64 * alpha + 255.*(1. - alpha)) as u8,
-                                    //         (g as f64 * alpha + 255.*(1. - alpha)) as u8,
-                                    //         (b as f64 * alpha + 255.*(1. - alpha)) as u8,
-                                    //         255]
-                                      // transparent background
-                                    //   vec![r, g, b, a]
-                                  })
-                                  .flatten()
-                                  .collect();
+                                     }
+                                 )
+                                 .flatten()
+                                 .collect();
 
         png::save_png(filename, x, y, &buffer)?;
-        Ok(1.)
+
+        let hsv: Vec<HSV> = rgb.iter().map(|c| c.blend_black().to_hsv()).collect();
+        let var = color_variance(&hsv);
+        Ok(var)
     }
 }
