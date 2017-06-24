@@ -1,8 +1,8 @@
 // TODO: longterm change this to (u8, u8, u8)
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct HSV(pub f64, pub f64, pub f64);
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct RGB(pub f64, pub f64, pub f64);
 
 #[derive(Debug, PartialEq, Clone)]

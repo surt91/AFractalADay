@@ -86,6 +86,7 @@ impl ColoredHistogram {
     }
 }
 
+/// find bounds containing all input points
 pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
     where I: Iterator<Item=&'a [Real; 2]>
 {
@@ -107,10 +108,36 @@ pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
         }
     );
     // 5% more
-    bounds.0 *= 1.05;
-    bounds.1 *= 1.05;
-    bounds.2 *= 1.05;
-    bounds.3 *= 1.05;
+    bounds.0 -= 0.05 * (bounds.1-bounds.0);
+    bounds.1 += 0.05 * (bounds.1-bounds.0);
+    bounds.2 -= 0.05 * (bounds.3-bounds.2);
+    bounds.3 += 0.05 * (bounds.3-bounds.2);
+
+    bounds
+}
+
+/// finds bounds containing 90% of all input points
+pub fn bounds90<'a, I>(vals: I) -> (f32, f32, f32, f32)
+    where I: Iterator<Item=&'a [Real; 2]>
+{
+    let mut rs: Vec<&[Real;2]> = vals.collect();
+    let n = rs.len();
+
+    rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap());
+    let min_x = rs[n / 10][0];
+    let max_x = rs[n - n / 10 - 1][0];
+
+    rs.sort_by(|r1, r2| r1[1].partial_cmp(&r2[1]).unwrap());
+    let min_y = rs[n / 10][1];
+    let max_y = rs[n - n / 10 - 1][1];
+
+    let mut bounds = (min_x, max_x, min_y, max_y);
+    // 5% more
+    bounds.0 -= 0.05 * (max_x-min_x);
+    bounds.1 += 0.05 * (max_x-min_x);
+    bounds.2 -= 0.05 * (max_y-min_y);
+    bounds.3 += 0.05 * (max_y-min_y);
+
     bounds
 }
 

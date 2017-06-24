@@ -10,16 +10,14 @@ use itertools::Itertools;
 use numbers::Real;
 use color::{RGB, RGBA};
 use png;
-use histogram::{bounds, ColoredHistogram};
+use histogram::{bounds, bounds90, ColoredHistogram};
 
 use self::fractal_flame::FractalFlameSampler;
-
 
 extern crate num_cpus;
 use std::thread;
 use std::sync::mpsc::channel;
 
-// TODO: The iterators should not be self, but they should be constructed -> many parallel iterators possible
 /// The `ColoredIFS` trait applies to all ``Chaos Game type'' fractals.
 pub trait ColoredIFS : Sync {
     fn description(&self) -> &str;
@@ -37,7 +35,7 @@ pub trait ColoredIFS : Sync {
         // warm up and get sample to derive bounds
         let values: Vec<([Real; 2], RGB)> = sampler.skip(100).take((x * y) as usize).collect();
         // read bounds from sample
-        let b = bounds(values.iter().map(|&(ref z, _)| z));
+        let b = bounds90(values.iter().map(|&(ref z, _)| z));
 
         // use N-1 additional threads (where N is the number of logical CPU)
         // this way one thread is idle and can calculate the remainder and merge the results
@@ -74,8 +72,19 @@ pub trait ColoredIFS : Sync {
                                   .iter()
                                   .map(|rgba| {
                                       let &RGBA(r, g, b, a) = rgba;
-
-                                      vec![r, g, b, a]
+                                      let alpha = a as f64 / 255.;
+                                      // black background
+                                      vec![ (r as f64 * alpha) as u8,
+                                            (g as f64 * alpha) as u8,
+                                            (b as f64 * alpha) as u8,
+                                            255]
+                                      //white background
+                                    //   vec![ (r as f64 * alpha + 255.*(1. - alpha)) as u8,
+                                    //         (g as f64 * alpha + 255.*(1. - alpha)) as u8,
+                                    //         (b as f64 * alpha + 255.*(1. - alpha)) as u8,
+                                    //         255]
+                                      // transparent background
+                                    //   vec![r, g, b, a]
                                   })
                                   .flatten()
                                   .collect();
