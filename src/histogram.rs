@@ -5,6 +5,7 @@ use color::{RGB, RGBA};
 extern crate rayon;
 use self::rayon::prelude::*;
 
+/// data structure containing a 2d-histogram with 4 channels (rgba)
 pub struct ColoredHistogram {
     resolution: (u32, u32),
     bounds: (f32, f32, f32, f32),
@@ -12,6 +13,12 @@ pub struct ColoredHistogram {
 }
 
 impl ColoredHistogram {
+    /// create a new empty histogram
+    ///
+    /// # Arguments
+    ///
+    /// * `resolution` - number of bins in x and y direction
+    /// * `bounds` - minimum and maximum values, i.e., range of the histogram
     pub fn new(resolution: (u32, u32), bounds: (f32, f32, f32, f32)) -> ColoredHistogram {
         let (x_res, y_res) = resolution;
 
@@ -24,6 +31,7 @@ impl ColoredHistogram {
         }
     }
 
+    /// normalize the four channels of the histogram to RGBA values, with a gamma correction
     pub fn normalize(&self) -> Vec<RGBA> {
         let max_a = self.bins.par_iter()
                             .map(|&(_, _, _, a)| a)
@@ -45,6 +53,11 @@ impl ColoredHistogram {
         ).collect()
     }
 
+    /// merge another histogram into this histogram
+    ///
+    /// # Arguments
+    ///
+    /// * `other` - the histogram to merge
     pub fn merge(&mut self, other: &ColoredHistogram) {
         assert_eq!(self.resolution, other.resolution);
         assert_eq!(self.bounds, other.bounds);
@@ -56,6 +69,11 @@ impl ColoredHistogram {
         }
     }
 
+    /// consume an iterator of coordinates and add them to the histogram
+    ///
+    /// # Arguments
+    ///
+    /// * `values` - iterator of coordinates
     pub fn feed<I>(&mut self, values: I)
         where I: Iterator<Item=([Real; 2], RGB)>
     {
@@ -87,6 +105,10 @@ impl ColoredHistogram {
 }
 
 /// find bounds containing all input points
+///
+/// # Arguments
+///
+/// * `vals` - Iterator yielding coordinates
 pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
     where I: Iterator<Item=&'a [Real; 2]>
 {
@@ -117,6 +139,10 @@ pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
 }
 
 /// finds bounds containing 90% of all input points
+///
+/// # Arguments
+///
+/// * `vals` - Iterator yielding coordinates
 pub fn bounds90<'a, I>(vals: I) -> (f32, f32, f32, f32)
     where I: Iterator<Item=&'a [Real; 2]>
 {
@@ -149,6 +175,13 @@ pub fn bounds90<'a, I>(vals: I) -> (f32, f32, f32, f32)
     bounds
 }
 
+/// generates a 2d-histogram from an iterator
+///
+/// # Arguments
+///
+/// * `vals` - Iterator yielding coordinates
+/// * `resolution` - number of bins in x and y direction
+/// * `bounds` - minimum and maximum values, i.e., range of the histogram
 pub fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32)) -> Vec<usize>
     where I: Iterator<Item=[Real; 2]>
 {

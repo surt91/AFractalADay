@@ -1,26 +1,33 @@
 // TODO: longterm change this to (u8, u8, u8)
+
+/// data structure representing a HSV color value
 #[derive(Debug, PartialEq, Clone)]
 pub struct HSV(pub f64, pub f64, pub f64);
 
+/// data structure representing a RGB color value
 #[derive(Debug, PartialEq, Clone)]
 pub struct RGB(pub f64, pub f64, pub f64);
 
+/// data structure representing a RGBA color value
 #[derive(Debug, PartialEq, Clone)]
 pub struct RGBA(pub u8, pub u8, pub u8, pub u8);
 
 impl HSV {
+    /// convert `HSV` into `RGB`
     pub fn to_rgb(&self) -> RGB {
         hsv2rgb(self)
     }
 }
 
 impl RGB {
+    /// convert `RGB` into `HSV`
     pub fn to_hsv(&self) -> HSV {
         rgb2hsv(self)
     }
 }
 
 impl RGBA {
+    /// convert `RGBA` to `RGB` by blending with a black background
     pub fn blend_black(&self) -> RGB {
         let &RGBA(r, g, b, a) = self;
         let alpha = a as f64 / 255.;
@@ -29,6 +36,7 @@ impl RGBA {
             b as f64 / 255. * alpha)
     }
 
+    /// convert `RGBA` to `RGB` by blending with a white background
     pub fn blend_white(&self) -> RGB {
         let &RGBA(r, g, b, a) = self;
         let alpha = a as f64 / 255.;
@@ -37,6 +45,7 @@ impl RGBA {
             b as f64 / 255. * alpha + (1. - alpha))
     }
 
+    /// convert `RGBA` to `RGB` by discarding the alpha channel
     pub fn blend_discard(&self) -> RGB {
         let &RGBA(r, g, b, _) = self;
         RGB(r as f64 / 255.,
@@ -100,6 +109,7 @@ fn rgb2hsv(rgb: &RGB) -> HSV {
     HSV(h, s, v)
 }
 
+/// count the number of `pixels` with the same color
 pub fn count_same(pixels: &[HSV]) -> usize {
     use std::collections::hash_map::HashMap;
     let mut m: HashMap<(u8, u8, u8), usize> = HashMap::new();

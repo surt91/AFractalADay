@@ -15,6 +15,7 @@ use std::process::Command;
 use std::fmt;
 use std::fs;
 
+/// Supported types of fractals
 #[derive(Debug, Clone)]
 pub enum FractalType {
     Random,
@@ -32,6 +33,19 @@ impl fmt::Display for FractalType {
     }
 }
 
+/// compress a png  in place using `optipng`
+///
+/// # Arguments
+///
+/// * `filename` - filename of the png which should be compressed
+///
+/// # Remarks
+///
+/// The png crate will generate non-optimal png. By `optipng` the png
+/// can typically be compressed by 30 - 50%.
+///
+/// *Note*: If `optipng` is not in the path, this function
+/// will do nothing, but logging an error.
 pub fn postprocess_image(filename: &str) {
     // use optipng to compress the png further
     info!("compress with optipng");
@@ -58,6 +72,21 @@ pub fn postprocess_image(filename: &str) {
     };
 }
 
+/// add a transparent border to a png
+///
+/// # Arguments
+///
+/// * `input` - path to the source png
+/// * `output` - path where the postprocessed png should be saved
+///
+/// # Remarks
+///
+/// Since twitter will convert uploaded png pictures to jpg with artifacts,
+/// we add a transparent border to suppress the conversion
+/// using imagemagick's convert.
+///
+/// *Note*: If imagemagick's `convert` is not in the path, this function
+/// will do nothing, but logging an error.
 pub fn postprocess_image_for_twitter(input: &str, output: &str) {
     // since twitter will convert the pictures to jpg with artifacts,
     // add a transparent border to suppress the conversion
