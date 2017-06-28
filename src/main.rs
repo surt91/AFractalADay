@@ -2,7 +2,6 @@ extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
 use escape_time_fractal::escape_time_fractal_builder::EscapeTimeFractalBuilder;
-use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 use colored_ifs::colored_ifs_builder::ColoredIFSBuilder;
 
 use std::fs;
@@ -80,8 +79,7 @@ fn build_fractal(filename: &str,
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
-        let b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
-        let c = ColoredIFSBuilder::new().seed(seed+ctr);
+        let b = ColoredIFSBuilder::new().seed(seed+ctr);
 
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),
@@ -89,7 +87,7 @@ fn build_fractal(filename: &str,
             FractalType::Mandelbrot => render_escape_time_fractal(&mut a.mandelbrot(), filename, &dim),
             FractalType::HeighwayDragon => render_ifs(&mut b.heighway_dragon(), filename, &dim),
             FractalType::BarnsleyFern => render_ifs(&mut b.barnsley_fern(), filename, &dim),
-            FractalType::FractalFlame => render_fractal_flame(&mut c.fractal_flame(), filename, &dim),
+            FractalType::FractalFlame => render_fractal_flame(&mut b.fractal_flame(), filename, &dim),
             FractalType::Random => unreachable!()
         };
 

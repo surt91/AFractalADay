@@ -3,6 +3,9 @@ use self::affine_transformation::AffineTransformation;
 mod nonlinear_transformation;
 use self::nonlinear_transformation::{Variation, NonlinearTransformation};
 
+mod barnsley_fern;
+mod heighway_dragon;
+
 extern crate std;
 extern crate num;
 use itertools;

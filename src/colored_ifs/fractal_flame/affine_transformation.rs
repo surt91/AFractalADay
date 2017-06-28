@@ -2,6 +2,7 @@ extern crate rand;
 use self::rand::Rng;
 
 use numbers::Real;
+use std::ops::Mul;
 
 #[derive(Debug, Clone)]
 pub struct AffineTransformation {
@@ -21,12 +22,12 @@ impl AffineTransformation {
         // also values near zero will lead to thin lines in the fractal
         // therefore, we scale the random numbers and set an offset
         AffineTransformation {
-            parameters: [rng.gen::<f32>() * 0.7 + 0.1,
-                         rng.gen::<f32>() * 0.7 + 0.1,
-                         rng.gen::<f32>() * 0.7 + 0.1,
-                         rng.gen::<f32>() * 0.7 + 0.1,
-                         rng.gen::<f32>() * 0.7 + 0.1,
-                         rng.gen::<f32>() * 0.7 + 0.1]
+            parameters: [rng.gen::<Real>() * 0.7 + 0.1,
+                         rng.gen::<Real>() * 0.7 + 0.1,
+                         rng.gen::<Real>() * 0.7 + 0.1,
+                         rng.gen::<Real>() * 0.7 + 0.1,
+                         rng.gen::<Real>() * 0.7 + 0.1,
+                         rng.gen::<Real>() * 0.7 + 0.1]
         }
     }
 
@@ -35,5 +36,13 @@ impl AffineTransformation {
         out[0] = self.parameters[0] * x[0] + self.parameters[1] * x[1] + self.parameters[2];
         out[1] = self.parameters[3] * x[0] + self.parameters[4] * x[1] + self.parameters[5];
         out
+    }
+}
+
+impl Mul<Real> for AffineTransformation {
+    type Output = Self;
+    fn mul(self, rhs: Real) -> Self {
+        let p = self.parameters;
+        AffineTransformation::new(rhs*p[0], rhs*p[1], rhs*p[2], rhs*p[3], rhs*p[4], rhs*p[5])
     }
 }
