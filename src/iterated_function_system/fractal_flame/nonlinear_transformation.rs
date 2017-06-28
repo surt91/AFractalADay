@@ -2,9 +2,9 @@ extern crate rand;
 use self::rand::Rng;
 
 use numbers::Real;
-use std::f64::consts::PI;
+use std::f64::consts::PI as PI64;
 
-const Pi: Real = PI as Real;
+const PI: Real = PI64 as Real;
 
 #[derive(Debug, Clone)]
 pub enum Variation {
@@ -86,7 +86,7 @@ impl NonlinearTransformation {
             Variation::Polar => {
                 let r = (x*x + y*y).sqrt();
                 let theta = (x/y).atan();
-                [theta / Pi, r - 1.]
+                [theta / PI, r - 1.]
             },
             Variation::Handkerchief => {
                 let r = (x*x + y*y).sqrt();
@@ -101,7 +101,7 @@ impl NonlinearTransformation {
             Variation::Disk => {
                 let r = (x*x + y*y).sqrt();
                 let theta = (x/y).atan();
-                [theta/Pi * (r*Pi).sin(), theta/Pi * (r*Pi).cos()]
+                [theta/PI * (r*PI).sin(), theta/PI * (r*PI).cos()]
             }
         }
     }
