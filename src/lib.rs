@@ -63,7 +63,7 @@ pub fn postprocess_image(filename: &str) {
                         error!("optipng failed")
                     } else {
 
-                        info!("optipng successful ({} KiB -> {} KiB), saved {:.0}%",
+                        info!("optipng successful ({} KB -> {} KB), saved {:.0}%",
                               before as f32 / 1000.,
                               after as f32 / 1000.,
                               (1. - after as f32 / before as f32) * 100.)
@@ -85,12 +85,15 @@ pub fn postprocess_image(filename: &str) {
 /// we add a transparent border to suppress the conversion
 /// using imagemagick's convert.
 ///
+/// Also, we need to ensure that the filesize is <= 3 MiB <https://dev.twitter.com/rest/media/uploading-media#imagerecs>.
+/// therefore, we will shrink by 10%, measure the size and repeat, until we reach the limit.
+///
 /// *Note*: If imagemagick's `convert` is not in the path, this function
 /// will do nothing, but logging an error.
 pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
-    // since twitter will convert the pictures to jpg with artifacts,
-    // add a transparent border to suppress the conversion
-    // using imagemagick's convert
+    let mut size: u64;
+    let mut resize: f64 = 1.;
+
     let output = Command::new("convert")
                          .arg("-alpha").arg("on")
                          .arg("-channel").arg("RGBA")
@@ -100,13 +103,46 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
                          .arg(outfile)
                          .output();
 
+    // compress using optipng
+    postprocess_image(outfile);
+
+    size = fs::metadata(outfile).map(|x| x.len()).unwrap_or(0);
+
     match output {
         Ok(x) => if !x.status.success() {
                         error!("convert failed")
                     } else {
-                        info!("convert successful ({} KiB)",
-                              fs::metadata(outfile).map(|x| x.len()).unwrap_or(0))
+                        info!("convert successful ({} KiB)", size as f32 / 1000.)
                     },
         Err(x) => error!("convert failed with {:?}", x)
     };
+
+    // it is too big, shrink it and try again
+    while size > 3e6f64 as u64 {
+        resize *= 0.9;
+        info!("rescale to {:.0}%", resize*100.);
+
+        let output = Command::new("convert")
+                             .arg("-alpha").arg("on")
+                             .arg("-channel").arg("RGBA")
+                             .arg("-bordercolor").arg("rgba(0,0,0,0)")
+                             .arg("-border").arg("1x1")
+                             .arg("-scale").arg(format!("{:.0}%", resize*100.))
+                             .arg(input)
+                             .arg(outfile)
+                             .output();
+
+        postprocess_image(outfile);
+
+        size = fs::metadata(outfile).map(|x| x.len()).unwrap_or(0);
+
+        match output {
+            Ok(x) => if !x.status.success() {
+                            error!("convert failed")
+                        } else {
+                            info!("convert successful ({} KiB)", size as f32 / 1000.)
+                        },
+            Err(x) => error!("convert failed with {:?}", x)
+        };
+    }
 }
