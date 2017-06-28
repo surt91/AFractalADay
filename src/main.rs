@@ -124,6 +124,10 @@ fn main() {
 
     info!("image saved as {}", filename);
 
+    if opt.optipng {
+        postprocess_image(&filename);
+    }
+
     if opt.tweet {
         let for_twitter = format!("{}_for_twitter.png", filename);
         postprocess_image_for_twitter(&filename, &for_twitter);
@@ -131,10 +135,6 @@ fn main() {
         tweet(&for_twitter, &description);
         info!("tweeted");
         fs::remove_file(&for_twitter).unwrap_or_else(|_| warn!("could not delete {}", for_twitter));
-    }
-
-    if opt.optipng {
-        postprocess_image(&filename);
     }
 
     info!("Success!");

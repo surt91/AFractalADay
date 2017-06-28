@@ -87,7 +87,7 @@ pub fn postprocess_image(filename: &str) {
 ///
 /// *Note*: If imagemagick's `convert` is not in the path, this function
 /// will do nothing, but logging an error.
-pub fn postprocess_image_for_twitter(input: &str, output: &str) {
+pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
     // since twitter will convert the pictures to jpg with artifacts,
     // add a transparent border to suppress the conversion
     // using imagemagick's convert
@@ -97,14 +97,15 @@ pub fn postprocess_image_for_twitter(input: &str, output: &str) {
                          .arg("-bordercolor").arg("rgba(0,0,0,0)")
                          .arg("-border").arg("1x1")
                          .arg(input)
-                         .arg(output)
+                         .arg(outfile)
                          .output();
 
     match output {
         Ok(x) => if !x.status.success() {
                         error!("convert failed")
                     } else {
-                        info!("convert successful")
+                        info!("convert successful ({} KiB)",
+                              fs::metadata(outfile).map(|x| x.len()).unwrap_or(0))
                     },
         Err(x) => error!("convert failed with {:?}", x)
     };
