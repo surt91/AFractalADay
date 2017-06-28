@@ -10,7 +10,7 @@ use itertools::Itertools;
 use numbers::Real;
 use color::{RGB, RGBA, HSV, color_variance};
 use png;
-use histogram::{bounds90, ColoredHistogram};
+use histogram::{bounds_without_outliers, ColoredHistogram};
 
 use self::fractal_flame::FractalFlameSampler;
 
@@ -35,7 +35,7 @@ pub trait ColoredIFS : Sync {
         // warm up and get sample to derive bounds
         let values: Vec<([Real; 2], RGB)> = sampler.skip(100).take((x * y) as usize).collect();
         // read bounds from sample
-        let b = bounds90(values.iter().map(|&(ref z, _)| z));
+        let b = bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000);
 
         // use N-1 additional threads (where N is the number of logical CPU)
         // this way one thread is idle and can calculate the remainder and merge the results

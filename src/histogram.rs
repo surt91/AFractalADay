@@ -138,28 +138,30 @@ pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
     bounds
 }
 
-/// finds bounds containing 90% of all input points
+/// finds bounds disarding a number of outliers in each direction
 ///
 /// # Arguments
 ///
 /// * `vals` - Iterator yielding coordinates
-pub fn bounds90<'a, I>(vals: I) -> (f32, f32, f32, f32)
+/// * `outliers` - Number of outliers to discard in each direction
+pub fn bounds_without_outliers<'a, I>(vals: I, outliers: usize) -> (f32, f32, f32, f32)
     where I: Iterator<Item=&'a [Real; 2]>
 {
     let mut rs: Vec<&[Real;2]> = vals.collect();
     let n = rs.len();
 
+
     rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap());
-    let min_x = rs[n / 10][0];
-    let max_x = rs[n - n / 10 - 1][0];
+    let min_x = rs[outliers][0];
+    let max_x = rs[n - outliers - 1][0];
 
     rs.sort_by(|r1, r2| r1[1].partial_cmp(&r2[1]).unwrap());
-    let min_y = rs[n / 10][1];
-    let max_y = rs[n - n / 10 - 1][1];
+    let min_y = rs[outliers][1];
+    let max_y = rs[n - outliers - 1][1];
 
     // FIXME
     // it is possible that we get nan values
-    // until I have a better idea, just choose the something arbitrary
+    // until I have a better idea, just choose something arbitrary
     let mut bounds = if min_x.is_finite() && max_x.is_finite() && min_y.is_finite() && max_y.is_finite() {
         (min_x, max_x, min_y, max_y)
     } else {
