@@ -14,10 +14,10 @@ extern crate rand;
 use self::rand::Rng;
 
 use numbers::Real;
-use colored_ifs::ColoredIFS;
+use super::IteratedFunctionSystem;
 use color::{RGB, HSV};
 
-use super::colored_ifs_builder::ColoredIFSBuilder;
+use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 
 pub struct FractalFlame {
     rng: rand::StdRng,
@@ -69,7 +69,7 @@ impl Iterator for FractalFlameSampler {
     }
 }
 
-impl ColoredIFS for FractalFlame {
+impl IteratedFunctionSystem for FractalFlame {
     fn description(&self) -> &str {
         &self.description
     }
@@ -104,7 +104,7 @@ impl ColoredIFS for FractalFlame {
 }
 
 
-impl ColoredIFSBuilder {
+impl IteratedFunctionSystemBuilder {
     pub fn fractal_flame(self) -> FractalFlame {
         let mut rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },

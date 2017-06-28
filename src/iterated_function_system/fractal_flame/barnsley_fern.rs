@@ -2,9 +2,9 @@ extern crate rand;
 
 use color::RGB;
 use super::{AffineTransformation, NonlinearTransformation, Variation, FractalFlame};
-use super::ColoredIFSBuilder;
+use super::IteratedFunctionSystemBuilder;
 
-impl ColoredIFSBuilder {
+impl IteratedFunctionSystemBuilder {
     pub fn barnsley_fern(self) -> FractalFlame {
         let rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },

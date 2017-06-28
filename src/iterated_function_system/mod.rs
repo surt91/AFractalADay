@@ -1,5 +1,5 @@
 mod fractal_flame;
-pub mod colored_ifs_builder;
+pub mod iterated_function_system_builder;
 
 extern crate rand;
 
@@ -18,8 +18,8 @@ extern crate num_cpus;
 use std::thread;
 use std::sync::mpsc::channel;
 
-/// The `ColoredIFS` trait applies to all ``Chaos Game type'' fractals.
-pub trait ColoredIFS : Sync {
+/// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
+pub trait IteratedFunctionSystem : Sync {
     fn description(&self) -> &str;
     fn get_rng(&mut self) -> &mut rand::StdRng;
     fn get_sampler(&mut self) -> FractalFlameSampler;

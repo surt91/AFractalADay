@@ -2,7 +2,7 @@ extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
 use escape_time_fractal::escape_time_fractal_builder::EscapeTimeFractalBuilder;
-use colored_ifs::colored_ifs_builder::ColoredIFSBuilder;
+use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 
 use std::fs;
 
@@ -79,7 +79,7 @@ fn build_fractal(filename: &str,
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
-        let b = ColoredIFSBuilder::new().seed(seed+ctr);
+        let b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
 
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),

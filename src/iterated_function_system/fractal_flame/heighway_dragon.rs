@@ -3,7 +3,7 @@ use self::rand::Rng;
 
 use color::{HSV, RGB};
 use super::{AffineTransformation, NonlinearTransformation, Variation, FractalFlame};
-use super::ColoredIFSBuilder;
+use super::IteratedFunctionSystemBuilder;
 
 use numbers::Real;
 
@@ -11,7 +11,7 @@ use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
 const PI_QUARTER: Real = FRAC_PI_4 as Real;
 const BY_SQRT: Real = FRAC_1_SQRT_2 as Real;
 
-impl ColoredIFSBuilder {
+impl IteratedFunctionSystemBuilder {
     pub fn heighway_dragon(self) -> FractalFlame {
         let mut rng: rand::StdRng = match self.seed {
             Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },

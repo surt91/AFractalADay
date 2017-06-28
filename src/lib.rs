@@ -2,7 +2,7 @@
 #[macro_use] extern crate log;
 
 pub mod escape_time_fractal;
-pub mod colored_ifs;
+pub mod iterated_function_system;
 pub mod color;
 pub mod numbers;
 pub mod functions;
