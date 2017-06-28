@@ -2,6 +2,9 @@ extern crate rand;
 use self::rand::Rng;
 
 use numbers::Real;
+use std::f64::consts::PI;
+
+const Pi: Real = PI as Real;
 
 #[derive(Debug, Clone)]
 pub enum Variation {
@@ -10,6 +13,10 @@ pub enum Variation {
     Spherical,
     Swirl,
     Horseshoe,
+    Polar,
+    Handkerchief,
+    Heart,
+    Disk,
 }
 
 #[derive(Debug, Clone)]
@@ -25,12 +32,16 @@ impl NonlinearTransformation {
     }
 
     pub fn random(rng: &mut rand::StdRng) -> NonlinearTransformation {
-        let variation = match rng.gen_range(0, 5) {
+        let variation = match rng.gen_range(0, 9) {
             0 => Variation::Linear,
             1 => Variation::Sinusoidal,
             2 => Variation::Spherical,
             3 => Variation::Swirl,
             4 => Variation::Horseshoe,
+            5 => Variation::Polar,
+            6 => Variation::Handkerchief,
+            7 => Variation::Heart,
+            8 => Variation::Disk,
             _ => unreachable!()
         };
 
@@ -45,7 +56,11 @@ impl NonlinearTransformation {
             Variation::Sinusoidal => "Sinusoidal",
             Variation::Spherical => "Spherical",
             Variation::Swirl => "Swirl",
-            Variation::Horseshoe => "Horseshoe"
+            Variation::Horseshoe => "Horseshoe",
+            Variation::Polar => "Polar",
+            Variation::Handkerchief => "Handkerchief",
+            Variation::Heart => "Heart",
+            Variation::Disk => "Disk",
         }.to_owned()
     }
 
@@ -56,9 +71,38 @@ impl NonlinearTransformation {
         match self.variation {
             Variation::Linear => r,
             Variation::Sinusoidal => [x.sin(), y.sin()],
-            Variation::Spherical => {let r2 = x*x + y*y; [x/r2, y/r2]},
-            Variation::Swirl => {let r2 = x*x + y*y; [x*r2.sin() - y*r2.cos(), x*r2.cos() + y*r2.sin()]},
-            Variation::Horseshoe => {let r = (x*x + y*y).sqrt(); [(x-y)*(x+y) / r, 2.*x*y / r]}
+            Variation::Spherical => {
+                let r2 = x*x + y*y;
+                [x/r2, y/r2]
+            },
+            Variation::Swirl => {
+                let r2 = x*x + y*y;
+                [x*r2.sin() - y*r2.cos(), x*r2.cos() + y*r2.sin()]
+            },
+            Variation::Horseshoe => {
+                let r = (x*x + y*y).sqrt();
+                [(x-y)*(x+y) / r, 2.*x*y / r]
+            },
+            Variation::Polar => {
+                let r = (x*x + y*y).sqrt();
+                let theta = (x/y).atan();
+                [theta / Pi, r - 1.]
+            },
+            Variation::Handkerchief => {
+                let r = (x*x + y*y).sqrt();
+                let theta = (x/y).atan();
+                [r*(theta+r).sin(), (theta-r).cos()]
+            }
+            Variation::Heart => {
+                let r = (x*x + y*y).sqrt();
+                let theta = (x/y).atan();
+                [r*(theta*r).sin(), -(theta*r).cos()]
+            }
+            Variation::Disk => {
+                let r = (x*x + y*y).sqrt();
+                let theta = (x/y).atan();
+                [theta/Pi * (r*Pi).sin(), theta/Pi * (r*Pi).cos()]
+            }
         }
     }
 }
