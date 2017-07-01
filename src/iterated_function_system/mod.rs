@@ -33,7 +33,9 @@ pub trait IteratedFunctionSystem : Sync {
         let sampler = self.get_sampler();
 
         // warm up and get sample to derive bounds
-        let values: Vec<([Real; 2], RGB)> = sampler.skip(100).take((x * y) as usize).collect();
+        let values: Vec<([Real; 2], RGB)> = sampler.skip(1000)
+                                                   .take((x * y) as usize)
+                                                   .collect();
         // read bounds from sample
         let b = bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000);
 
