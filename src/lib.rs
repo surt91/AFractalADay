@@ -23,6 +23,7 @@ pub enum FractalType {
     Mandelbrot,
     HeighwayDragon,
     BarnsleyFern,
+    SierpinskiGasket,
     FractalFlame
 }
 

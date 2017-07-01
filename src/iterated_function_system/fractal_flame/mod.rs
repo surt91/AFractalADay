@@ -5,6 +5,7 @@ use self::nonlinear_transformation::{Variation, NonlinearTransformation};
 
 mod barnsley_fern;
 mod heighway_dragon;
+mod sierpinski_gasket;
 
 extern crate std;
 extern crate num;
