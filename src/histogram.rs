@@ -84,22 +84,39 @@ impl ColoredHistogram {
         // keep aspect ratio and center the fractal
         let x_w = max_x - min_x;
         let y_w = max_y - min_y;
-        let scale = if x_w > y_w {x_w} else {y_w};
-        let x_offset = if x_w > y_w*aspect {0.} else {(y_w*aspect - x_w)/2. };
-        let y_offset = if y_w*aspect > x_w {0.} else {(x_w - y_w)/2.};
+        let x_offset;
+        let y_offset;
+        let x_scale;
+        let y_scale;
+        if x_w > y_w*aspect {
+            x_offset = 0.;
+            y_offset = (x_w/aspect - y_w)/2.;
+            x_scale = x_w;
+            y_scale = x_w / aspect;
+        } else {
+            x_offset = (y_w*aspect - x_w)/2.;
+            y_offset = 0.;
+            x_scale = y_w * aspect;
+            y_scale = y_w;
+        };
 
         for i in values {
             let (z, c) = i;
-            let x = ((z[0] - min_x + x_offset) / scale * (x_res-1) as f32 / aspect) as usize;
-            let y = ((z[1] - min_y + y_offset) / scale * (y_res-1) as f32) as usize;
-            // discard points outside
-            if y*x_res as usize + x < self.bins.len() {
-                let RGB(r, g, b) = c;
-                self.bins[y*x_res as usize + x].0 += r;
-                self.bins[y*x_res as usize + x].1 += g;
-                self.bins[y*x_res as usize + x].2 += b;
-                self.bins[y*x_res as usize + x].3 += 1;
+
+            // discard data outside of bounds
+            if z[0] < min_x || z[0] > max_x || z[1] < min_y || z[1] > max_y {
+                continue
             }
+
+            let x = ((z[0] - min_x + x_offset) / x_scale * (x_res-1) as f32) as usize;
+            let y = ((z[1] - min_y + y_offset) / y_scale * (y_res-1) as f32) as usize;
+
+            let idx = y*x_res as usize + x;
+            let RGB(r, g, b) = c;
+            self.bins[idx].0 += r;
+            self.bins[idx].1 += g;
+            self.bins[idx].2 += b;
+            self.bins[idx].3 += 1;
         }
     }
 }
@@ -190,7 +207,6 @@ pub fn bounds_zoom<'a, I>(vals: I, aspect: f32) -> (f32, f32, f32, f32)
     let n = rs.len();
     let n5 = (n as f32 * 0.05) as usize;
 
-
     rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap());
     let min_x = rs[n5][0];
     let med_x = rs[n/2][0];
@@ -211,6 +227,7 @@ pub fn bounds_zoom<'a, I>(vals: I, aspect: f32) -> (f32, f32, f32, f32)
     };
 
     let (min_x, max_x, min_y, max_y) = bounds;
+
     if max_x - min_x < aspect * (max_y - min_y) {
         bounds.3 = med_y + (max_x - min_x) / aspect / 2.;
         bounds.2 = med_y - (max_x - min_x) / aspect / 2.;
@@ -246,15 +263,19 @@ pub fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32
     // keep aspect ratio and center the fractal
     let x_w = max_x - min_x;
     let y_w = max_y - min_y;
-    let scale = if x_w > y_w {x_w} else {y_w};
-    let x_offset = if x_w > y_w*aspect {0.} else {(y_w*aspect - x_w)/2. };
-    let y_offset = if y_w*aspect > x_w {0.} else {(x_w - y_w)/2.};
+    let x_offset = if x_w >= y_w*aspect {0.} else {(y_w*aspect - x_w)/2. };
+    let y_offset = if y_w*aspect >= x_w {0.} else {(x_w - y_w)/2.};
 
     let mut out = vec![0; (x_res*y_res) as usize];
     for z in vals {
-        let x = ((z[0] - min_x + x_offset) / scale * (x_res-1) as f32 / aspect) as usize;
-        let y = ((z[1] - min_y + y_offset) / scale * (y_res-1) as f32) as usize;
-        // discard points outside
+        // discard data outside of bounds
+        if z[0] < min_x || z[0] > max_x || z[1] < min_y || z[1] > max_y {
+            continue
+        }
+
+        let x = ((z[0] - min_x + x_offset) / x_w * (x_res-1) as f32) as usize;
+        let y = ((z[1] - min_y + y_offset) / (x_w / aspect) * (y_res-1) as f32) as usize;
+
         if y*x_res as usize + x < out.len() {
             out[y*x_res as usize + x] += 1;
         }
