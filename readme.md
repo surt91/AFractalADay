@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/surt91/AFractalADay.svg?branch=master)](https://travis-ci.org/surt91/AFractalADay)
 
-This is a Twitter bot, which can tweet pictures of random fractals.
+This is the Twitter bot [@AFractalADay](https://twitter.com/AFractalADay),
+which tweets pictures of random fractals.
 
 Documentation at [surt91.github.io/AFractalADay](https://surt91.github.io/AFractalADay/).
 
