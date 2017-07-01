@@ -19,15 +19,13 @@ impl AffineTransformation {
     pub fn random(rng: &mut rand::StdRng) -> AffineTransformation {
         // The parameters should be contracting (in the average)
         // that means: a^2+c^2 < 1, b^2+d^2 < 1
-        // also values near zero will lead to thin lines in the fractal
-        // therefore, we scale the random numbers and set an offset
         AffineTransformation {
-            parameters: [rng.gen::<Real>() * 0.7 + 0.1,
-                         rng.gen::<Real>() * 0.7 + 0.1,
-                         rng.gen::<Real>() * 0.7 + 0.1,
-                         rng.gen::<Real>() * 0.7 + 0.1,
-                         rng.gen::<Real>() * 0.7 + 0.1,
-                         rng.gen::<Real>() * 0.7 + 0.1]
+            parameters: [rng.gen::<Real>() * 2.4 - 1.2,
+                         rng.gen::<Real>() * 2.4 - 1.2,
+                         rng.gen::<Real>() * 2.4 - 1.2,
+                         rng.gen::<Real>() * 2.4 - 1.2,
+                         rng.gen::<Real>() * 2.4 - 1.2,
+                         rng.gen::<Real>() * 2.4 - 1.2]
         }
     }
 
