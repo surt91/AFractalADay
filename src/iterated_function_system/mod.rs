@@ -1,4 +1,5 @@
 mod fractal_flame;
+mod quality;
 pub mod iterated_function_system_builder;
 
 extern crate rand;
@@ -11,6 +12,7 @@ use numbers::Real;
 use color::{RGB, RGBA, HSV, color_variance};
 use png;
 use histogram::{bounds_without_outliers, ColoredHistogram};
+use self::quality::probably_good;
 
 use self::fractal_flame::FractalFlameSampler;
 
@@ -24,6 +26,24 @@ pub trait IteratedFunctionSystem : Sync {
     fn get_rng(&mut self) -> &mut rand::StdRng;
     fn get_sampler(&mut self) -> FractalFlameSampler;
 
+    fn estimate_quality(&mut self) -> bool {
+        let sampler = self.get_sampler();
+
+        // warm up and get sample to derive bounds
+        let values: Vec<([Real; 2], RGB)> = sampler.skip(1000)
+                                                   .take(100000 as usize)
+                                                   .collect();
+        let coords: Vec<[Real; 2]> = values.iter()
+                                           .map(|&(z, _)| z)
+                                           .collect();
+
+        // read bounds from sample
+        let b = bounds_without_outliers(coords.iter(), 100);
+
+        // estimate if the fractal will be interesting
+        probably_good(&coords, b)
+    }
+
     // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
                          samples_per_pixel: usize,
@@ -36,6 +56,7 @@ pub trait IteratedFunctionSystem : Sync {
         let values: Vec<([Real; 2], RGB)> = sampler.skip(1000)
                                                    .take((x * y) as usize)
                                                    .collect();
+
         // read bounds from sample
         let b = bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000);
 

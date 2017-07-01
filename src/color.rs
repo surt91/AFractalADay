@@ -145,9 +145,9 @@ pub fn color_variance(pixels: &[HSV]) -> f64 {
                           .filter(|&&HSV(_, s, v)| s < 1e-3 && v > 1e-3)
                           .count();
 
-    // if more than 75% of pixels are black or white, reject
+    // if more than 85% of pixels are black or white, reject
     info!("{:3.2}% of pixels are black or white", (num_black + num_white) as f64 / n * 100.);
-    if (num_black + num_white) as f64 > 0.75 * n {
+    if (num_black + num_white) as f64 > 0.85 * n {
         return -1.
     }
 
