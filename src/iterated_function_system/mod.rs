@@ -11,7 +11,7 @@ use itertools::Itertools;
 use numbers::Real;
 use color::{RGB, RGBA, HSV, color_variance};
 use png;
-use histogram::{bounds_without_outliers, ColoredHistogram};
+use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
 
 use self::fractal_flame::FractalFlameSampler;
@@ -23,6 +23,7 @@ use std::sync::mpsc::channel;
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {
     fn description(&self) -> &str;
+    fn needs_strict_bounds(&self) -> bool;
     fn get_rng(&mut self) -> &mut rand::StdRng;
     fn get_sampler(&mut self) -> FractalFlameSampler;
 
@@ -58,7 +59,11 @@ pub trait IteratedFunctionSystem : Sync {
                                                    .collect();
 
         // read bounds from sample
-        let b = bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000);
+        let b = if self.needs_strict_bounds() {
+            bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000)
+        } else {
+            bounds_zoom(values.iter().map(|&(ref z, _)| z), x as f32/y as f32)
+        };
 
         // use N-1 additional threads (where N is the number of logical CPU)
         // this way one thread is idle and can calculate the remainder and merge the results

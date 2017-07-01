@@ -29,6 +29,7 @@ pub struct FractalFlame {
     colors: Vec<RGB>,
     affine_transformations: Vec<AffineTransformation>,
     nonlinear_transformation: NonlinearTransformation,
+    strict_bounds: bool,
 }
 
 pub struct FractalFlameSampler {
@@ -71,6 +72,10 @@ impl Iterator for FractalFlameSampler {
 }
 
 impl IteratedFunctionSystem for FractalFlame {
+    fn needs_strict_bounds(&self) -> bool {
+        self.strict_bounds
+    }
+
     fn description(&self) -> &str {
         &self.description
     }
@@ -160,7 +165,8 @@ impl IteratedFunctionSystemBuilder {
             probabilities,
             colors,
             affine_transformations,
-            nonlinear_transformation
+            nonlinear_transformation,
+            strict_bounds: false
         }
     }
 }

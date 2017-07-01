@@ -66,7 +66,8 @@ impl IteratedFunctionSystemBuilder {
             probabilities,
             colors,
             affine_transformations,
-            nonlinear_transformation
+            nonlinear_transformation,
+            strict_bounds: true
         }
     }
 }
