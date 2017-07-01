@@ -84,7 +84,7 @@ impl IteratedFunctionSystem for FractalFlame {
         let s: &[_] = &[self.seed];
         let rng = rand::SeedableRng::from_seed(s);
 
-        let p = [0., 0.];
+        let p = [0.05, 0.05];
         let r = 0.;
         let g = 0.;
         let b = 0.;
