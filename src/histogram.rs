@@ -5,6 +5,8 @@ use color::{RGB, RGBA};
 extern crate rayon;
 use self::rayon::prelude::*;
 
+use std::cmp::Ordering;
+
 /// data structure containing a 2d-histogram with 4 channels (rgba)
 pub struct ColoredHistogram {
     resolution: (u32, u32),
@@ -104,7 +106,7 @@ impl ColoredHistogram {
             let (z, c) = i;
 
             // discard data outside of bounds
-            if z[0] < min_x || z[0] > max_x || z[1] < min_y || z[1] > max_y {
+            if z[0] < min_x || z[0] > max_x || z[1] < min_y || z[1] > max_y || z[0].is_nan() || z[1].is_nan() {
                 continue
             }
 
@@ -167,12 +169,12 @@ pub fn bounds_without_outliers<'a, I>(vals: I, outliers: usize) -> (f32, f32, f3
     let mut rs: Vec<&[Real;2]> = vals.collect();
     let n = rs.len();
 
-
-    rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap());
+    // FIXME ignore NaN... this might lead to unexpected results
+    rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap_or(Ordering::Equal));
     let min_x = rs[outliers][0];
     let max_x = rs[n - outliers - 1][0];
 
-    rs.sort_by(|r1, r2| r1[1].partial_cmp(&r2[1]).unwrap());
+    rs.sort_by(|r1, r2| r1[1].partial_cmp(&r2[1]).unwrap_or(Ordering::Equal));
     let min_y = rs[outliers][1];
     let max_y = rs[n - outliers - 1][1];
 
@@ -207,14 +209,15 @@ pub fn bounds_zoom<'a, I>(vals: I, aspect: f32) -> (f32, f32, f32, f32)
     let n = rs.len();
     let n5 = (n as f32 * 0.05) as usize;
 
-    rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap());
+    // FIXME ignore NaN... this might lead to unexpected results
+    rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap_or(Ordering::Equal));
     let min_x = rs[n5][0];
-    let med_x = rs[n/2][0];
+    let mut med_x = rs[n/2][0];
     let max_x = rs[n - n5 - 1][0];
 
-    rs.sort_by(|r1, r2| r1[1].partial_cmp(&r2[1]).unwrap());
+    rs.sort_by(|r1, r2| r1[1].partial_cmp(&r2[1]).unwrap_or(Ordering::Equal));
     let min_y = rs[n5][1];
-    let med_y = rs[n/2][1];
+    let mut med_y = rs[n/2][1];
     let max_y = rs[n - n5 - 1][1];
 
     // FIXME
@@ -223,6 +226,8 @@ pub fn bounds_zoom<'a, I>(vals: I, aspect: f32) -> (f32, f32, f32, f32)
     let mut bounds = if min_x.is_finite() && max_x.is_finite() && min_y.is_finite() && max_y.is_finite() {
         (min_x, max_x, min_y, max_y)
     } else {
+        med_x = 0.;
+        med_y = 0.;
         (-1., 1., -1., 1.)
     };
 

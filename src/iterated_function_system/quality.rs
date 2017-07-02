@@ -19,6 +19,12 @@ pub fn probably_good(vals: &[[Real; 2]], bounds: (f32, f32, f32, f32)) -> bool {
     let width = bounds.1 - bounds.0;
     let height = bounds.3 - bounds.2;
 
+    // if we have NaN, it can not be good
+    if !width.is_finite() || !height.is_finite() {
+        info!("non-finite bounds, probably divergent");
+        return false
+    }
+
     // if it is too tall, it can not be good
     if width < height/2. {
         info!("probably too tall ({}:{:.1})", 1., height/width);
@@ -26,7 +32,7 @@ pub fn probably_good(vals: &[[Real; 2]], bounds: (f32, f32, f32, f32)) -> bool {
     }
 
     let dim = correlation_dimension(vals, width+height);
-    if dim < 1.2 {
+    if dim < 1.2 || dim.is_nan() {
         info!("bad correlation dimension ({})", dim);
         return false
     }
