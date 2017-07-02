@@ -1,6 +1,7 @@
 mod fractal_flame;
 mod quality;
 pub mod iterated_function_system_builder;
+pub mod variation;
 
 extern crate rand;
 

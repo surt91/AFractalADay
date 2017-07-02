@@ -1,7 +1,8 @@
 mod affine_transformation;
 use self::affine_transformation::AffineTransformation;
 mod nonlinear_transformation;
-use self::nonlinear_transformation::{Variation, NonlinearTransformation};
+use self::nonlinear_transformation::NonlinearTransformation;
+use super::variation::Variation;
 
 mod barnsley_fern;
 mod heighway_dragon;
@@ -145,7 +146,10 @@ impl IteratedFunctionSystemBuilder {
                           .take(number_of_functions)
                           .collect();
 
-        let nonlinear_transformation = NonlinearTransformation::random(&mut rng);
+        let nonlinear_transformation = match self.variation {
+            Some(v) => NonlinearTransformation::new(v),
+            None => NonlinearTransformation::random(&mut rng)
+        };
 
         let description = format!("Fractal Flame: '{}' Variation, {} affine transformations",
                                    nonlinear_transformation.name(),

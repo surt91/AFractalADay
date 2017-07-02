@@ -4,6 +4,7 @@ use std::fmt;
 use self::clap::{App, Arg, ArgGroup};
 use escape_time_fractal::style::Style;
 use FractalType;
+use iterated_function_system::variation::Variation;
 
 #[derive(Debug)]
 pub struct Options {
@@ -16,18 +17,20 @@ pub struct Options {
     pub quiet: bool,
     pub optipng: bool,
     pub fractal_type: FractalType,
+    pub variation: Option<Variation>,
 }
 
 impl fmt::Display for Options {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Options: type: {}, seed: {}, name:  {}, style: {}, tweet: {}, quiet: {}, optipng: {}",
+        write!(f, "Options: type: {}, seed: {}, name:  {}, style: {}, variation: {}, tweet: {}, quiet: {}, optipng: {}",
                   self.fractal_type,
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
                   self.style.as_ref().unwrap_or(&"random".to_string()),
+                  self.variation.as_ref().and_then(|v| Some(v.name())).unwrap_or_else(|| "default".to_string()),
                   self.tweet,
                   self.quiet,
-                  self.optipng
+                  self.optipng,
               )
     }
 }
@@ -133,6 +136,15 @@ pub fn parse_cl() -> Options {
               .group(ArgGroup::with_name("escape_time")
                   .conflicts_with("iterated_function_system")
               )
+              .arg(Arg::with_name("variation")
+                    .long("variation")
+                    .takes_value(true)
+                    .help(&format!("the variation to use for fractal flames\nOne of:\n  {}",
+                                  Variation::list().join("\n  "))
+                    )
+                    // FIXME what is the nice way?
+                    .possible_values(&Variation::list().iter().map(|s| s.as_ref()).collect::<Vec<&str>>().as_slice())
+                    .requires("iterated_function_system")
               )
               .get_matches();
 
@@ -182,6 +194,9 @@ pub fn parse_cl() -> Options {
         FractalType::Random
     };
 
+    let variation = matches.value_of("variation")
+                           .and_then(|s| Variation::from_string(s));
+
     Options {
         seed,
         filename,
@@ -191,6 +206,7 @@ pub fn parse_cl() -> Options {
         fractal_type,
         height,
         width,
-        optipng
+        optipng,
+        variation,
     }
 }

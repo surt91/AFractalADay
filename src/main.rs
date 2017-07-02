@@ -79,7 +79,11 @@ fn build_fractal(filename: &str,
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
-        let b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
+        let mut b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
+        b = match opt.variation {
+            Some(ref x) => b.variation(x),
+            None => b
+        };
 
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),

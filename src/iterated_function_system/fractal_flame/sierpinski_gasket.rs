@@ -37,9 +37,16 @@ impl IteratedFunctionSystemBuilder {
             AffineTransformation::new(-1./4., -sqrt3by4, 1.,
                                       sqrt3by4, -1./4., 0.),
         ];
-        let nonlinear_transformation = NonlinearTransformation::new(Variation::Linear);
 
-        let description = "Sierpinski Gasket".to_owned();
+        let mut description = "Sierpinski Gasket".to_owned();
+
+        let nonlinear_transformation = match self.variation {
+            Some(v) => {
+                description.push_str(&format!(" with Variation '{}'", v.name()));
+                NonlinearTransformation::new(v)
+            },
+            None => NonlinearTransformation::new(Variation::Linear)
+        };
 
         info!("Will render {}", description);
 

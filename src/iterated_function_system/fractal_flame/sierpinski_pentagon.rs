@@ -50,9 +50,16 @@ impl IteratedFunctionSystemBuilder {
             AffineTransformation::new(R, 0., x5,
                                       0., R, y3),
         ];
-        let nonlinear_transformation = NonlinearTransformation::new(Variation::Linear);
 
-        let description = "Sierpinski Pentagon".to_owned();
+        let mut description = "Sierpinski Pentagon".to_owned();
+
+        let nonlinear_transformation = match self.variation {
+            Some(v) => {
+                description.push_str(&format!(" with Variation '{}'", v.name()));
+                NonlinearTransformation::new(v)
+            },
+            None => NonlinearTransformation::new(Variation::Linear)
+        };
 
         info!("Will render {}", description);
 

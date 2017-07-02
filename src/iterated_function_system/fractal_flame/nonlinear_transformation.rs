@@ -1,23 +1,11 @@
 extern crate rand;
 use self::rand::Rng;
 
+use super::Variation;
 use numbers::Real;
 use std::f64::consts::PI as PI64;
 
 const PI: Real = PI64 as Real;
-
-#[derive(Debug, Clone)]
-pub enum Variation {
-    Linear,
-    Sinusoidal,
-    Spherical,
-    Swirl,
-    Horseshoe,
-    Polar,
-    Handkerchief,
-    Heart,
-    Disk,
-}
 
 #[derive(Debug, Clone)]
 pub struct NonlinearTransformation {
@@ -32,18 +20,8 @@ impl NonlinearTransformation {
     }
 
     pub fn random(rng: &mut rand::StdRng) -> NonlinearTransformation {
-        let variation = match rng.gen_range(0, 9) {
-            0 => Variation::Linear,
-            1 => Variation::Sinusoidal,
-            2 => Variation::Spherical,
-            3 => Variation::Swirl,
-            4 => Variation::Horseshoe,
-            5 => Variation::Polar,
-            6 => Variation::Handkerchief,
-            7 => Variation::Heart,
-            8 => Variation::Disk,
-            _ => unreachable!()
-        };
+        let rn = rng.gen_range(0, Variation::num());
+        let variation = Variation::from_number(rn).unwrap();
 
         NonlinearTransformation {
             variation
@@ -51,17 +29,7 @@ impl NonlinearTransformation {
     }
 
     pub fn name(&self) -> String {
-        match self.variation {
-            Variation::Linear => "Linear",
-            Variation::Sinusoidal => "Sinusoidal",
-            Variation::Spherical => "Spherical",
-            Variation::Swirl => "Swirl",
-            Variation::Horseshoe => "Horseshoe",
-            Variation::Polar => "Polar",
-            Variation::Handkerchief => "Handkerchief",
-            Variation::Heart => "Heart",
-            Variation::Disk => "Disk",
-        }.to_owned()
+        self.variation.name()
     }
 
     pub fn transform(&self, r: [Real; 2]) -> [Real; 2] {

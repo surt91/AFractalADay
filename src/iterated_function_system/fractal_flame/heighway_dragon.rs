@@ -46,9 +46,16 @@ impl IteratedFunctionSystemBuilder {
                                       (3.*PI_QUARTER).cos(),
                                       (2. as Real).sqrt()) * BY_SQRT,
         ];
-        let nonlinear_transformation = NonlinearTransformation::new(Variation::Linear);
 
-        let description = "Heighway Dragon".to_owned();
+        let mut description = "Heighway Dragon".to_owned();
+
+        let nonlinear_transformation = match self.variation {
+            Some(v) => {
+                description.push_str(&format!(" with Variation '{}'", v.name()));
+                NonlinearTransformation::new(v)
+            },
+            None => NonlinearTransformation::new(Variation::Linear)
+        };
 
         info!("Will render {}", description);
 
