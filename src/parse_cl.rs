@@ -115,7 +115,7 @@ pub fn parse_cl() -> Options {
                     .help("render a fractal flame")
               )
               .group(ArgGroup::with_name("fractal_type")
-                  .args(&["newton", "mandelbrot", "julia", "dragon", "fern", "sierpinski", "flame"]))
+                  .args(&["newton", "mandelbrot", "julia", "dragon", "fern", "sierpinski", "pythagorean", "flame"]))
               .get_matches();
 
     let tweet = matches.is_present("tweet");
