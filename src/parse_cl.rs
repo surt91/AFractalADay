@@ -150,15 +150,15 @@ pub fn parse_cl() -> Options {
     };
     let style = matches.value_of("style").map(|x| x.to_string());
     let seed = matches.value_of("seed")
-                      .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be and integer")))
+                      .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be an integer")))
                       .or_else(|| None);
 
     let height = matches.value_of("height")
-                        .and_then(|s| Some(s.parse::<u32>().expect("height needs to be and integer")))
-                        .or_else(|| None);;
+                        .and_then(|s| Some(s.parse::<u32>().expect("height needs to be an integer")))
+                        .or_else(|| None);
     let width = matches.value_of("width")
-                       .and_then(|s| Some(s.parse::<u32>().expect("width needs to be and integer")))
-                       .or_else(|| None);;
+                       .and_then(|s| Some(s.parse::<u32>().expect("width needs to be an integer")))
+                       .or_else(|| None);
 
     let fractal_type = if matches.is_present("newton") {
         FractalType::Newton
