@@ -40,6 +40,13 @@ pub fn render_fractal_flame<T: IteratedFunctionSystem>(fractal: &mut T, filename
 
 // same as fractal flame, but always accept
 pub fn render_ifs<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
-    let (_, description) = render_fractal_flame(fractal, filename, dim);
+    let description = fractal.description().to_string();
+    info!("{}", description);
+
+    match fractal.render(*dim, 1000, filename) {
+        Ok(_) => (),
+        Err(x) => error!("creation of fractal failed {:?}", x)
+    }
+
     (true, description)
 }
