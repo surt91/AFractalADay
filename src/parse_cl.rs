@@ -106,6 +106,10 @@ pub fn parse_cl() -> Options {
                     .long("sierpinski")
                     .help("render a Sierpinski gasket")
               )
+              .arg(Arg::with_name("sierpinski-pentagon")
+                    .long("sierpinski-pentagon")
+                    .help("render a Sierpinski pentagon")
+              )
               .arg(Arg::with_name("pythagorean")
                     .long("pythagorean")
                     .help("render a Pythagorean tree")
@@ -115,7 +119,17 @@ pub fn parse_cl() -> Options {
                     .help("render a fractal flame")
               )
               .group(ArgGroup::with_name("fractal_type")
-                  .args(&["newton", "mandelbrot", "julia", "dragon", "fern", "sierpinski", "pythagorean", "flame"]))
+                  .args(&["newton",
+                          "mandelbrot",
+                          "julia",
+                          "dragon",
+                          "fern",
+                          "sierpinski",
+                          "sierpinski-pentagon",
+                          "pythagorean",
+                          "flame"]
+                  )
+              )
               .get_matches();
 
     let tweet = matches.is_present("tweet");
@@ -154,6 +168,8 @@ pub fn parse_cl() -> Options {
         FractalType::BarnsleyFern
     } else if matches.is_present("sierpinski") {
         FractalType::SierpinskiGasket
+    } else if matches.is_present("sierpinski-pentagon") {
+        FractalType::SierpinskiPentagon
     } else if matches.is_present("pythagorean") {
         FractalType::PythagoreanTree
     } else if matches.is_present("flame") {
