@@ -106,6 +106,10 @@ pub fn parse_cl() -> Options {
                     .long("sierpinski")
                     .help("render a Sierpinski gasket")
               )
+              .arg(Arg::with_name("pythagorean")
+                    .long("pythagorean")
+                    .help("render a Pythagorean tree")
+              )
               .arg(Arg::with_name("flame")
                     .long("flame")
                     .help("render a fractal flame")
@@ -150,6 +154,8 @@ pub fn parse_cl() -> Options {
         FractalType::BarnsleyFern
     } else if matches.is_present("sierpinski") {
         FractalType::SierpinskiGasket
+    } else if matches.is_present("pythagorean") {
+        FractalType::PythagoreanTree
     } else if matches.is_present("flame") {
         FractalType::FractalFlame
     } else {

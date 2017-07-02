@@ -6,6 +6,7 @@ use self::nonlinear_transformation::{Variation, NonlinearTransformation};
 mod barnsley_fern;
 mod heighway_dragon;
 mod sierpinski_gasket;
+mod pythagorean_tree;
 
 extern crate std;
 extern crate num;

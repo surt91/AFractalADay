@@ -24,6 +24,7 @@ pub enum FractalType {
     HeighwayDragon,
     BarnsleyFern,
     SierpinskiGasket,
+    PythagoreanTree,
     FractalFlame
 }
 

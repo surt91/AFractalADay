@@ -88,6 +88,7 @@ fn build_fractal(filename: &str,
             FractalType::HeighwayDragon => render_ifs(&mut b.heighway_dragon(), filename, &dim),
             FractalType::BarnsleyFern => render_ifs(&mut b.barnsley_fern(), filename, &dim),
             FractalType::SierpinskiGasket => render_ifs(&mut b.sierpinski_gasket(), filename, &dim),
+            FractalType::PythagoreanTree => render_ifs(&mut b.pythagorean_tree(), filename, &dim),
             FractalType::FractalFlame => render_fractal_flame(&mut b.fractal_flame(), filename, &dim),
             FractalType::Random => unreachable!()
         };
