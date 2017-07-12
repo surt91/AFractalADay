@@ -1,5 +1,7 @@
 mod affine_transformation;
 use self::affine_transformation::AffineTransformation;
+mod mobius_transformation;
+use self::mobius_transformation::MobiusTransformation;
 mod nonlinear_transformation;
 use self::nonlinear_transformation::NonlinearTransformation;
 use super::variation::Variation;
@@ -10,6 +12,8 @@ mod sierpinski_gasket;
 mod sierpinski_pentagon;
 mod pythagorean_tree;
 
+mod mobius_flame;
+
 extern crate std;
 extern crate num;
 use itertools;
@@ -17,7 +21,7 @@ use itertools;
 extern crate rand;
 use self::rand::Rng;
 
-use numbers::Real;
+use numbers::{Real, Cplx};
 use super::IteratedFunctionSystem;
 use color::{RGB, HSV};
 
@@ -26,11 +30,15 @@ use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 #[derive(Debug, Clone)]
 pub enum Transformation {
     Affine(AffineTransformation),
+    Mobius(MobiusTransformation)
 }
 
 impl Transformation {
     fn affine(a: Real, b: Real, c: Real, d: Real, e: Real, f: Real) -> Transformation {
         Transformation::Affine(AffineTransformation::new(a, b, c, d, e, f))
+    }
+    fn mobius(a: Cplx, b: Cplx, c: Cplx, d: Cplx) -> Transformation {
+        Transformation::Mobius(MobiusTransformation::new(a, b, c, d))
     }
 }
 
@@ -75,6 +83,10 @@ impl Iterator for FractalFlameSampler {
 
         let transformed = match self.transformations[index] {
             Transformation::Affine(ref x) => x.transform(self.p),
+            Transformation::Mobius(ref x) => {
+                let z = x.transform(Cplx::new(self.p[0], self.p[1]));
+                [z.re, z.im]
+            }
         };
         self.p = self.variation.transform(transformed);
 

@@ -125,6 +125,11 @@ pub fn parse_cl() -> Options {
                     .help("render a Pythagorean tree")
                     .group("iterated_function_system")
               )
+              .arg(Arg::with_name("mobius")
+                    .long("mobius")
+                    .help("render a mobius flame")
+                    .group("iterated_function_system")
+              )
               .arg(Arg::with_name("flame")
                     .long("flame")
                     .help("render a fractal flame")
@@ -188,6 +193,8 @@ pub fn parse_cl() -> Options {
         FractalType::SierpinskiPentagon
     } else if matches.is_present("pythagorean") {
         FractalType::PythagoreanTree
+    } else if matches.is_present("mobius") {
+        FractalType::MobiusFlame
     } else if matches.is_present("flame") {
         FractalType::FractalFlame
     } else {
