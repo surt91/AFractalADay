@@ -17,8 +17,6 @@ pub fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filenam
 }
 
 pub fn render_fractal_flame<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
-    let mut finished = false;
-
     let description = fractal.description().to_string();
     info!("{}", description);
 
@@ -30,11 +28,11 @@ pub fn render_fractal_flame<T: IteratedFunctionSystem>(fractal: &mut T, filename
     // ensure that the image has some variance
     // otherwise the images are probably boring
     match fractal.render(*dim, 1000, filename) {
-        Ok(variance) => finished = variance > 0.01,
+        Ok(_) => (),
         Err(x) => error!("creation of fractal failed {:?}", x)
     }
 
-    (finished, description)
+    (true, description)
 }
 
 
