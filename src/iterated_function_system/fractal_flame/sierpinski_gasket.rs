@@ -2,7 +2,7 @@ extern crate rand;
 use self::rand::Rng;
 
 use color::{HSV, RGB};
-use super::{AffineTransformation, NonlinearTransformation, Variation, FractalFlame};
+use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
 
 use numbers::Real;
@@ -29,18 +29,18 @@ impl IteratedFunctionSystemBuilder {
         }
 
         let sqrt3by4 = (3. as Real).sqrt()/4.;
-        let affine_transformations = vec![
-            AffineTransformation::new(-1./4., sqrt3by4, 1./4.,
-                                      -sqrt3by4, -1./4., sqrt3by4),
-            AffineTransformation::new(1./2., 0., 1./4.,
-                                      0., 1./2., sqrt3by4),
-            AffineTransformation::new(-1./4., -sqrt3by4, 1.,
-                                      sqrt3by4, -1./4., 0.),
+        let transformations = vec![
+            Transformation::affine(-1./4., sqrt3by4, 1./4.,
+                                   -sqrt3by4, -1./4., sqrt3by4),
+            Transformation::affine(1./2., 0., 1./4.,
+                                   0., 1./2., sqrt3by4),
+            Transformation::affine(-1./4., -sqrt3by4, 1.,
+                                   sqrt3by4, -1./4., 0.),
         ];
 
         let mut description = "Sierpinski Gasket".to_owned();
 
-        let nonlinear_transformation = match self.variation {
+        let variation = match self.variation {
             Some(v) => {
                 description.push_str(&format!(" with Variation '{}'", v.name()));
                 NonlinearTransformation::new(v)
@@ -53,8 +53,8 @@ impl IteratedFunctionSystemBuilder {
         debug!("number of functions    : {:?}", number_of_functions);
         debug!("cumulative probabilites: {:?}", probabilities);
         debug!("colors                 : {:?}", colors);
-        debug!("affine transformations : {:?}", affine_transformations);
-        debug!("Variation              : {:?}", nonlinear_transformation);
+        debug!("affine transformations : {:?}", transformations);
+        debug!("Variation              : {:?}", variation);
 
         FractalFlame {
             rng,
@@ -63,8 +63,8 @@ impl IteratedFunctionSystemBuilder {
             number_of_functions,
             probabilities,
             colors,
-            affine_transformations,
-            nonlinear_transformation,
+            transformations,
+            variation,
             strict_bounds: true
         }
     }

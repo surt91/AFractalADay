@@ -23,6 +23,17 @@ use color::{RGB, HSV};
 
 use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 
+#[derive(Debug, Clone)]
+pub enum Transformation {
+    Affine(AffineTransformation),
+}
+
+impl Transformation {
+    fn affine(a: Real, b: Real, c: Real, d: Real, e: Real, f: Real) -> Transformation {
+        Transformation::Affine(AffineTransformation::new(a, b, c, d, e, f))
+    }
+}
+
 pub struct FractalFlame {
     rng: rand::StdRng,
     pub description: String,
@@ -30,8 +41,8 @@ pub struct FractalFlame {
     number_of_functions: usize,
     probabilities: Vec<f64>,
     colors: Vec<RGB>,
-    affine_transformations: Vec<AffineTransformation>,
-    nonlinear_transformation: NonlinearTransformation,
+    transformations: Vec<Transformation>,
+    variation: NonlinearTransformation,
     strict_bounds: bool,
 }
 
@@ -40,8 +51,8 @@ pub struct FractalFlameSampler {
     number_of_functions: usize,
     probabilities: Vec<f64>,
     colors: Vec<RGB>,
-    affine_transformations: Vec<AffineTransformation>,
-    nonlinear_transformation: NonlinearTransformation,
+    transformations: Vec<Transformation>,
+    variation: NonlinearTransformation,
     p: [Real; 2],
     r: f64,
     g: f64,
@@ -62,8 +73,10 @@ impl Iterator for FractalFlameSampler {
             }
         }
 
-        let linear = self.affine_transformations[index].transform(self.p);
-        self.p = self.nonlinear_transformation.transform(linear);
+        let transformed = match self.transformations[index] {
+            Transformation::Affine(ref x) => x.transform(self.p),
+        };
+        self.p = self.variation.transform(transformed);
 
         let RGB(r, g, b) = self.colors[index];
         self.r = (r + self.r)/2.;
@@ -102,8 +115,8 @@ impl IteratedFunctionSystem for FractalFlame {
             number_of_functions: self.number_of_functions,
             probabilities: self.probabilities.clone(),
             colors: self.colors.clone(),
-            affine_transformations: self.affine_transformations.clone(),
-            nonlinear_transformation: self.nonlinear_transformation.clone(),
+            transformations: self.transformations.clone(),
+            variation: self.variation.clone(),
             p,
             r,
             g,
@@ -141,18 +154,18 @@ impl IteratedFunctionSystemBuilder {
             let hsv = HSV(rng.gen(), 1., 1.);
             colors.push(hsv.to_rgb());
         }
-        let affine_transformations: Vec<AffineTransformation> =
-                itertools::repeat_call(|| AffineTransformation::random(&mut rng))
+        let transformations: Vec<Transformation> =
+                itertools::repeat_call(|| Transformation::Affine(AffineTransformation::random(&mut rng)))
                           .take(number_of_functions)
                           .collect();
 
-        let nonlinear_transformation = match self.variation {
+        let variation = match self.variation {
             Some(v) => NonlinearTransformation::new(v),
             None => NonlinearTransformation::random(&mut rng)
         };
 
         let description = format!("Fractal Flame: '{}' Variation, {} affine transformations",
-                                   nonlinear_transformation.name(),
+                                   variation.name(),
                                    number_of_functions);
 
         info!("Will render {}", description);
@@ -160,8 +173,8 @@ impl IteratedFunctionSystemBuilder {
         debug!("number of functions    : {:?}", number_of_functions);
         debug!("cumulative probabilites: {:?}", probabilities);
         debug!("colors                 : {:?}", colors);
-        debug!("affine transformations : {:?}", affine_transformations);
-        debug!("Variation              : {:?}", nonlinear_transformation);
+        debug!("affine transformations : {:?}", transformations);
+        debug!("Variation              : {:?}", variation);
 
         FractalFlame {
             rng,
@@ -170,8 +183,8 @@ impl IteratedFunctionSystemBuilder {
             number_of_functions,
             probabilities,
             colors,
-            affine_transformations,
-            nonlinear_transformation,
+            transformations,
+            variation,
             strict_bounds: false
         }
     }

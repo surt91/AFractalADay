@@ -2,7 +2,7 @@ extern crate rand;
 use self::rand::Rng;
 
 use color::{HSV, RGB};
-use super::{AffineTransformation, NonlinearTransformation, Variation, FractalFlame};
+use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
 
 use numbers::Real;
@@ -32,24 +32,24 @@ impl IteratedFunctionSystemBuilder {
             colors.push(hsv.to_rgb());
         }
 
-        let affine_transformations = vec![
-            AffineTransformation::new(PI_QUARTER.cos(),
-                                      (-PI_QUARTER).sin(),
-                                      0.,
-                                      PI_QUARTER.sin(),
-                                      PI_QUARTER.cos(),
-                                      0.) * BY_SQRT,
-            AffineTransformation::new((3.*PI_QUARTER).cos(),
-                                      (-3.*PI_QUARTER).sin(),
-                                      1.,
-                                      (3.*PI_QUARTER).sin(),
-                                      (3.*PI_QUARTER).cos(),
-                                      (2. as Real).sqrt()) * BY_SQRT,
+        let transformations = vec![
+            Transformation::affine(PI_QUARTER.cos() * BY_SQRT,
+                                   (-PI_QUARTER).sin() * BY_SQRT,
+                                   0.,
+                                   PI_QUARTER.sin() * BY_SQRT,
+                                   PI_QUARTER.cos() * BY_SQRT,
+                                   0.),
+            Transformation::affine((3.*PI_QUARTER).cos() * BY_SQRT,
+                                   (-3.*PI_QUARTER).sin() * BY_SQRT,
+                                   BY_SQRT,
+                                   (3.*PI_QUARTER).sin() * BY_SQRT,
+                                   (3.*PI_QUARTER).cos() * BY_SQRT,
+                                   (2. as Real).sqrt() * BY_SQRT) ,
         ];
 
         let mut description = "Heighway Dragon".to_owned();
 
-        let nonlinear_transformation = match self.variation {
+        let variation = match self.variation {
             Some(v) => {
                 description.push_str(&format!(" with Variation '{}'", v.name()));
                 NonlinearTransformation::new(v)
@@ -62,8 +62,8 @@ impl IteratedFunctionSystemBuilder {
         debug!("number of functions    : {:?}", number_of_functions);
         debug!("cumulative probabilites: {:?}", probabilities);
         debug!("colors                 : {:?}", colors);
-        debug!("affine transformations : {:?}", affine_transformations);
-        debug!("Variation              : {:?}", nonlinear_transformation);
+        debug!("affine transformations : {:?}", transformations);
+        debug!("Variation              : {:?}", variation);
 
         FractalFlame {
             rng,
@@ -72,8 +72,8 @@ impl IteratedFunctionSystemBuilder {
             number_of_functions,
             probabilities,
             colors,
-            affine_transformations,
-            nonlinear_transformation,
+            transformations,
+            variation,
             strict_bounds: true
         }
     }

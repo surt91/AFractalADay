@@ -1,7 +1,7 @@
 extern crate rand;
 
 use color::RGB;
-use super::{AffineTransformation, NonlinearTransformation, Variation, FractalFlame};
+use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
 
 impl IteratedFunctionSystemBuilder {
@@ -25,16 +25,16 @@ impl IteratedFunctionSystemBuilder {
             RGB(0.8, 0.8, 0.),
             RGB(0.8, 0.6, 0.)
         ];
-        let affine_transformations = vec![
-            AffineTransformation::new(0., 0., 0., 0., 0.16, 0.),
-            AffineTransformation::new(0.85, 0.04, 0., -0.04, 0.85, 1.6),
-            AffineTransformation::new(0.2, -0.26, 0., 0.23, 0.22, 1.6),
-            AffineTransformation::new(-0.15, 0.28, 0., 0.26, 0.24, 0.44),
+        let transformations = vec![
+            Transformation::affine(0., 0., 0., 0., 0.16, 0.),
+            Transformation::affine(0.85, 0.04, 0., -0.04, 0.85, 1.6),
+            Transformation::affine(0.2, -0.26, 0., 0.23, 0.22, 1.6),
+            Transformation::affine(-0.15, 0.28, 0., 0.26, 0.24, 0.44),
         ];
 
         let mut description = "Barnsley Fern".to_owned();
 
-        let nonlinear_transformation = match self.variation {
+        let variation = match self.variation {
             Some(v) => {
                 description.push_str(&format!(" with Variation '{}'", v.name()));
                 NonlinearTransformation::new(v)
@@ -47,8 +47,8 @@ impl IteratedFunctionSystemBuilder {
         debug!("number of functions    : {:?}", number_of_functions);
         debug!("cumulative probabilites: {:?}", probabilities);
         debug!("colors                 : {:?}", colors);
-        debug!("affine transformations : {:?}", affine_transformations);
-        debug!("Variation              : {:?}", nonlinear_transformation);
+        debug!("affine transformations : {:?}", transformations);
+        debug!("Variation              : {:?}", variation);
 
         FractalFlame {
             rng,
@@ -57,8 +57,8 @@ impl IteratedFunctionSystemBuilder {
             number_of_functions,
             probabilities,
             colors,
-            affine_transformations,
-            nonlinear_transformation,
+            transformations,
+            variation,
             strict_bounds: true
         }
     }
