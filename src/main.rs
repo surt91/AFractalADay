@@ -65,7 +65,7 @@ fn build_fractal(filename: &str,
         fractal_type = match rng.gen_range(0, 3) {
             0 => FractalType::Newton,
             1 => FractalType::FractalFlame,
-            2 => FractalType::MobiusFlame,
+            2 => FractalType::ThreeMobius,
             _ => unreachable!()
         }
     };
