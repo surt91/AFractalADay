@@ -26,6 +26,7 @@ pub enum FractalType {
     SierpinskiGasket,
     SierpinskiPentagon,
     PythagoreanTree,
+    ThreeMobius,
     MobiusFlame,
     FractalFlame
 }

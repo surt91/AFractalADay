@@ -12,6 +12,7 @@ mod sierpinski_gasket;
 mod sierpinski_pentagon;
 mod pythagorean_tree;
 
+mod three_moebius_flame;
 mod mobius_flame;
 
 extern crate std;
