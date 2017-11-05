@@ -1,3 +1,5 @@
+//! Generate random fractals.
+
 extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
@@ -110,8 +112,24 @@ fn build_fractal(filename: &str,
 }
 
 fn tweet(filename: &str, description: &str) {
+    use std::thread::sleep;
+    use std::time;
     twitter::tweet_image(description, filename)
-            .expect("Uploading to twitter failed!");
+            .or_else(|_| {
+                    info!("Upload to Twitter failed!");
+                    info!("Try again in 60 seconds.");
+                    sleep(time::Duration::from_secs(60));
+                    twitter::tweet_image(description, filename)
+                }
+            )
+            .or_else(|_| {
+                    info!("Upload to Twitter failed again!");
+                    info!("Try again in 10 minutes.");
+                    sleep(time::Duration::from_secs(600));
+                    twitter::tweet_image(description, filename)
+                }
+            )
+            .expect("Uploading to twitter failed three times! Panic!");
 }
 
 fn main() {
