@@ -61,7 +61,7 @@ fn correlation_dimension(vals: &[[Real; 2]], span: Real) -> Real {
     let r1: Real = span/100.;
     let r2: Real = 10.*r1;
 
-    let mut rng = rand::StdRng::new().unwrap();
+    let mut rng = rand::weak_rng();
 
     for (n, i) in vals.iter().enumerate().skip(20) {
         let j = vals[rng.gen_range(0, n)];

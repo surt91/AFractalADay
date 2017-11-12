@@ -16,7 +16,9 @@ impl AffineTransformation {
         }
     }
 
-    pub fn random(rng: &mut rand::StdRng) -> AffineTransformation {
+    pub fn random<T>(rng: &mut T) -> AffineTransformation
+        where T: Rng
+    {
         // The parameters should be contracting (in the average)
         // that means: a^2+c^2 < 1, b^2+d^2 < 1
         AffineTransformation {

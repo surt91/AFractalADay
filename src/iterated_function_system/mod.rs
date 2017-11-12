@@ -21,12 +21,15 @@ extern crate num_cpus;
 use std::thread;
 use std::sync::mpsc::channel;
 
+pub type RngType = rand::Isaac64Rng;
+pub type SeedType = [u64; 4];
+
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {
     fn description(&self) -> &str;
     fn needs_strict_bounds(&self) -> bool;
-    fn get_rng(&mut self) -> &mut rand::StdRng;
-    fn get_sampler(&mut self) -> FractalFlameSampler;
+    fn get_rng(&mut self) -> &mut RngType;
+    fn get_sampler(&mut self) -> FractalFlameSampler<RngType>;
 
     fn estimate_quality(&mut self) -> bool {
         let sampler = self.get_sampler();

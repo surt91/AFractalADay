@@ -20,13 +20,15 @@ extern crate num;
 use itertools;
 
 extern crate rand;
-use self::rand::Rng;
+use self::rand::{Rng, SeedableRng};
 
 use numbers::{Real, Cplx};
 use super::IteratedFunctionSystem;
 use color::{RGB, HSV};
 
+use super::{RngType, SeedType};
 use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
+
 
 #[derive(Debug, Clone)]
 pub enum Transformation {
@@ -43,10 +45,11 @@ impl Transformation {
     }
 }
 
-pub struct FractalFlame {
-    rng: rand::StdRng,
+pub struct FractalFlame<T>
+    where T: Rng
+{
+    rng: T,
     pub description: String,
-    seed: usize,
     number_of_functions: usize,
     probabilities: Vec<f64>,
     colors: Vec<RGB>,
@@ -55,8 +58,10 @@ pub struct FractalFlame {
     strict_bounds: bool,
 }
 
-pub struct FractalFlameSampler {
-    rng: rand::StdRng,
+pub struct FractalFlameSampler<T>
+    where T: Rng
+{
+    rng: T,
     number_of_functions: usize,
     probabilities: Vec<f64>,
     colors: Vec<RGB>,
@@ -68,7 +73,9 @@ pub struct FractalFlameSampler {
     b: f64,
 }
 
-impl Iterator for FractalFlameSampler {
+impl <T> Iterator for FractalFlameSampler<T>
+    where T: Rng
+{
     type Item = ([Real; 2], RGB);
 
     fn next(&mut self) -> Option<([Real; 2], RGB)> {
@@ -100,7 +107,8 @@ impl Iterator for FractalFlameSampler {
     }
 }
 
-impl IteratedFunctionSystem for FractalFlame {
+impl IteratedFunctionSystem for FractalFlame<RngType>
+{
     fn needs_strict_bounds(&self) -> bool {
         self.strict_bounds
     }
@@ -109,14 +117,14 @@ impl IteratedFunctionSystem for FractalFlame {
         &self.description
     }
 
-    fn get_rng(&mut self) -> &mut rand::StdRng {
+    fn get_rng(&mut self) -> &mut RngType
+    {
         &mut self.rng
     }
 
-    fn get_sampler(&mut self) -> FractalFlameSampler {
-        self.seed += 1;
-        let s: &[_] = &[self.seed];
-        let rng = rand::SeedableRng::from_seed(s);
+    fn get_sampler(&mut self) -> FractalFlameSampler<RngType> {
+        // let s = self.rng.gen::<SeedType>();
+        let rng = RngType::from_seed(&self.rng.gen::<SeedType>());
 
         let p = [0.05, 0.05];
         let r = 0.;
@@ -139,17 +147,10 @@ impl IteratedFunctionSystem for FractalFlame {
 }
 
 
-impl IteratedFunctionSystemBuilder {
-    pub fn fractal_flame(self) -> FractalFlame {
-        let mut rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
-
-        let seed = match self.seed {
-            Some(x) => x,
-            None => 1
-        };
+impl IteratedFunctionSystemBuilder
+{
+    pub fn fractal_flame(self) -> FractalFlame<RngType> {
+        let mut rng = self.seed_rng();
 
         let number_of_functions = rng.gen_range(2, 7);
 
@@ -192,7 +193,6 @@ impl IteratedFunctionSystemBuilder {
         FractalFlame {
             rng,
             description,
-            seed,
             number_of_functions,
             probabilities,
             colors,

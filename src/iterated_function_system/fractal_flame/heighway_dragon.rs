@@ -4,6 +4,7 @@ use self::rand::Rng;
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
+use super::RngType;
 
 use numbers::Real;
 
@@ -11,17 +12,10 @@ use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
 const PI_QUARTER: Real = FRAC_PI_4 as Real;
 const BY_SQRT: Real = FRAC_1_SQRT_2 as Real;
 
-impl IteratedFunctionSystemBuilder {
-    pub fn heighway_dragon(self) -> FractalFlame {
-        let mut rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
-
-        let seed = match self.seed {
-            Some(x) => x,
-            None => 1
-        };
+impl IteratedFunctionSystemBuilder
+{
+    pub fn heighway_dragon(self) -> FractalFlame<RngType> {
+        let mut rng = self.seed_rng();
 
         let number_of_functions = 2;
         let probabilities = vec![0.5, 1.];
@@ -68,7 +62,6 @@ impl IteratedFunctionSystemBuilder {
         FractalFlame {
             rng,
             description,
-            seed,
             number_of_functions,
             probabilities,
             colors,

@@ -4,6 +4,7 @@ use self::rand::Rng;
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
+use super::RngType;
 
 use numbers::Real;
 
@@ -12,17 +13,10 @@ const PI: Real = PI_ as Real;
 // const R: Real = (3. - (5. as Real).sqrt())/2.;
 const R: Real = (3. - 2.23606797749979)/2.;
 
-impl IteratedFunctionSystemBuilder {
-    pub fn sierpinski_pentagon(self) -> FractalFlame {
-        let mut rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
-
-        let seed = match self.seed {
-            Some(x) => x,
-            None => 1
-        };
+impl IteratedFunctionSystemBuilder
+{
+    pub fn sierpinski_pentagon(self) -> FractalFlame<RngType> {
+        let mut rng = self.seed_rng();
 
         let number_of_functions = 5;
         let probabilities = vec![0.2, 0.4, 0.6, 0.8, 1.];
@@ -72,7 +66,6 @@ impl IteratedFunctionSystemBuilder {
         FractalFlame {
             rng,
             description,
-            seed,
             number_of_functions,
             probabilities,
             colors,

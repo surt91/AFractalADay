@@ -6,18 +6,12 @@ use itertools;
 use color::{HSV, RGB};
 use super::{Transformation, MobiusTransformation, NonlinearTransformation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
+use super::RngType;
 
-impl IteratedFunctionSystemBuilder {
-    pub fn mobius_flame(self) -> FractalFlame {
-        let mut rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
-
-        let seed = match self.seed {
-            Some(x) => x,
-            None => 1
-        };
+impl IteratedFunctionSystemBuilder
+{
+    pub fn mobius_flame(self) -> FractalFlame<RngType> {
+        let mut rng = self.seed_rng();
 
         let number_of_functions = rng.gen_range(2, 7);
 
@@ -54,13 +48,12 @@ impl IteratedFunctionSystemBuilder {
         debug!("number of functions    : {:?}", number_of_functions);
         debug!("cumulative probabilites: {:?}", probabilities);
         debug!("colors                 : {:?}", colors);
-        debug!("affine transformations : {:?}", transformations);
+        debug!("mobius transformations : {:?}", transformations);
         debug!("Variation              : {:?}", variation);
 
         FractalFlame {
             rng,
             description,
-            seed,
             number_of_functions,
             probabilities,
             colors,

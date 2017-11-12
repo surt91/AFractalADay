@@ -82,7 +82,8 @@ fn build_fractal(filename: &str,
             Some(ref x) => a.style(Style::from_string(x).unwrap()),
             None => a
         };
-        let mut b = IteratedFunctionSystemBuilder::new().seed(seed+ctr);
+        let s = seed+ctr;
+        let mut b = IteratedFunctionSystemBuilder::new().seed(s);
         b = match opt.variation {
             Some(ref x) => b.variation(x),
             None => b

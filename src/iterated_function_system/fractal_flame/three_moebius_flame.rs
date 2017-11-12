@@ -4,23 +4,17 @@ use self::rand::Rng;
 use color::{HSV, RGB};
 use super::{Transformation, MobiusTransformation, NonlinearTransformation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
+use super::RngType;
 
 use numbers::{Real, Cplx};
 
 use std::f64::consts::PI as PI_;
 const PI: Real = PI_ as Real;
 
-impl IteratedFunctionSystemBuilder {
-    pub fn three_moebius_flame(self) -> FractalFlame {
-        let mut rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
-
-        let seed = match self.seed {
-            Some(x) => x,
-            None => 1
-        };
+impl IteratedFunctionSystemBuilder
+{
+    pub fn three_moebius_flame(self) -> FractalFlame<RngType> {
+        let mut rng = self.seed_rng();
 
         let number_of_functions = 3;
         let probabilities = vec![0.33, 0.66, 1.];
@@ -58,7 +52,6 @@ impl IteratedFunctionSystemBuilder {
         FractalFlame {
             rng,
             description,
-            seed,
             number_of_functions,
             probabilities,
             colors,

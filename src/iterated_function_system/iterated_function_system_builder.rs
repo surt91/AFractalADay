@@ -2,17 +2,27 @@ extern crate std;
 extern crate num;
 
 extern crate rand;
+use self::rand::{Rng, SeedableRng};
 
 use super::variation::Variation;
+use super::{RngType, SeedType};
 
 #[derive(Default)]
 pub struct IteratedFunctionSystemBuilder {
-    pub seed: Option<usize>,
+    pub seed: Option<SeedType>,
     pub variation: Option<Variation>,
 }
 
 // Builder Pattern
-impl IteratedFunctionSystemBuilder {
+impl IteratedFunctionSystemBuilder
+{
+    pub fn seed_rng(&self) -> RngType {
+        match self.seed {
+            Some(x) => RngType::from_seed(&x),
+            None => RngType::from_seed(&rand::weak_rng().gen::<SeedType>())
+        }
+    }
+
     pub fn new() -> IteratedFunctionSystemBuilder {
         IteratedFunctionSystemBuilder {
             seed: None,
@@ -21,7 +31,8 @@ impl IteratedFunctionSystemBuilder {
     }
 
     pub fn seed(mut self, seed: usize) -> IteratedFunctionSystemBuilder {
-        self.seed = Some(seed);
+        let s = [seed];
+        self.seed = Some(rand::StdRng::from_seed(&s).gen::<SeedType>());
         self
     }
 

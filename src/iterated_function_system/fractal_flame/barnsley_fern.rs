@@ -3,18 +3,12 @@ extern crate rand;
 use color::RGB;
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
 use super::IteratedFunctionSystemBuilder;
+use super::RngType;
 
-impl IteratedFunctionSystemBuilder {
-    pub fn barnsley_fern(self) -> FractalFlame {
-        let rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
-
-        let seed = match self.seed {
-            Some(x) => x,
-            None => 1
-        };
+impl IteratedFunctionSystemBuilder
+{
+    pub fn barnsley_fern(self) -> FractalFlame<RngType> {
+        let rng = self.seed_rng();
 
         let number_of_functions = 4;
         let probabilities = vec![0.01, 0.86, 0.93, 1.];
@@ -53,7 +47,6 @@ impl IteratedFunctionSystemBuilder {
         FractalFlame {
             rng,
             description,
-            seed,
             number_of_functions,
             probabilities,
             colors,

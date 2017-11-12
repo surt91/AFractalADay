@@ -18,7 +18,9 @@ impl MobiusTransformation {
         }
     }
 
-    pub fn random(rng: &mut rand::StdRng) -> MobiusTransformation {
+    pub fn random<T>(rng: &mut T) -> MobiusTransformation
+        where T: Rng
+    {
         MobiusTransformation {
             parameters: [
                 Cplx::new(rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,),
