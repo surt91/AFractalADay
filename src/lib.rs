@@ -28,7 +28,8 @@ pub enum FractalType {
     PythagoreanTree,
     ThreeMobius,
     MobiusFlame,
-    FractalFlame
+    FractalFlame,
+    MirrorFlame
 }
 
 impl fmt::Display for FractalType {

@@ -12,8 +12,9 @@ mod sierpinski_gasket;
 mod sierpinski_pentagon;
 mod pythagorean_tree;
 
-mod three_moebius_flame;
+mod two_fractal_flame;
 mod mobius_flame;
+mod three_moebius_flame;
 
 extern crate std;
 extern crate num;
@@ -89,19 +90,34 @@ impl <T> Iterator for FractalFlameSampler<T>
             }
         }
 
+        let mut is_symmetry_transformation = false;
         let transformed = match self.transformations[index] {
-            Transformation::Affine(ref x) => x.transform(self.p),
+            Transformation::Affine(ref x) => {
+                is_symmetry_transformation = x.symmetry;
+                x.transform(self.p)
+            },
             Transformation::Mobius(ref x) => {
                 let z = x.transform(Cplx::new(self.p[0], self.p[1]));
                 [z.re, z.im]
             }
         };
-        self.p = self.variation.transform(transformed);
+
+        // do not apply variation to symmetry transforms
+        if !is_symmetry_transformation {
+            self.p = self.variation.transform(transformed);
+        } else {
+            self.p = transformed;
+        }
 
         let RGB(r, g, b) = self.colors[index];
-        self.r = (r + self.r)/2.;
-        self.g = (g + self.g)/2.;
-        self.b = (b + self.b)/2.;
+        // if it is black, ignore it
+        // FIXME: better would be Option<RGB>
+        if r != 0. || g != 0. || b != 0.
+        {
+            self.r = (r + self.r)/2.;
+            self.g = (g + self.g)/2.;
+            self.b = (b + self.b)/2.;
+        }
 
         Some((self.p, RGB(self.r, self.g, self.b)))
     }

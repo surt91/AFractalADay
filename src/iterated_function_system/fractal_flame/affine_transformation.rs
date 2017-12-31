@@ -7,12 +7,14 @@ use std::ops::Mul;
 #[derive(Debug, Clone)]
 pub struct AffineTransformation {
     parameters: [Real; 6],
+    pub symmetry: bool,
 }
 
 impl AffineTransformation {
     pub fn new(a: Real, b: Real, c: Real, d: Real, e: Real, f: Real) -> AffineTransformation {
         AffineTransformation {
-            parameters: [a, b, c, d, e, f]
+            parameters: [a, b, c, d, e, f],
+            symmetry: false
         }
     }
 
@@ -27,7 +29,8 @@ impl AffineTransformation {
                          rng.gen::<Real>() * 2.4 - 1.2,
                          rng.gen::<Real>() * 2.4 - 1.2,
                          rng.gen::<Real>() * 2.4 - 1.2,
-                         rng.gen::<Real>() * 2.4 - 1.2]
+                         rng.gen::<Real>() * 2.4 - 1.2],
+            symmetry: false
         }
     }
 
@@ -36,6 +39,30 @@ impl AffineTransformation {
         out[0] = self.parameters[0] * x[0] + self.parameters[1] * x[1] + self.parameters[2];
         out[1] = self.parameters[3] * x[0] + self.parameters[4] * x[1] + self.parameters[5];
         out
+    }
+
+    pub fn vertical_mirror() -> AffineTransformation {
+        AffineTransformation {
+            parameters: [-1., 0., 0.,
+                          0., 1., 0.],
+            symmetry: true
+        }
+    }
+
+    pub fn horizontal_mirror() -> AffineTransformation {
+        AffineTransformation {
+            parameters: [0.,  0., 0.,
+                         0., -1., 0.],
+            symmetry: true
+        }
+    }
+
+    pub fn rotate(phi: Real) -> AffineTransformation {
+        AffineTransformation {
+            parameters: [phi.cos(), -phi.sin(), 0.,
+                         phi.sin(),  phi.cos(), 0.],
+            symmetry: true
+        }
     }
 }
 
