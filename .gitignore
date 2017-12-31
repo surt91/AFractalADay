@@ -4,3 +4,4 @@ Cargo.lock
 
 img/
 fractals.log
+fractals.debug

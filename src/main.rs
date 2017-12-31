@@ -37,10 +37,15 @@ fn init_logging(quiet: bool) {
     let _ = CombinedLogger::init(
         vec![
             SimpleLogger::new(level, Config::default()),
-            WriteLogger::new(LogLevelFilter::Info, Config::default(),
+            WriteLogger::new(level, Config::default(),
                              fs::OpenOptions::new().append(true)
                                                    .create(true)
                                                    .open("fractals.log")
+                                                   .expect("Failed to create log file!")),
+            WriteLogger::new(LogLevelFilter::Debug, Config::default(),
+                             fs::OpenOptions::new().append(true)
+                                                   .create(true)
+                                                   .open("fractals.debug")
                                                    .expect("Failed to create log file!"))
         ]
     );
