@@ -51,7 +51,7 @@ impl AffineTransformation {
 
     pub fn horizontal_mirror() -> AffineTransformation {
         AffineTransformation {
-            parameters: [0.,  0., 0.,
+            parameters: [1.,  0., 0.,
                          0., -1., 0.],
             symmetry: true
         }
