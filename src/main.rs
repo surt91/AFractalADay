@@ -69,12 +69,13 @@ fn build_fractal(filename: &str,
     let mut rng: StdRng = rand::SeedableRng::from_seed(tmp);
 
     if let FractalType::Random = fractal_type {
-        fractal_type = match rng.gen_range(0, 5) {
+        fractal_type = match rng.gen_range(0, 6) {
             0 => FractalType::Newton,
             1 => FractalType::FractalFlame,
             2 => FractalType::MirrorFlame,
-            3 => FractalType::MobiusFlame,
-            4 => FractalType::ThreeMobius,
+            3 => FractalType::SymmetricFlame,
+            4 => FractalType::MobiusFlame,
+            5 => FractalType::ThreeMobius,
             _ => unreachable!()
         }
     };
@@ -109,6 +110,7 @@ fn build_fractal(filename: &str,
             FractalType::MobiusFlame => render_fractal_flame(&mut b.mobius_flame(), filename, &dim),
             FractalType::FractalFlame => render_fractal_flame(&mut b.fractal_flame(), filename, &dim),
             FractalType::MirrorFlame => render_fractal_flame(&mut b.two_fractal_flame(), filename, &dim),
+            FractalType::SymmetricFlame => render_fractal_flame(&mut b.rotated_fractal_flame(), filename, &dim),
             FractalType::Random => unreachable!()
         };
 

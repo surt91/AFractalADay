@@ -145,6 +145,11 @@ pub fn parse_cl() -> Options {
                     .help("render a mirrored fractal flame")
                     .group("iterated_function_system")
               )
+              .arg(Arg::with_name("symmetricflame")
+                    .long("symmetricflame")
+                    .help("render a rotated fractal flame")
+                    .group("iterated_function_system")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
               )
@@ -211,6 +216,8 @@ pub fn parse_cl() -> Options {
         FractalType::FractalFlame
     } else if matches.is_present("mirrorflame") {
         FractalType::MirrorFlame
+    } else if matches.is_present("symmetricflame") {
+        FractalType::SymmetricFlame
     } else {
         FractalType::Random
     };

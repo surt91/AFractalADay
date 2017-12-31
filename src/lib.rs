@@ -29,7 +29,8 @@ pub enum FractalType {
     ThreeMobius,
     MobiusFlame,
     FractalFlame,
-    MirrorFlame
+    MirrorFlame,
+    SymmetricFlame,
 }
 
 impl fmt::Display for FractalType {

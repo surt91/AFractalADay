@@ -13,6 +13,7 @@ mod sierpinski_pentagon;
 mod pythagorean_tree;
 
 mod two_fractal_flame;
+mod rotated_fractal_flame;
 mod mobius_flame;
 mod three_moebius_flame;
 
