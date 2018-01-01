@@ -112,7 +112,7 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
         Ok(x) => if !x.status.success() {
                         error!("convert failed")
                     } else {
-                        info!("convert successful ({} KiB)", size as f32 / 1000.)
+                        info!("convert successful ({} KB)", size as f32 / 1000.)
                     },
         Err(x) => error!("convert failed with {:?}", x)
     };
@@ -138,7 +138,7 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
             Ok(x) => if !x.status.success() {
                             error!("convert failed")
                         } else {
-                            info!("convert successful ({} KiB)", size as f32 / 1000.)
+                            info!("convert successful ({} KB)", size as f32 / 1000.)
                         },
             Err(x) => error!("convert failed with {:?}", x)
         };
