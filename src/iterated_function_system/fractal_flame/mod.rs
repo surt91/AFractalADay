@@ -12,10 +12,10 @@ mod sierpinski_gasket;
 mod sierpinski_pentagon;
 mod pythagorean_tree;
 
-mod two_fractal_flame;
-mod rotated_fractal_flame;
+// mod two_fractal_flame;
+// mod rotated_fractal_flame;
 mod mobius_flame;
-mod three_moebius_flame;
+// mod three_moebius_flame;
 
 extern crate std;
 extern crate num;
@@ -26,11 +26,14 @@ use self::rand::{Rng, SeedableRng};
 
 use numbers::{Real, Cplx};
 use super::IteratedFunctionSystem;
+use super::symmetry::Symmetry;
 use color::{RGB, HSV};
 
 use super::{RngType, SeedType};
 use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 
+use std::f64::consts::PI as PI_;
+const PI: Real = PI_ as Real;
 
 #[derive(Debug, Clone)]
 pub enum Transformation {
@@ -185,7 +188,7 @@ impl IteratedFunctionSystemBuilder
             let hsv = HSV(rng.gen(), 1., 1.);
             colors.push(hsv.to_rgb());
         }
-        let transformations: Vec<Transformation> =
+        let mut transformations: Vec<Transformation> =
                 itertools::repeat_call(|| Transformation::Affine(AffineTransformation::random(&mut rng)))
                           .take(number_of_functions)
                           .collect();
@@ -195,9 +198,61 @@ impl IteratedFunctionSystemBuilder
             None => NonlinearTransformation::random(&mut rng)
         };
 
-        let description = format!("Fractal Flame: '{}' Variation, {} affine transformations",
+        // handle symmetries
+        let symmetry = match self.symmetry {
+            Some(s) => s,
+            None => Symmetry::random(&mut rng)
+        };
+
+        let number_of_symmetries: usize = match symmetry {
+            Symmetry::None => 1,
+            Symmetry::Vertical => {
+                transformations.push(
+                    Transformation::Affine(
+                        AffineTransformation::vertical_mirror()
+                    )
+                );
+                2
+            }
+            Symmetry::Horizontal => {
+                transformations.push(
+                    Transformation::Affine(
+                        AffineTransformation::horizontal_mirror()
+                    )
+                );
+                2
+            }
+            Symmetry::Rotational(x) => {
+                for i in 1..x {
+                    transformations.push(
+                        Transformation::Affine(
+                            AffineTransformation::rotate(2.*PI/x as Real * i as Real)
+                        )
+                    );
+                }
+                x
+            }
+        };
+
+        for i in 0..probabilities.len() {
+            probabilities[i] /= number_of_symmetries as f64;
+        }
+
+        p = 1./number_of_symmetries as f64;
+        for _ in 1..number_of_symmetries {
+            p += 1./number_of_symmetries as f64;
+            probabilities.push(p);
+            // black will be treated as transparent
+            // FIXME: .make colors Vec<Option<RGB>>
+            let hsv = HSV(0., 0., 0.);
+            colors.push(hsv.to_rgb());
+        }
+
+        let description = format!("Fractal Flame: '{}' Variation, {} affine transformations with {}",
                                    variation.name(),
-                                   number_of_functions);
+                                   number_of_functions,
+                                   symmetry
+                                 );
 
         info!("Will render {}", description);
 
@@ -206,6 +261,9 @@ impl IteratedFunctionSystemBuilder
         debug!("colors                 : {:?}", colors);
         debug!("affine transformations : {:?}", transformations);
         debug!("Variation              : {:?}", variation);
+        debug!("Symmetry               : {:?}", symmetry);
+
+        let number_of_functions = number_of_functions + number_of_symmetries - 1;
 
         FractalFlame {
             rng,

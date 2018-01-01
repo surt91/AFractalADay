@@ -5,6 +5,7 @@ use self::clap::{App, Arg, ArgGroup};
 use escape_time_fractal::style::Style;
 use FractalType;
 use iterated_function_system::variation::Variation;
+use iterated_function_system::symmetry::Symmetry;
 
 #[derive(Debug)]
 pub struct Options {
@@ -18,6 +19,7 @@ pub struct Options {
     pub optipng: bool,
     pub fractal_type: FractalType,
     pub variation: Option<Variation>,
+    pub symmetry: Option<Symmetry>,
 }
 
 impl fmt::Display for Options {
@@ -125,11 +127,6 @@ pub fn parse_cl() -> Options {
                     .help("render a Pythagorean tree")
                     .group("iterated_function_system")
               )
-              .arg(Arg::with_name("three_mobius")
-                    .long("three_mobius")
-                    .help("render an mobius flame with three-fold symmetrie")
-                    .group("iterated_function_system")
-              )
               .arg(Arg::with_name("mobius")
                     .long("mobius")
                     .help("render a mobius flame")
@@ -140,21 +137,39 @@ pub fn parse_cl() -> Options {
                     .help("render a fractal flame")
                     .group("iterated_function_system")
               )
-              .arg(Arg::with_name("mirrorflame")
-                    .long("mirrorflame")
-                    .help("render a mirrored fractal flame")
-                    .group("iterated_function_system")
-              )
-              .arg(Arg::with_name("symmetricflame")
-                    .long("symmetricflame")
-                    .help("render a rotated fractal flame")
-                    .group("iterated_function_system")
-              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
               )
               .group(ArgGroup::with_name("escape_time")
                   .conflicts_with("iterated_function_system")
+              )
+              .group(ArgGroup::with_name("symmetry")
+                  .conflicts_with("escape_time")
+              )
+              .arg(Arg::with_name("mirror")
+                    .long("mirror")
+                    .help("creates a vertical mirror symmetry in the resulting fractal")
+                    .group("symmetry")
+                    .requires("iterated_function_system")
+              )
+              .arg(Arg::with_name("mirror-horizontal")
+                    .long("mirror-horizontal")
+                    .help("creates a horizontal mirror symmetry in the resulting fractal")
+                    .group("symmetry")
+                    .requires("iterated_function_system")
+              )
+              .arg(Arg::with_name("no-symmetry")
+                    .long("no-symmetry")
+                    .help("creates a fractal without artificial symmetries")
+                    .group("symmetry")
+                    .requires("iterated_function_system")
+              )
+              .arg(Arg::with_name("rotational")
+                    .long("rotational")
+                    .takes_value(true)
+                    .help("creates a fractal with an x-fold rotational symmetry")
+                    .group("symmetry")
+                    .requires("iterated_function_system")
               )
               .arg(Arg::with_name("variation")
                     .long("variation")
@@ -208,22 +223,32 @@ pub fn parse_cl() -> Options {
         FractalType::SierpinskiPentagon
     } else if matches.is_present("pythagorean") {
         FractalType::PythagoreanTree
-    } else if matches.is_present("three_mobius") {
-        FractalType::ThreeMobius
     } else if matches.is_present("mobius") {
         FractalType::MobiusFlame
     } else if matches.is_present("flame") {
         FractalType::FractalFlame
-    } else if matches.is_present("mirrorflame") {
-        FractalType::MirrorFlame
-    } else if matches.is_present("symmetricflame") {
-        FractalType::SymmetricFlame
     } else {
         FractalType::Random
     };
 
     let variation = matches.value_of("variation")
                            .and_then(|s| Variation::from_string(s));
+
+    let symmetry = if matches.is_present("mirror") {
+        Some(Symmetry::Vertical)
+    } else if matches.is_present("mirror-horizontal") {
+        Some(Symmetry::Horizontal)
+    } else if matches.is_present("rotational") {
+        let symmetries = matches.value_of("rotational")
+                                .unwrap()
+                                .parse::<usize>()
+                                .expect("the number of rotational symmetries need to be an integer");
+        Some(Symmetry::Rotational(symmetries))
+    } else if matches.is_present("no-symmetry") {
+        Some(Symmetry::None)
+    } else {
+        None
+    };
 
     Options {
         seed,
@@ -236,5 +261,6 @@ pub fn parse_cl() -> Options {
         width,
         optipng,
         variation,
+        symmetry,
     }
 }

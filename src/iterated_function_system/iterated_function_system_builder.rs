@@ -5,12 +5,14 @@ extern crate rand;
 use self::rand::{Rng, SeedableRng};
 
 use super::variation::Variation;
+use super::symmetry::Symmetry;
 use super::{RngType, SeedType};
 
 #[derive(Default)]
 pub struct IteratedFunctionSystemBuilder {
     pub seed: Option<SeedType>,
     pub variation: Option<Variation>,
+    pub symmetry: Option<Symmetry>,
 }
 
 // Builder Pattern
@@ -27,6 +29,7 @@ impl IteratedFunctionSystemBuilder
         IteratedFunctionSystemBuilder {
             seed: None,
             variation: None,
+            symmetry: None
         }
     }
 
@@ -38,6 +41,11 @@ impl IteratedFunctionSystemBuilder
 
     pub fn variation(mut self, variation: &Variation) -> IteratedFunctionSystemBuilder {
         self.variation = Some(variation.clone());
+        self
+    }
+
+    pub fn symmetry(mut self, symmetry: &Symmetry) -> IteratedFunctionSystemBuilder {
+        self.symmetry = Some(symmetry.clone());
         self
     }
 }

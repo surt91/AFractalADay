@@ -69,13 +69,10 @@ fn build_fractal(filename: &str,
     let mut rng: StdRng = rand::SeedableRng::from_seed(tmp);
 
     if let FractalType::Random = fractal_type {
-        fractal_type = match rng.gen_range(0, 6) {
+        fractal_type = match rng.gen_range(0, 3) {
             0 => FractalType::Newton,
             1 => FractalType::FractalFlame,
-            2 => FractalType::MirrorFlame,
-            3 => FractalType::SymmetricFlame,
-            4 => FractalType::MobiusFlame,
-            5 => FractalType::ThreeMobius,
+            2 => FractalType::MobiusFlame,
             _ => unreachable!()
         }
     };
@@ -96,6 +93,10 @@ fn build_fractal(filename: &str,
             Some(ref x) => b.variation(x),
             None => b
         };
+        b = match opt.symmetry {
+            Some(ref x) => b.symmetry(x),
+            None => b
+        };
 
         let (finished, tmp_description) = match fractal_type {
             FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),
@@ -106,11 +107,8 @@ fn build_fractal(filename: &str,
             FractalType::SierpinskiGasket => render_ifs(&mut b.sierpinski_gasket(), filename, &dim),
             FractalType::SierpinskiPentagon => render_ifs(&mut b.sierpinski_pentagon(), filename, &dim),
             FractalType::PythagoreanTree => render_fractal_flame(&mut b.pythagorean_tree(), filename, &dim),
-            FractalType::ThreeMobius => render_fractal_flame(&mut b.three_moebius_flame(), filename, &dim),
             FractalType::MobiusFlame => render_fractal_flame(&mut b.mobius_flame(), filename, &dim),
             FractalType::FractalFlame => render_fractal_flame(&mut b.fractal_flame(), filename, &dim),
-            FractalType::MirrorFlame => render_fractal_flame(&mut b.two_fractal_flame(), filename, &dim),
-            FractalType::SymmetricFlame => render_fractal_flame(&mut b.rotated_fractal_flame(), filename, &dim),
             FractalType::Random => unreachable!()
         };
 

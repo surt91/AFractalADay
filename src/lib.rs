@@ -26,11 +26,8 @@ pub enum FractalType {
     SierpinskiGasket,
     SierpinskiPentagon,
     PythagoreanTree,
-    ThreeMobius,
     MobiusFlame,
     FractalFlame,
-    MirrorFlame,
-    SymmetricFlame,
 }
 
 impl fmt::Display for FractalType {
