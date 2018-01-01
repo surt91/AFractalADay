@@ -118,7 +118,8 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
     };
 
     // it is too big, shrink it and try again
-    while size > 3e6f64 as u64 {
+    // the threshold is empiric (and somewhere between 2.8 and 2.3MB)
+    while size > 2.8e6f64 as u64 {
         resize *= 0.9;
         info!("rescale to {:.0}%", resize*100.);
 
