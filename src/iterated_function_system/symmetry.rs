@@ -16,9 +16,9 @@ impl Symmetry {
         where T: Rng
     {
         match rng.gen_range(0, 3) {
-            1 => Symmetry::None,
-            2 => Symmetry::Vertical,
-            3 => Symmetry::Rotational(rng.gen_range(2, 8)),
+            0 => Symmetry::None,
+            1 => Symmetry::Vertical,
+            2 => Symmetry::Rotational(rng.gen_range(2, 8)),
             _ => unreachable!()
         }
     }
