@@ -107,6 +107,7 @@ fn build_fractal(filename: &str,
             FractalType::SierpinskiGasket => render_ifs(&mut b.sierpinski_gasket(), filename, &dim),
             FractalType::SierpinskiPentagon => render_ifs(&mut b.sierpinski_pentagon(), filename, &dim),
             FractalType::PythagoreanTree => render_fractal_flame(&mut b.pythagorean_tree(), filename, &dim),
+            FractalType::AppolonianGasket => render_fractal_flame(&mut b.appolonian_gasket(), filename, &dim),
             FractalType::MobiusFlame => render_fractal_flame(&mut b.mobius_flame(), filename, &dim),
             FractalType::FractalFlame => render_fractal_flame(&mut b.fractal_flame(), filename, &dim),
             FractalType::Random => unreachable!()

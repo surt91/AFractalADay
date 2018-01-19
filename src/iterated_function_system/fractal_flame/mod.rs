@@ -11,6 +11,7 @@ mod heighway_dragon;
 mod sierpinski_gasket;
 mod sierpinski_pentagon;
 mod pythagorean_tree;
+mod appolonian_gasket;
 
 // mod two_fractal_flame;
 // mod rotated_fractal_flame;
