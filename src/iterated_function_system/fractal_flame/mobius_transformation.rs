@@ -1,5 +1,6 @@
 extern crate rand;
 use self::rand::Rng;
+use self::rand::distributions::{Normal, IndependentSample};
 
 use numbers::{Real, Cplx};
 
@@ -25,12 +26,13 @@ impl MobiusTransformation {
     pub fn random<T>(rng: &mut T) -> MobiusTransformation
         where T: Rng
     {
+        let normal = Normal::new(0., 0.6);
         MobiusTransformation {
             parameters: [
-                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,
-                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,
-                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,
-                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2
+                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
+                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
+                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
+                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
             ]
         }
     }
