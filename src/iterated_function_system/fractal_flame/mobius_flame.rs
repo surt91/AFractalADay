@@ -7,6 +7,7 @@ use color::{HSV, RGB};
 use super::{Transformation, MobiusTransformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
 use super::IteratedFunctionSystemBuilder;
 use super::RngType;
+use super::Variation;
 
 use numbers::Real;
 use std::f64::consts::PI as PI_;
@@ -40,7 +41,7 @@ impl IteratedFunctionSystemBuilder
 
         let variation = match self.variation {
             Some(v) => NonlinearTransformation::new(v),
-            None => NonlinearTransformation::random(&mut rng)
+            None => NonlinearTransformation::new(Variation::Linear)
         };
 
         // handle symmetries
