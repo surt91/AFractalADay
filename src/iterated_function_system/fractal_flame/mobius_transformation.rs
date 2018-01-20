@@ -2,7 +2,6 @@ extern crate rand;
 use self::rand::Rng;
 
 use numbers::{Real, Cplx};
-use std::ops::Mul;
 
 /// A Mobius transformation has 4 complex parameters and maps a complex number z
 /// T(z) = (a*z + b) / (c*z + d)
@@ -36,10 +35,3 @@ impl MobiusTransformation {
     }
 }
 
-impl Mul<Cplx> for MobiusTransformation {
-    type Output = Self;
-    fn mul(self, rhs: Cplx) -> Self {
-        let p = self.parameters;
-        MobiusTransformation::new(rhs*p[0], rhs*p[1], p[2], p[3])
-    }
-}
