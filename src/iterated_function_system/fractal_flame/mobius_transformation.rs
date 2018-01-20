@@ -7,13 +7,18 @@ use numbers::{Real, Cplx};
 /// T(z) = (a*z + b) / (c*z + d)
 #[derive(Debug, Clone)]
 pub struct MobiusTransformation {
-    parameters: [Cplx; 4],
+    parameters: [Real; 8],
 }
 
 impl MobiusTransformation {
     pub fn new(a: Cplx, b: Cplx, c: Cplx, d: Cplx) -> MobiusTransformation {
         MobiusTransformation {
-            parameters: [a, b, c, d]
+            parameters: [
+                a.re, a.im,
+                b.re, b.im,
+                c.re, c.im,
+                d.re, d.im
+            ]
         }
     }
 
@@ -22,16 +27,22 @@ impl MobiusTransformation {
     {
         MobiusTransformation {
             parameters: [
-                Cplx::new(rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,),
-                Cplx::new(rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,),
-                Cplx::new(rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,),
-                Cplx::new(rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,)
+                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,
+                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,
+                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2,
+                rng.gen::<Real>() * 2.4 - 1.2, rng.gen::<Real>() * 2.4 - 1.2
             ]
         }
     }
 
-    pub fn transform(&self, z: Cplx) -> Cplx {
-        (self.parameters[0]*z + self.parameters[1]) / (self.parameters[2]*z + self.parameters[3])
+    pub fn transform(&self, x: Real, y: Real) -> [Real; 2] {
+        let z = Cplx::new(x, y);
+        let a = Cplx::new(self.parameters[0], self.parameters[1]);
+        let b = Cplx::new(self.parameters[2], self.parameters[3]);
+        let c = Cplx::new(self.parameters[4], self.parameters[5]);
+        let d = Cplx::new(self.parameters[6], self.parameters[7]);
+
+        let tmp = (a*z + b) / (c*z + d);
+        [tmp.re, tmp.im]
     }
 }
-

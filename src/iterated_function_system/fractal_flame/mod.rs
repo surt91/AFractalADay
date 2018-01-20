@@ -102,8 +102,7 @@ impl <T> Iterator for FractalFlameSampler<T>
                 x.transform(self.p)
             },
             Transformation::Mobius(ref x) => {
-                let z = x.transform(Cplx::new(self.p[0], self.p[1]));
-                [z.re, z.im]
+                x.transform(self.p[0], self.p[1])
             }
         };
 
