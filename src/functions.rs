@@ -66,7 +66,7 @@ pub fn random_formula(rng: &mut rand::StdRng) -> Formula {
 
     let f = move |x| terms.iter()
                           .map(move |f| f(x))
-                          .fold(Cplx {re: 0., im: 0.}, |sum, x| sum + x);
+                          .fold(Cplx::new(0., 0.), |sum, x| sum + x);
 
     Formula {callable: Box::new(f),
              readable: "z ↦ ".to_string() + &term_string.join(" + ")}
