@@ -33,6 +33,7 @@ pub enum FractalType {
     AppolonianGasket,
     MobiusFlame,
     FractalFlame,
+    LoadJson(String),
 }
 
 impl fmt::Display for FractalType {

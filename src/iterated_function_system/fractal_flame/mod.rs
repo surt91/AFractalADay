@@ -15,11 +15,9 @@ mod sierpinski_gasket;
 mod sierpinski_pentagon;
 mod pythagorean_tree;
 mod appolonian_gasket;
-
-// mod two_fractal_flame;
-// mod rotated_fractal_flame;
 mod mobius_flame;
-// mod three_moebius_flame;
+
+mod from_json;
 
 extern crate std;
 extern crate num;

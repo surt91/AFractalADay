@@ -1,6 +1,10 @@
+extern crate serde_json;
 extern crate clap;
 
 use std::fmt;
+use std::fs;
+use std::io::prelude::*;
+
 use self::clap::{App, Arg, ArgGroup};
 use escape_time_fractal::style::Style;
 use FractalType;
@@ -142,6 +146,12 @@ pub fn parse_cl() -> Options {
                     .help("render a fractal flame")
                     .group("iterated_function_system")
               )
+              .arg(Arg::with_name("json")
+                    .long("json")
+                    .help("load a fractal from a file (only ifs)")
+                    .takes_value(true)
+                    .group("iterated_function_system")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
               )
@@ -234,6 +244,12 @@ pub fn parse_cl() -> Options {
         FractalType::MobiusFlame
     } else if matches.is_present("flame") {
         FractalType::FractalFlame
+    } else if matches.is_present("json") {
+        let filename = matches.value_of("json").expect("file need to be specified");
+        let mut file = fs::File::open(filename).expect("can not open file");
+        let mut json = String::new();
+        file.read_to_string(&mut json).expect("can not read file");
+        FractalType::LoadJson(json)
     } else {
         FractalType::Random
     };

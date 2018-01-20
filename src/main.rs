@@ -116,6 +116,7 @@ fn build_fractal(filename: &str,
             FractalType::AppolonianGasket => render_ifs(&mut b.appolonian_gasket(), filename, &dim),
             FractalType::MobiusFlame => render_fractal_flame(&mut b.mobius_flame(), filename, &dim),
             FractalType::FractalFlame => render_fractal_flame(&mut b.fractal_flame(), filename, &dim),
+            FractalType::LoadJson(ref json) => render_ifs(&mut b.from_json(&json), filename, &dim),
             FractalType::Random => unreachable!()
         };
 
