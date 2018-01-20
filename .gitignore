@@ -3,5 +3,6 @@ target/
 Cargo.lock
 
 img/
+json/
 fractals.log
 fractals.debug

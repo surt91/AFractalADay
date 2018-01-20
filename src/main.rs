@@ -7,6 +7,7 @@ use escape_time_fractal::escape_time_fractal_builder::EscapeTimeFractalBuilder;
 use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 
 use std::fs;
+use std::io::prelude::*;
 
 extern crate rand;
 use self::rand::Rng;
@@ -52,16 +53,21 @@ fn init_logging(quiet: bool) {
 }
 
 
-fn prepare(filename: &str) -> String {
+fn prepare(filename: &str) -> (String, String) {
     fs::create_dir_all("img").expect("could not create output directory");
+    fs::create_dir_all("json").expect("could not create output directory");
 
-    format!("img/{}.png", filename)
+    let img = format!("img/{}.png", filename);
+    let json = format!("json/{}.json", filename);
+
+    (img, json)
 }
 
 fn build_fractal(filename: &str,
                   seed: usize,
-                  opt: &Options) -> String{
+                  opt: &Options) -> (String, String) {
     let mut description;
+    let mut json;
     let mut ctr = 0;
     let mut fractal_type: FractalType = opt.fractal_type.clone();
 
@@ -98,7 +104,7 @@ fn build_fractal(filename: &str,
             None => b
         };
 
-        let (finished, tmp_description) = match fractal_type {
+        let (finished, tmp_description, tmp_json) = match fractal_type {
             FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),
             FractalType::Julia => render_escape_time_fractal(&mut a.julia(), filename, &dim),
             FractalType::Mandelbrot => render_escape_time_fractal(&mut a.mandelbrot(), filename, &dim),
@@ -114,11 +120,12 @@ fn build_fractal(filename: &str,
         };
 
         description = tmp_description;
+        json = tmp_json;
         ctr += 1;
         ! finished
     } {}
 
-    description
+    (description, json)
 }
 
 fn tweet(filename: &str, description: &str) {
@@ -152,21 +159,23 @@ fn main() {
 
     let seed = opt.seed.unwrap_or(timestamp as usize);
     let filename = opt.filename.clone().unwrap_or_else(|| timestamp.to_string());
-    let filename = prepare(&filename);
+    let (file_img, file_json) = prepare(&filename);
 
     info!("start generation with seed {}", seed);
 
-    let description = build_fractal(&filename, seed, &opt);
+    let (description, json) = build_fractal(&file_img, seed, &opt);
+    let mut file = fs::File::create(file_json).unwrap();
+    file.write_all(json.as_bytes()).unwrap();
 
-    info!("image saved as {}", filename);
+    info!("image saved as {}", file_img);
 
     if opt.optipng {
-        postprocess_image(&filename);
+        postprocess_image(&file_img);
     }
 
     if opt.tweet {
-        let for_twitter = format!("{}_for_twitter.png", filename);
-        postprocess_image_for_twitter(&filename, &for_twitter);
+        let for_twitter = format!("{}_for_twitter.png", file_img);
+        postprocess_image_for_twitter(&file_img, &for_twitter);
         info!("start upload to twitter");
         tweet(&for_twitter, &description);
         info!("tweeted");

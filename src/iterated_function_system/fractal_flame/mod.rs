@@ -6,6 +6,9 @@ mod nonlinear_transformation;
 use self::nonlinear_transformation::NonlinearTransformation;
 use super::variation::Variation;
 
+pub mod serialize;
+use self::serialize::FractalFlameConfig;
+
 mod barnsley_fern;
 mod heighway_dragon;
 mod sierpinski_gasket;
@@ -36,7 +39,7 @@ use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
 use std::f64::consts::PI as PI_;
 const PI: Real = PI_ as Real;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Transformation {
     Affine(AffineTransformation),
     Mobius(MobiusTransformation)
@@ -162,6 +165,16 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             r,
             g,
             b,
+        }
+    }
+
+    fn get_serializable(&self) -> FractalFlameConfig {
+        FractalFlameConfig {
+            probabilities: self.probabilities.clone(),
+            colors: self.colors.clone(),
+            transformations: self.transformations.clone(),
+            variation: self.variation.clone(),
+            description: self.description().to_owned(),
         }
     }
 }

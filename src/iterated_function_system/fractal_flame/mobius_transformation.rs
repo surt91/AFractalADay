@@ -5,7 +5,7 @@ use numbers::{Real, Cplx};
 
 /// A Mobius transformation has 4 complex parameters and maps a complex number z
 /// T(z) = (a*z + b) / (c*z + d)
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MobiusTransformation {
     parameters: [Real; 8],
 }

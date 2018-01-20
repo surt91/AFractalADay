@@ -1,6 +1,10 @@
 #[macro_use] extern crate itertools;
 #[macro_use] extern crate log;
 
+extern crate serde;
+extern crate serde_json;
+#[macro_use] extern crate serde_derive;
+
 pub mod escape_time_fractal;
 pub mod iterated_function_system;
 pub mod color;
@@ -15,7 +19,7 @@ use std::fmt;
 use std::fs;
 
 /// Supported types of fractals
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum FractalType {
     Random,
     Newton,

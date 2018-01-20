@@ -7,7 +7,7 @@ use std::f64::consts::PI as PI64;
 
 const PI: Real = PI64 as Real;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NonlinearTransformation {
     variation: Variation
 }

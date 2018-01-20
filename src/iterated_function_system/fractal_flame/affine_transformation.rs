@@ -4,7 +4,7 @@ use self::rand::Rng;
 use numbers::Real;
 use std::ops::Mul;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AffineTransformation {
     parameters: [Real; 6],
     pub symmetry: bool,

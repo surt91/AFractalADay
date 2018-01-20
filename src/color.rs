@@ -1,15 +1,15 @@
 // TODO: longterm change this to (u8, u8, u8)
 
 /// data structure representing a HSV color value
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct HSV(pub f64, pub f64, pub f64);
 
 /// data structure representing a RGB color value
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct RGB(pub f64, pub f64, pub f64);
 
 /// data structure representing a RGBA color value
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct RGBA(pub u8, pub u8, pub u8, pub u8);
 
 impl HSV {

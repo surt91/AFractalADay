@@ -1,7 +1,9 @@
+extern crate serde_json;
+
 use escape_time_fractal::EscapeTimeFractal;
 use iterated_function_system::IteratedFunctionSystem;
 
-pub fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
+pub fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
     let mut finished = false;
     // ensure that the image has some variance
     // otherwise the images are probably boring
@@ -13,16 +15,21 @@ pub fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filenam
     let description = fractal.description().to_string();
     info!("{}", description);
 
-    (finished, description)
+    let json = "todo".to_owned();
+
+    (finished, description, json)
 }
 
-pub fn render_fractal_flame<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
+pub fn render_fractal_flame<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
     let description = fractal.description().to_string();
     info!("{}", description);
 
+    // Serialize it to a JSON string.
+    let json = serde_json::to_string_pretty(&fractal.get_serializable()).unwrap();
+
     // if the fractal will probably be not interesting, try the next one
     if !fractal.estimate_quality() {
-        return (false, description)
+        return (false, description, json)
     }
 
     // ensure that the image has some variance
@@ -32,12 +39,12 @@ pub fn render_fractal_flame<T: IteratedFunctionSystem>(fractal: &mut T, filename
         Err(x) => error!("creation of fractal failed {:?}", x)
     }
 
-    (true, description)
+    (true, description, json)
 }
 
 
 // same as fractal flame, but always accept
-pub fn render_ifs<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String) {
+pub fn render_ifs<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
     let description = fractal.description().to_string();
     info!("{}", description);
 
@@ -46,5 +53,7 @@ pub fn render_ifs<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, di
         Err(x) => error!("creation of fractal failed {:?}", x)
     }
 
-    (true, description)
+    let json = serde_json::to_string_pretty(&fractal.get_serializable()).unwrap();
+
+    (true, description, json)
 }
