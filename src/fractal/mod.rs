@@ -9,6 +9,7 @@ pub use self::iterated_function_system::symmetry::Symmetry;
 extern crate serde_json;
 
 use std::io;
+use png;
 
 use FractalType;
 use numbers::{Coef, Formula};
@@ -116,10 +117,15 @@ impl FractalBuilder {
 
 impl Fractal {
     pub fn render(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<f64> {
-        match self.fractal {
-            FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None, filename),
-            FractalInstance::IFS(ref mut f) => f.render(resolution, 1000, filename)
-        }
+        let (buffer, var) = match self.fractal {
+            FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
+            FractalInstance::IFS(ref mut f) => f.render(resolution, 1000)
+        };
+
+        let (x, y) = resolution;
+        png::save_png(filename, x, y, &buffer)?;
+        
+        Ok(var)
     }
 
     pub fn description(&self) -> &str {

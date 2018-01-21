@@ -6,12 +6,10 @@ pub mod style;
 extern crate rayon;
 use self::rayon::prelude::*;
 
-use std::io;
 use itertools::Itertools;
 
 use numbers::{Real, Cplx};
 use color;
-use png;
 use self::style::Stylable;
 
 use super::RngType;
@@ -48,8 +46,9 @@ pub trait EscapeTimeFractal : Sync + Stylable {
     // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
                          scale: Option<f64>,
-                         center: Option<(f64, f64)>,
-                         filename: &str) -> io::Result<f64> {
+                         center: Option<(f64, f64)>)
+        -> (Vec<u8>, f64)
+    {
         let scale = match scale {
             Some(x) => (x, x),
             None => {
@@ -62,8 +61,6 @@ pub trait EscapeTimeFractal : Sync + Stylable {
             Some(x) => x,
             None => (0., 0.)
         };
-
-        let (x, y) = resolution;
 
         let states = self.raster(resolution, scale, center);
         let total_iterations: i64 = states.par_iter()
@@ -88,7 +85,6 @@ pub trait EscapeTimeFractal : Sync + Stylable {
                                 .flatten()
                                 .collect();
 
-        png::save_png(filename, x, y, &buffer)?;
-        Ok(var)
+        (buffer, var)
     }
 }

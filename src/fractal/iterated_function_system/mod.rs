@@ -11,12 +11,10 @@ pub mod serialize;
 use rand::Rng;
 
 use std::f64;
-use std::io;
 use itertools::Itertools;
 
 use numbers::Real;
 use color::{RGB, RGBA, HSV, color_variance};
-use png;
 use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
 use self::serialize::IteratedFunctionSystemConfig;
@@ -55,8 +53,9 @@ pub trait IteratedFunctionSystem : Sync {
 
     // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
-                         samples_per_pixel: usize,
-                         filename: &str) -> io::Result<f64> {
+                         samples_per_pixel: usize)
+        -> (Vec<u8>, f64)
+    {
         let (x, y) = resolution;
 
         let sampler = self.get_sampler();
@@ -119,11 +118,10 @@ pub trait IteratedFunctionSystem : Sync {
                                  .flatten()
                                  .collect();
 
-        png::save_png(filename, x, y, &buffer)?;
-
         let hsv: Vec<HSV> = rgb.iter().map(|c| c.blend_black().to_hsv()).collect();
         let var = color_variance(&hsv);
-        Ok(var)
+
+        (buffer, var)
     }
 }
 
