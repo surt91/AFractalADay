@@ -14,10 +14,12 @@ use std::f64;
 use itertools::Itertools;
 
 use numbers::Real;
-use color::{RGB, RGBA, HSV, color_variance};
+use color::{RGB, RGBA};
 use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
 use self::serialize::IteratedFunctionSystemConfig;
+
+use super::estimate_quality_after;
 
 extern crate num_cpus;
 use std::thread;
@@ -33,7 +35,7 @@ pub trait IteratedFunctionSystem : Sync {
     fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType>;
     fn get_serializable(&self) -> IteratedFunctionSystemConfig;
 
-    fn estimate_quality(&mut self) -> bool {
+    fn estimate_quality_before(&mut self) -> bool {
         let sampler = self.get_sampler();
 
         // warm up and get sample to derive bounds
@@ -54,7 +56,7 @@ pub trait IteratedFunctionSystem : Sync {
     // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
                          samples_per_pixel: usize)
-        -> (Vec<u8>, f64)
+        -> (Vec<u8>, bool)
     {
         let (x, y) = resolution;
 
@@ -118,13 +120,8 @@ pub trait IteratedFunctionSystem : Sync {
                                  .flatten()
                                  .collect();
 
-        let hsv: Vec<HSV> = rgb.iter().map(|c| c.blend_black().to_hsv()).collect();
-        let var = color_variance(&hsv);
-
-        let ent = quality::entropy(&rgb);
-        info!("entropy: {:.2}", ent);
-
-        (buffer, var)
+        let good = estimate_quality_after(&rgb, &resolution);
+        (buffer, good)
     }
 }
 

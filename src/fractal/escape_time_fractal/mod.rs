@@ -11,6 +11,7 @@ use itertools::Itertools;
 use numbers::{Real, Cplx};
 use color;
 use self::style::Stylable;
+use super::estimate_quality_after;
 
 use super::RngType;
 
@@ -47,7 +48,7 @@ pub trait EscapeTimeFractal : Sync + Stylable {
     fn render(&mut self, resolution: (u32, u32),
                          scale: Option<f64>,
                          center: Option<(f64, f64)>)
-        -> (Vec<u8>, f64)
+        -> (Vec<u8>, bool)
     {
         let scale = match scale {
             Some(x) => (x, x),
@@ -72,9 +73,6 @@ pub trait EscapeTimeFractal : Sync + Stylable {
                                          .map(|i| self.style(i))
                                          .collect();
 
-        let var = color::color_variance(&hsv);
-        info!("variance: {}", var);
-
         let buffer: Vec<u8> = hsv.iter()
                                 .map(|hsv| {
                                     let color::RGB(r, g, b) = hsv.to_rgb();
@@ -85,6 +83,9 @@ pub trait EscapeTimeFractal : Sync + Stylable {
                                 .flatten()
                                 .collect();
 
-        (buffer, var)
+        let rgb: Vec<color::RGBA> = hsv.iter().map(|c| c.to_rgba()).collect();
+        let good = estimate_quality_after(&rgb, &resolution);
+
+        (buffer, good)
     }
 }

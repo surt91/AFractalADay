@@ -1,8 +1,6 @@
 use numbers::Real;
 
 use rand::{self, Rng};
-use color::RGBA;
-
 
 /// Estimates if the resulting fractal will be interesting
 ///
@@ -75,26 +73,4 @@ fn correlation_dimension(vals: &[[Real; 2]], span: Real) -> Real {
     }
 
     (n2/n1).ln() / (r2/r1).ln()
-}
-
-/// Calculates the entropy of an image.
-///
-/// # Arguments
-///
-/// * `pixel` - slice of the pixels of the image
-///
-/// # Remarks
-///
-/// Low entropy is a image of one color, high entropy is noise.
-/// Interesting images should be located at some range of intermediate entropies.
-pub fn entropy(pixel: &[RGBA]) -> f64 {
-    use histogram::histogram1d;
-    let hist = histogram1d(pixel.iter().map(|c| c.to_u8() as usize), (0, 255));
-
-    let entropy = - hist.iter().map(|&i| {
-                    let f = i as f64;
-                    if f<=0. { 0. } else { f*f.log2() }
-                }).sum::<f64>();
-
-    entropy
 }

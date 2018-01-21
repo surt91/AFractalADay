@@ -17,6 +17,10 @@ impl HSV {
     pub fn to_rgb(&self) -> RGB {
         hsv2rgb(self)
     }
+    pub fn to_rgba(&self) -> RGBA {
+        let RGB(r, g, b) = hsv2rgb(self);
+        RGBA((r * 255.) as u8, (g * 255.) as u8, (b * 255.) as u8, 255)
+    }
 
     pub fn to_u8(&self) -> u8 {
         self.to_rgb().to_u8()
@@ -60,6 +64,28 @@ impl RGBA {
         RGB(r as f64 / 255.,
             g as f64 / 255.,
             b as f64 / 255.)
+    }
+
+    pub fn blend(colors: &[&RGBA]) -> RGBA {
+        let mut r = 0.;
+        let mut g = 0.;
+        let mut b = 0.;
+        let mut a = 0.;
+        let mut ctr = 0.;
+        for c in colors {
+            let &&RGBA(rr, gg, bb, aa) = c;
+            r += rr as f64;
+            g += gg as f64;
+            b += bb as f64;
+            a += aa as f64;
+            ctr += 1.0;
+        }
+        RGBA(
+            (r/ctr) as u8,
+            (g/ctr) as u8,
+            (b/ctr) as u8,
+            (a/ctr) as u8
+        )
     }
 
     pub fn to_u8(&self) -> u8 {
@@ -191,5 +217,7 @@ pub fn color_variance(pixels: &[HSV]) -> f64 {
                              .sum::<f64>();
 
     let tmp = (var_h, if var_s > var_v {var_s} else {var_v});
+    info!("hue: {}, sat: {}, value: {}", mean_h, mean_s, mean_v);
+    info!("hue: {}, sat: {}, value: {}", var_h, var_s, var_v);
     (tmp.0 + tmp.1) / 2.
 }

@@ -1,5 +1,6 @@
 mod escape_time_fractal;
 mod iterated_function_system;
+mod quality;
 
 // reexport configuration types
 pub use self::escape_time_fractal::style::Style;
@@ -116,16 +117,16 @@ impl FractalBuilder {
 }
 
 impl Fractal {
-    pub fn render(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<f64> {
-        let (buffer, var) = match self.fractal {
+    pub fn render(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<bool> {
+        let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
             FractalInstance::IFS(ref mut f) => f.render(resolution, 1000)
         };
 
         let (x, y) = resolution;
         png::save_png(filename, x, y, &buffer)?;
-        
-        Ok(var)
+
+        Ok(good)
     }
 
     pub fn description(&self) -> &str {
@@ -141,11 +142,11 @@ impl Fractal {
         }
     }
 
-    pub fn estimate_quality(&mut self) -> bool {
+    pub fn estimate_quality_before(&mut self) -> bool {
         match self.fractal_type {
             FractalType::FractalFlame => {
                 match self.fractal {
-                    FractalInstance::IFS(ref mut f) => f.estimate_quality(),
+                    FractalInstance::IFS(ref mut f) => f.estimate_quality_before(),
                     _ => unreachable!(),
                 }
             },
@@ -157,23 +158,36 @@ impl Fractal {
 pub fn render_wrapper(fractal: &mut Fractal, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
     // for some fractals, we can estimate if it will look good
     // so abort, if not before rendering
-    if ! fractal.estimate_quality() {
+    if ! fractal.estimate_quality_before() {
         return (false, "".to_string(), "".to_string())
     }
 
-    let variance = fractal.render(*dim, filename).expect("creation of fractal failed");
-    info!("variance: {:.4}", variance);
+    let finished = fractal.render(*dim, filename).expect("creation of fractal failed");
 
     let description = fractal.description().to_owned();
     info!("{}", description);
 
     let json = serde_json::to_string_pretty(&fractal.json()).unwrap();
 
-    // ensure that the image has some variance
-    // otherwise the images are probably boring
-    let finished = variance > 0.01;
     // TODO: we need something better than the variance to estimate the
     // quality of an image, maybe do an FFT and look for intermediate frequencies?
 
     (finished, description, json)
+}
+
+use color::{RGBA, HSV, color_variance};
+
+pub fn estimate_quality_after(rgb: &[RGBA], resolution: &(u32, u32)) -> bool {
+    let hsv: Vec<HSV> = rgb.iter().map(|c| c.blend_black().to_hsv()).collect();
+    let var = color_variance(&hsv);
+    info!("variance: {:.3}", var);
+
+    let ent = quality::entropy(&rgb);
+    info!("entropy: {:.2}", ent);
+    let rgb = quality::downscale(&rgb, resolution);
+    let rgb = quality::downscale(&rgb, &(resolution.0/2, resolution.1/2));
+    let ent16 = quality::entropy(&rgb);
+    info!("entropy after downscale (1:16): {:.2}", ent16);
+
+    var > 0.01 && (ent - ent16).abs() > 1. && ent < 10. && ent > 2.
 }
