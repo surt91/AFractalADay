@@ -5,7 +5,7 @@ use itertools;
 
 use color::{HSV, RGB};
 use super::{Transformation, MobiusTransformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
-use super::IteratedFunctionSystemBuilder;
+use fractal::FractalBuilder;
 use super::RngType;
 use super::Variation;
 
@@ -13,7 +13,7 @@ use numbers::Real;
 use std::f64::consts::PI as PI_;
 const PI: Real = PI_ as Real;
 
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
     pub fn mobius_flame(self) -> FractalFlame<RngType> {
         let mut rng = self.seed_rng();

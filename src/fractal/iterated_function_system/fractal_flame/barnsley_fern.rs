@@ -1,44 +1,32 @@
 extern crate rand;
 
 use color::RGB;
-use super::{Transformation, NonlinearTransformation, Variation, FractalFlame, AffineTransformation};
-use super::IteratedFunctionSystemBuilder;
+use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
+use fractal::FractalBuilder;
 use super::RngType;
 
-use numbers::{Real,Cplx};
-use std::f64::consts::PI as PI_;
-const PI: Real = PI_ as Real;
-
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
-    pub fn appolonian_gasket(self) -> FractalFlame<RngType> {
+    pub fn barnsley_fern(self) -> FractalFlame<RngType> {
         let rng = self.seed_rng();
 
-        let number_of_functions = 3;
-        let probabilities = vec![0.33, 0.66, 1.];
+        let number_of_functions = 4;
+        let probabilities = vec![0.01, 0.86, 0.93, 1.];
 
         let colors = vec![
-            RGB(1., 0., 0.),
-            RGB(0., 1., 0.),
-            RGB(0., 0., 1.),
+            RGB(0.5, 0.5, 0.1),
+            RGB(0.02, 0.6, 0.001),
+            RGB(0.8, 0.8, 0.),
+            RGB(0.8, 0.6, 0.)
         ];
-
         let transformations = vec![
-            Transformation::mobius(
-                Cplx::new((3. as Real).sqrt() - 1., 0.),
-                Cplx::new(1., 0.),
-                Cplx::new(-1., 0.),
-                Cplx::new((3. as Real).sqrt() + 1., 0.)
-            ),
-            Transformation::Affine(
-                AffineTransformation::rotate(2.*PI/3.)
-            ),
-            Transformation::Affine(
-                AffineTransformation::rotate(4.*PI/3.)
-            )
+            Transformation::affine(0., 0., 0., 0., 0.16, 0.),
+            Transformation::affine(0.85, 0.04, 0., -0.04, 0.85, 1.6),
+            Transformation::affine(0.2, -0.26, 0., 0.23, 0.22, 1.6),
+            Transformation::affine(-0.15, 0.28, 0., 0.26, 0.24, 0.44),
         ];
 
-        let mut description = "Appolonian Gasket".to_owned();
+        let mut description = "Barnsley Fern".to_owned();
 
         let variation = match self.variation {
             Some(v) => {

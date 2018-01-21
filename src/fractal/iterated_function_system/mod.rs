@@ -1,10 +1,7 @@
 mod fractal_flame;
 mod quality;
-pub mod iterated_function_system_builder;
 pub mod variation;
 pub mod symmetry;
-
-extern crate rand;
 
 use std::f64;
 use std::io;
@@ -23,9 +20,7 @@ extern crate num_cpus;
 use std::thread;
 use std::sync::mpsc::channel;
 
-pub type RngType = rand::Isaac64Rng;
-pub type SeedType = [u64; 4];
-
+use super::{RngType, SeedType};
 
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {

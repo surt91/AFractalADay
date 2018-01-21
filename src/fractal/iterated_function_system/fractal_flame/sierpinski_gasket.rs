@@ -3,22 +3,18 @@ use self::rand::Rng;
 
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
-use super::IteratedFunctionSystemBuilder;
+use fractal::FractalBuilder;
 use super::RngType;
 
 use numbers::Real;
 
-use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
-const PI_QUARTER: Real = FRAC_PI_4 as Real;
-const BY_SQRT: Real = FRAC_1_SQRT_2 as Real;
-
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
-    pub fn heighway_dragon(self) -> FractalFlame<RngType> {
+    pub fn sierpinski_gasket(self) -> FractalFlame<RngType> {
         let mut rng = self.seed_rng();
 
-        let number_of_functions = 2;
-        let probabilities = vec![0.5, 1.];
+        let number_of_functions = 3;
+        let probabilities = vec![0.33, 0.66, 1.];
 
         let mut colors: Vec<RGB> = Vec::new();
         for _ in 0..number_of_functions {
@@ -26,22 +22,17 @@ impl IteratedFunctionSystemBuilder
             colors.push(hsv.to_rgb());
         }
 
+        let sqrt3by4 = (3. as Real).sqrt()/4.;
         let transformations = vec![
-            Transformation::affine(PI_QUARTER.cos() * BY_SQRT,
-                                   (-PI_QUARTER).sin() * BY_SQRT,
-                                   0.,
-                                   PI_QUARTER.sin() * BY_SQRT,
-                                   PI_QUARTER.cos() * BY_SQRT,
-                                   0.),
-            Transformation::affine((3.*PI_QUARTER).cos() * BY_SQRT,
-                                   (-3.*PI_QUARTER).sin() * BY_SQRT,
-                                   BY_SQRT,
-                                   (3.*PI_QUARTER).sin() * BY_SQRT,
-                                   (3.*PI_QUARTER).cos() * BY_SQRT,
-                                   (2. as Real).sqrt() * BY_SQRT) ,
+            Transformation::affine(-1./4., sqrt3by4, 1./4.,
+                                   -sqrt3by4, -1./4., sqrt3by4),
+            Transformation::affine(1./2., 0., 1./4.,
+                                   0., 1./2., sqrt3by4),
+            Transformation::affine(-1./4., -sqrt3by4, 1.,
+                                   sqrt3by4, -1./4., 0.),
         ];
 
-        let mut description = "Heighway Dragon".to_owned();
+        let mut description = "Sierpinski Gasket".to_owned();
 
         let variation = match self.variation {
             Some(v) => {

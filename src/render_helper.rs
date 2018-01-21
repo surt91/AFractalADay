@@ -1,59 +1,26 @@
 extern crate serde_json;
 
-use escape_time_fractal::EscapeTimeFractal;
-use iterated_function_system::IteratedFunctionSystem;
+use fractal::{Fractal};
 
-pub fn render_escape_time_fractal<T: EscapeTimeFractal>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
-    let mut finished = false;
-    // ensure that the image has some variance
-    // otherwise the images are probably boring
-    match fractal.render(*dim, None, None, filename) {
-        Ok(variance) => finished = variance > 0.01,
-        Err(x) => error!("creation of fractal failed {:?}", x)
+pub fn render_wrapper(fractal: &mut Fractal, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
+    // for some fractals, we can estimate if it will look good
+    // so abort, if not before rendering
+    if ! fractal.estimate_quality() {
+        return (false, "".to_string(), "".to_string())
     }
 
-    let description = fractal.description().to_string();
+    let variance = fractal.render(*dim, filename).expect("creation of fractal failed");
+
+    let description = fractal.description().to_owned();
     info!("{}", description);
 
-    let json = "todo".to_owned();
+    let json = serde_json::to_string_pretty(&fractal.json()).unwrap();
+
+    // ensure that the image has some variance
+    // otherwise the images are probably boring
+    let finished = variance > 0.01;
+    // TODO: we need something better than the variance to estimate the
+    // quality of an image, maybe do an FFT and look for intermediate frequencies?
 
     (finished, description, json)
-}
-
-pub fn render_fractal_flame<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
-    let description = fractal.description().to_string();
-    info!("{}", description);
-
-    // Serialize it to a JSON string.
-    let json = serde_json::to_string_pretty(&fractal.get_serializable()).unwrap();
-
-    // if the fractal will probably be not interesting, try the next one
-    if !fractal.estimate_quality() {
-        return (false, description, json)
-    }
-
-    // ensure that the image has some variance
-    // otherwise the images are probably boring
-    match fractal.render(*dim, 1000, filename) {
-        Ok(_) => (),
-        Err(x) => error!("creation of fractal failed {:?}", x)
-    }
-
-    (true, description, json)
-}
-
-
-// same as fractal flame, but always accept
-pub fn render_ifs<T: IteratedFunctionSystem>(fractal: &mut T, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
-    let description = fractal.description().to_string();
-    info!("{}", description);
-
-    match fractal.render(*dim, 1000, filename) {
-        Ok(_) => (),
-        Err(x) => error!("creation of fractal failed {:?}", x)
-    }
-
-    let json = serde_json::to_string_pretty(&fractal.get_serializable()).unwrap();
-
-    (true, description, json)
 }

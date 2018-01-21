@@ -6,11 +6,14 @@ use std::fmt;
 use color;
 use super::Convergence;
 
+use super::RngType;
+
 pub trait Stylable {
     fn style(&self, &Convergence) -> color::HSV;
     fn style_name(&self) -> &str;
 }
 
+#[derive(Clone)]
 pub struct Style {
     pub callable: fn(&Convergence, Option<f64>, Option<f64>) -> color::HSV,
     pub readable: String,
@@ -45,6 +48,10 @@ impl Style {
         Style { callable: style_pastell, readable: "pastell".to_string() }
     }
 
+    pub fn name(&self) -> String {
+        self.readable.to_owned()
+    }
+
     pub fn num() -> usize {
         4
     }
@@ -57,7 +64,7 @@ impl Style {
         }
     }
 
-    pub fn random_style(rng: &mut rand::StdRng) -> Style {
+    pub fn random_style(rng: &mut RngType) -> Style {
         Style::index(rng.gen_range(0, Style::num()))
     }
 }

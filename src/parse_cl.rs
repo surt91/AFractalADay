@@ -6,16 +6,16 @@ use std::fs;
 use std::io::prelude::*;
 
 use self::clap::{App, Arg, ArgGroup};
-use escape_time_fractal::style::Style;
 use FractalType;
-use iterated_function_system::variation::Variation;
-use iterated_function_system::symmetry::Symmetry;
+use fractal::escape_time_fractal::style::Style;
+use fractal::iterated_function_system::variation::Variation;
+use fractal::iterated_function_system::symmetry::Symmetry;
 
 #[derive(Debug)]
 pub struct Options {
     pub seed: Option<usize>,
     pub filename: Option<String>,
-    pub style: Option<String>,
+    pub style: Option<Style>,
     pub height: Option<u32>,
     pub width: Option<u32>,
     pub tweet: bool,
@@ -32,8 +32,8 @@ impl fmt::Display for Options {
                   self.fractal_type,
                   self.seed.map_or("random".to_string(), |s| s.to_string()),
                   self.filename.as_ref().unwrap_or(&"random".to_string()),
-                  self.style.as_ref().unwrap_or(&"random".to_string()),
-                  self.variation.as_ref().and_then(|v| Some(v.name())).unwrap_or_else(|| "default".to_string()),
+                  self.style.as_ref().and_then(|s| Some(s.name())).unwrap_or("random".to_string()),
+                  self.variation.as_ref().and_then(|v| Some(v.name())).unwrap_or("default".to_string()),
                   self.tweet,
                   self.quiet,
                   self.optipng,
@@ -205,12 +205,12 @@ pub fn parse_cl() -> Options {
                           .and_then(|f| Some(f.to_string()))
                           .or_else(|| None);
     // test if style is valid
-    match matches.value_of("style")
+    let style = match matches.value_of("style")
     {
         Some(x) => Some(Style::from_string(x).expect(&format!("Invalid Style {}", x))),
         None => None
     };
-    let style = matches.value_of("style").map(|x| x.to_string());
+
     let seed = matches.value_of("seed")
                       .and_then(|s| Some(s.parse::<usize>().expect("seed needs to be an integer")))
                       .or_else(|| None);

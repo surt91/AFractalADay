@@ -5,29 +5,28 @@ extern crate rand;
 use self::rand::Rng;
 
 use super::{EscapeTimeFractal, Convergence};
-use super::escape_time_fractal_builder::EscapeTimeFractalBuilder;
+use fractal::FractalBuilder;
 use numbers::{Coef, Cplx, ComplexFunction};
 use functions::{derivative, random_formula, random_coef};
 
-use escape_time_fractal::style::{Style, Stylable};
+use super::style::{Style, Stylable};
 use color;
+
+use super::RngType;
 
 pub struct NewtonFractal {
     a: Coef,
     f: ComplexFunction,
-    rng: rand::StdRng,
+    rng: RngType,
     pub description: String,
     style: Style,
     random_color: f64,
     random_count: f64
 }
 
-impl EscapeTimeFractalBuilder {
+impl FractalBuilder {
     pub fn newton(self) -> NewtonFractal {
-        let mut rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
+        let mut rng = self.seed_rng();
 
         // fill in defaults, if members are not given
         // most defaults will be random
@@ -116,7 +115,7 @@ impl EscapeTimeFractal for NewtonFractal {
         Convergence {count: ctr as f64, value: state}
     }
 
-    fn get_rng(&mut self) -> &mut rand::StdRng {
+    fn get_rng(&mut self) -> &mut RngType {
         &mut self.rng
     }
 }

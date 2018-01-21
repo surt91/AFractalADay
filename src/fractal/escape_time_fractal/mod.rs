@@ -1,7 +1,6 @@
 mod newton;
 mod julia;
 mod mandelbrot;
-pub mod escape_time_fractal_builder;
 pub mod style;
 
 extern crate rand;
@@ -17,6 +16,8 @@ use color;
 use png;
 use self::style::Stylable;
 
+use super::RngType;
+
 pub struct Convergence {
     pub count: f64,
     pub value: Cplx
@@ -28,7 +29,7 @@ pub struct Convergence {
 pub trait EscapeTimeFractal : Sync + Stylable {
     fn description(&self) -> &str;
     fn iterate(&self, state: Cplx) -> Convergence;
-    fn get_rng(&mut self) -> &mut rand::StdRng;
+    fn get_rng(&mut self) -> &mut RngType;
 
     fn raster(&self, resolution: (u32, u32), scale: (f64, f64), center: (f64, f64)) -> Vec<Convergence> {
         let (x, y) = resolution;

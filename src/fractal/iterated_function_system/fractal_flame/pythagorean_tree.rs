@@ -3,7 +3,7 @@ use self::rand::Rng;
 
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
-use super::IteratedFunctionSystemBuilder;
+use fractal::FractalBuilder;
 use super::RngType;
 
 use numbers::Real;
@@ -11,7 +11,7 @@ use numbers::Real;
 use std::f64::consts::PI as PI_;
 const PI: Real = PI_ as Real;
 
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
     pub fn pythagorean_tree(self) -> FractalFlame<RngType> {
         let mut rng = self.seed_rng();

@@ -1,38 +1,44 @@
 extern crate rand;
-use self::rand::Rng;
 
-use color::{HSV, RGB};
-use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
-use super::IteratedFunctionSystemBuilder;
+use color::RGB;
+use super::{Transformation, NonlinearTransformation, Variation, FractalFlame, AffineTransformation};
+use fractal::FractalBuilder;
 use super::RngType;
 
-use numbers::Real;
+use numbers::{Real,Cplx};
+use std::f64::consts::PI as PI_;
+const PI: Real = PI_ as Real;
 
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
-    pub fn sierpinski_gasket(self) -> FractalFlame<RngType> {
-        let mut rng = self.seed_rng();
+    pub fn appolonian_gasket(self) -> FractalFlame<RngType> {
+        let rng = self.seed_rng();
 
         let number_of_functions = 3;
         let probabilities = vec![0.33, 0.66, 1.];
 
-        let mut colors: Vec<RGB> = Vec::new();
-        for _ in 0..number_of_functions {
-            let hsv = HSV(rng.gen(), 1., 1.);
-            colors.push(hsv.to_rgb());
-        }
-
-        let sqrt3by4 = (3. as Real).sqrt()/4.;
-        let transformations = vec![
-            Transformation::affine(-1./4., sqrt3by4, 1./4.,
-                                   -sqrt3by4, -1./4., sqrt3by4),
-            Transformation::affine(1./2., 0., 1./4.,
-                                   0., 1./2., sqrt3by4),
-            Transformation::affine(-1./4., -sqrt3by4, 1.,
-                                   sqrt3by4, -1./4., 0.),
+        let colors = vec![
+            RGB(1., 0., 0.),
+            RGB(0., 1., 0.),
+            RGB(0., 0., 1.),
         ];
 
-        let mut description = "Sierpinski Gasket".to_owned();
+        let transformations = vec![
+            Transformation::mobius(
+                Cplx::new((3. as Real).sqrt() - 1., 0.),
+                Cplx::new(1., 0.),
+                Cplx::new(-1., 0.),
+                Cplx::new((3. as Real).sqrt() + 1., 0.)
+            ),
+            Transformation::Affine(
+                AffineTransformation::rotate(2.*PI/3.)
+            ),
+            Transformation::Affine(
+                AffineTransformation::rotate(4.*PI/3.)
+            )
+        ];
+
+        let mut description = "Appolonian Gasket".to_owned();
 
         let variation = match self.variation {
             Some(v) => {

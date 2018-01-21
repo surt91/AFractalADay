@@ -3,8 +3,7 @@
 extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
-use escape_time_fractal::escape_time_fractal_builder::EscapeTimeFractalBuilder;
-use iterated_function_system::iterated_function_system_builder::IteratedFunctionSystemBuilder;
+use fractal::FractalBuilder;
 
 use std::fs;
 use std::io::prelude::*;
@@ -25,10 +24,9 @@ use my_twitter::twitter as twitter;
 
 mod parse_cl;
 use parse_cl::{parse_cl, Options};
-use escape_time_fractal::style::Style;
 
 mod render_helper;
-use render_helper::{render_escape_time_fractal, render_ifs, render_fractal_flame};
+use render_helper::{render_wrapper};
 
 
 // only log errors to stdout, but everything to a log file
@@ -87,38 +85,14 @@ fn build_fractal(filename: &str,
 
     // hacky do while loop
     while {
-        let mut a = EscapeTimeFractalBuilder::new().seed(seed+ctr);
-        a = match opt.style {
-            // the parser made sure that this is a valid value, unwrap should be fine
-            Some(ref x) => a.style(Style::from_string(x).unwrap()),
-            None => a
-        };
-        let s = seed+ctr;
-        let mut b = IteratedFunctionSystemBuilder::new().seed(s);
-        b = match opt.variation {
-            Some(ref x) => b.variation(x),
-            None => b
-        };
-        b = match opt.symmetry {
-            Some(ref x) => b.symmetry(x),
-            None => b
-        };
+        let mut fractal = FractalBuilder::new()
+                                         .seed(seed+ctr)
+                                         .style(&opt.style)
+                                         .variation(&opt.variation)
+                                         .symmetry(&opt.symmetry)
+                                         .build(&fractal_type);
 
-        let (finished, tmp_description, tmp_json) = match fractal_type {
-            FractalType::Newton => render_escape_time_fractal(&mut a.newton(), filename, &dim),
-            FractalType::Julia => render_escape_time_fractal(&mut a.julia(), filename, &dim),
-            FractalType::Mandelbrot => render_escape_time_fractal(&mut a.mandelbrot(), filename, &dim),
-            FractalType::HeighwayDragon => render_ifs(&mut b.heighway_dragon(), filename, &dim),
-            FractalType::BarnsleyFern => render_ifs(&mut b.barnsley_fern(), filename, &dim),
-            FractalType::SierpinskiGasket => render_ifs(&mut b.sierpinski_gasket(), filename, &dim),
-            FractalType::SierpinskiPentagon => render_ifs(&mut b.sierpinski_pentagon(), filename, &dim),
-            FractalType::PythagoreanTree => render_ifs(&mut b.pythagorean_tree(), filename, &dim),
-            FractalType::AppolonianGasket => render_ifs(&mut b.appolonian_gasket(), filename, &dim),
-            FractalType::MobiusFlame => render_fractal_flame(&mut b.mobius_flame(), filename, &dim),
-            FractalType::FractalFlame => render_fractal_flame(&mut b.fractal_flame(), filename, &dim),
-            FractalType::LoadJson(ref json) => render_ifs(&mut b.from_json(&json), filename, &dim),
-            FractalType::Random => unreachable!()
-        };
+        let (finished, tmp_description, tmp_json) = render_wrapper(&mut fractal, filename, &dim);
 
         description = tmp_description;
         json = tmp_json;

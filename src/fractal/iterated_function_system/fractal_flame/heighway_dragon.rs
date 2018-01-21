@@ -3,23 +3,22 @@ use self::rand::Rng;
 
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
-use super::IteratedFunctionSystemBuilder;
+use fractal::FractalBuilder;
 use super::RngType;
 
 use numbers::Real;
 
-use std::f64::consts::PI as PI_;
-const PI: Real = PI_ as Real;
-// const R: Real = (3. - (5. as Real).sqrt())/2.;
-const R: Real = (3. - 2.23606797749979)/2.;
+use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
+const PI_QUARTER: Real = FRAC_PI_4 as Real;
+const BY_SQRT: Real = FRAC_1_SQRT_2 as Real;
 
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
-    pub fn sierpinski_pentagon(self) -> FractalFlame<RngType> {
+    pub fn heighway_dragon(self) -> FractalFlame<RngType> {
         let mut rng = self.seed_rng();
 
-        let number_of_functions = 5;
-        let probabilities = vec![0.2, 0.4, 0.6, 0.8, 1.];
+        let number_of_functions = 2;
+        let probabilities = vec![0.5, 1.];
 
         let mut colors: Vec<RGB> = Vec::new();
         for _ in 0..number_of_functions {
@@ -27,25 +26,22 @@ impl IteratedFunctionSystemBuilder
             colors.push(hsv.to_rgb());
         }
 
-        let x3 = R * (1. + (72.*PI/180.).cos() + (36.*PI/180.).cos());
-        let y3 = R * ((72.*PI/180.).sin() + (36.*PI/180.).sin());
-        let x4 = R * (36.*PI/180.).cos();
-        let y4 = R * (2.*(72.*PI/180.).sin() + (36.*PI/180.).sin());
-        let x5 = R * (-(72.*PI/180.).cos() + (36.*PI/180.).cos() - 1.);
         let transformations = vec![
-            Transformation::affine(R, 0., 0.,
-                                   0., R, 0.),
-            Transformation::affine(R, 0., 1.-R,
-                                   0., R, 0.),
-            Transformation::affine(R, 0., x3,
-                                   0., R, y3),
-            Transformation::affine(R, 0., x4,
-                                   0., R, y4),
-            Transformation::affine(R, 0., x5,
-                                   0., R, y3),
+            Transformation::affine(PI_QUARTER.cos() * BY_SQRT,
+                                   (-PI_QUARTER).sin() * BY_SQRT,
+                                   0.,
+                                   PI_QUARTER.sin() * BY_SQRT,
+                                   PI_QUARTER.cos() * BY_SQRT,
+                                   0.),
+            Transformation::affine((3.*PI_QUARTER).cos() * BY_SQRT,
+                                   (-3.*PI_QUARTER).sin() * BY_SQRT,
+                                   BY_SQRT,
+                                   (3.*PI_QUARTER).sin() * BY_SQRT,
+                                   (3.*PI_QUARTER).cos() * BY_SQRT,
+                                   (2. as Real).sqrt() * BY_SQRT) ,
         ];
 
-        let mut description = "Sierpinski Pentagon".to_owned();
+        let mut description = "Heighway Dragon".to_owned();
 
         let variation = match self.variation {
             Some(v) => {

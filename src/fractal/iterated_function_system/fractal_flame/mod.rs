@@ -32,7 +32,7 @@ use super::symmetry::Symmetry;
 use color::{RGB, HSV};
 
 use super::{RngType, SeedType};
-use super::iterated_function_system_builder::IteratedFunctionSystemBuilder;
+use fractal::FractalBuilder;
 
 use std::f64::consts::PI as PI_;
 const PI: Real = PI_ as Real;
@@ -178,7 +178,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
 }
 
 
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
     pub fn fractal_flame(self) -> FractalFlame<RngType> {
         let mut rng = self.seed_rng();

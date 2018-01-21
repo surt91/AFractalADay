@@ -5,7 +5,7 @@ use std::fmt::Display;
 
 use numbers::{Cplx, Real, Coef, ComplexFunction, Formula};
 
-pub fn random_coef(rng: &mut rand::StdRng) -> Coef {
+pub fn random_coef<T: Rng>(rng: &mut T) -> Coef {
     let a_re = ((rng.gen_range(1f64, 2.) * 10.).floor() / 10.) as Real;
     let a_im = ((rng.gen_range(1f64, 2.) * 10.).floor() / 10.) as Real;
     if rng.gen::<f64>() < 0.1 {
@@ -38,14 +38,14 @@ pub fn derivative(f: &ComplexFunction, z: &Cplx) -> Cplx {
     (f(z + H) - f(z - H)) / (2. * H)
 }
 
-pub fn random_formula(rng: &mut rand::StdRng) -> Formula {
+pub fn random_formula<T: Rng>(rng: &mut T) -> Formula {
     // use up to 4 terms but at least 1
     let num_terms = (rng.gen_range(0f64, 1.) * 3.).floor() as i32 + 1;
     let mut terms: Vec<ComplexFunction> = Vec::new();
     let mut term_string: Vec<String> = Vec::new();
 
-    let a_real_gen = |generator: &mut rand::StdRng| ((generator.gen_range(-1f64, 1.) * 3. * 10.).round() / 10.) as Real;
-    let a_comp_gen = |generator: &mut rand::StdRng| Cplx::new(a_real_gen(generator), a_real_gen(generator));
+    let a_real_gen = |generator: &mut T| ((generator.gen_range(-1f64, 1.) * 3. * 10.).round() / 10.) as Real;
+    let a_comp_gen = |generator: &mut T| Cplx::new(a_real_gen(generator), a_real_gen(generator));
 
     let mut possible_terms = Terms::new();
     // chance that all coefficients will be real
@@ -164,7 +164,7 @@ impl Terms {
         candidates
     }
 
-    pub fn choice(&mut self, a: Coef, rng: &mut rand::StdRng) -> Formula {
+    pub fn choice<T: Rng>(&mut self, a: Coef, rng: &mut T) -> Formula {
         let num = self.candidates_real.len();
         let idx = rng.gen_range(0, num as usize);
         match a {

@@ -9,26 +9,26 @@ use std::f64::consts::PI;
 use std::cmp::max;
 
 use super::{EscapeTimeFractal, Convergence};
-use super::escape_time_fractal_builder::EscapeTimeFractalBuilder;
 use numbers::{Real, Cplx};
+
+use fractal::FractalBuilder;
 
 use super::style::Stylable;
 use color;
 
+use super::RngType;
+
 pub struct MandelbrotFractal {
-    rng: rand::StdRng,
+    rng: RngType,
     pub description: String,
     max_count: u64,
     shift: Cplx,
     zoom: Real
 }
 
-impl EscapeTimeFractalBuilder {
+impl FractalBuilder {
     pub fn mandelbrot(self) -> MandelbrotFractal {
-        let mut rng: rand::StdRng = match self.seed {
-            Some(x) => { let s: &[_] = &[x]; rand::SeedableRng::from_seed(s) },
-            None => rand::StdRng::new().unwrap()
-        };
+        let mut rng = self.seed_rng();
 
         // guess a random point on the complex plane which could be interesting
         let extra_r = 1. + rng.gen_range(0.0, 0.1);
@@ -112,7 +112,7 @@ impl EscapeTimeFractal for MandelbrotFractal {
         Convergence {count: ctr as f64, value: state}
     }
 
-    fn get_rng(&mut self) -> &mut rand::StdRng {
+    fn get_rng(&mut self) -> &mut RngType {
         &mut self.rng
     }
 }

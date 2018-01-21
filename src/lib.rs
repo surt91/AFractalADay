@@ -5,8 +5,7 @@ extern crate serde;
 extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 
-pub mod escape_time_fractal;
-pub mod iterated_function_system;
+pub mod fractal;
 pub mod color;
 pub mod numbers;
 pub mod functions;

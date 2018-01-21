@@ -2,12 +2,12 @@ extern crate rand;
 extern crate serde_json;
 
 use super::FractalFlame;
-use super::IteratedFunctionSystemBuilder;
+use fractal::FractalBuilder;
 use super::RngType;
 
 use super::serialize::FractalFlameConfig;
 
-impl IteratedFunctionSystemBuilder
+impl FractalBuilder
 {
     pub fn from_json(self, json: &str) -> FractalFlame<RngType> {
         let rng = self.seed_rng();
