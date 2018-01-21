@@ -3,6 +3,11 @@ mod quality;
 pub mod variation;
 pub mod symmetry;
 
+mod transformation;
+pub use self::transformation::{Transformation,AffineTransformation,MobiusTransformation,NonlinearTransformation};
+
+pub mod serialize;
+
 use std::f64;
 use std::io;
 use itertools::Itertools;
@@ -14,7 +19,7 @@ use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
 
 use self::fractal_flame::FractalFlameSampler;
-use self::fractal_flame::serialize::FractalFlameConfig;
+use self::serialize::IteratedFunctionSystemConfig;
 
 extern crate num_cpus;
 use std::thread;
@@ -28,7 +33,7 @@ pub trait IteratedFunctionSystem : Sync {
     fn needs_strict_bounds(&self) -> bool;
     fn get_rng(&mut self) -> &mut RngType;
     fn get_sampler(&mut self) -> FractalFlameSampler<RngType>;
-    fn get_serializable(&self) -> FractalFlameConfig;
+    fn get_serializable(&self) -> IteratedFunctionSystemConfig;
 
     fn estimate_quality(&mut self) -> bool {
         let sampler = self.get_sampler();

@@ -1,7 +1,7 @@
 extern crate rand;
 use self::rand::Rng;
 
-use super::Variation;
+use fractal::Variation;
 use numbers::Real;
 use std::f64::consts::PI as PI64;
 

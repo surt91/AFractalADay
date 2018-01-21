@@ -1,5 +1,9 @@
-pub mod escape_time_fractal;
-pub mod iterated_function_system;
+mod escape_time_fractal;
+mod iterated_function_system;
+
+pub use self::escape_time_fractal::style::Style;
+pub use self::iterated_function_system::variation::Variation;
+pub use self::iterated_function_system::symmetry::Symmetry;
 
 extern crate serde_json;
 
@@ -11,24 +15,18 @@ pub type SeedType = [u64; 4];
 
 use FractalType;
 
-// for iterated function systems
-use self::iterated_function_system::variation::Variation;
-use self::iterated_function_system::symmetry::Symmetry;
-
-// for escape time
 use numbers::{Coef, Formula};
-use self::escape_time_fractal::style::Style;
 
 use std::io;
 
-pub enum FractalInstance {
+enum FractalInstance {
     EscapeTime(Box<escape_time_fractal::EscapeTimeFractal>),
     IFS(Box<iterated_function_system::IteratedFunctionSystem>)
 }
 
 pub struct Fractal {
-    pub fractal: FractalInstance,
-    pub fractal_type: FractalType
+    fractal: FractalInstance,
+    fractal_type: FractalType
 }
 
 pub struct FractalBuilder {
@@ -149,4 +147,28 @@ impl Fractal {
             _ => true,
         }
     }
+}
+
+pub fn render_wrapper(fractal: &mut Fractal, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
+    // for some fractals, we can estimate if it will look good
+    // so abort, if not before rendering
+    if ! fractal.estimate_quality() {
+        return (false, "".to_string(), "".to_string())
+    }
+
+    let variance = fractal.render(*dim, filename).expect("creation of fractal failed");
+    info!("variance: {:.4}", variance);
+
+    let description = fractal.description().to_owned();
+    info!("{}", description);
+
+    let json = serde_json::to_string_pretty(&fractal.json()).unwrap();
+
+    // ensure that the image has some variance
+    // otherwise the images are probably boring
+    let finished = variance > 0.01;
+    // TODO: we need something better than the variance to estimate the
+    // quality of an image, maybe do an FFT and look for intermediate frequencies?
+
+    (finished, description, json)
 }

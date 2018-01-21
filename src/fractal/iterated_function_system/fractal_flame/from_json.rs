@@ -5,14 +5,14 @@ use super::FractalFlame;
 use fractal::FractalBuilder;
 use super::RngType;
 
-use super::serialize::FractalFlameConfig;
+use fractal::iterated_function_system::serialize::IteratedFunctionSystemConfig;
 
 impl FractalBuilder
 {
     pub fn from_json(self, json: &str) -> FractalFlame<RngType> {
         let rng = self.seed_rng();
 
-        let ffc: FractalFlameConfig = serde_json::from_str(json).expect("invalid json");
+        let ffc: IteratedFunctionSystemConfig = serde_json::from_str(json).expect("invalid json");
 
         let number_of_functions = ffc.probabilities.len();
         let probabilities = ffc.probabilities;

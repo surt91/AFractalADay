@@ -7,9 +7,9 @@ use std::io::prelude::*;
 
 use self::clap::{App, Arg, ArgGroup};
 use FractalType;
-use fractal::escape_time_fractal::style::Style;
-use fractal::iterated_function_system::variation::Variation;
-use fractal::iterated_function_system::symmetry::Symmetry;
+use fractal::Style;
+use fractal::Variation;
+use fractal::Symmetry;
 
 #[derive(Debug)]
 pub struct Options {

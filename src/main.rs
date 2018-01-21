@@ -3,7 +3,7 @@
 extern crate a_fractal_a_day;
 
 use a_fractal_a_day::*;
-use fractal::FractalBuilder;
+use fractal::{FractalBuilder,render_wrapper};
 
 use std::fs;
 use std::io::prelude::*;
@@ -24,9 +24,6 @@ use my_twitter::twitter as twitter;
 
 mod parse_cl;
 use parse_cl::{parse_cl, Options};
-
-mod render_helper;
-use render_helper::{render_wrapper};
 
 
 // only log errors to stdout, but everything to a log file

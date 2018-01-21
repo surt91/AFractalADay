@@ -1,10 +1,9 @@
-use super::nonlinear_transformation::NonlinearTransformation;
-
+use super::NonlinearTransformation;
 use super::Transformation;
 use color::RGB;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct FractalFlameConfig {
+pub struct IteratedFunctionSystemConfig {
     pub probabilities: Vec<f64>,
     pub colors: Vec<RGB>,
     pub transformations: Vec<Transformation>,

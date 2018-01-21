@@ -1,14 +1,3 @@
-mod affine_transformation;
-use self::affine_transformation::AffineTransformation;
-mod mobius_transformation;
-use self::mobius_transformation::MobiusTransformation;
-mod nonlinear_transformation;
-use self::nonlinear_transformation::NonlinearTransformation;
-use super::variation::Variation;
-
-pub mod serialize;
-use self::serialize::FractalFlameConfig;
-
 mod barnsley_fern;
 mod heighway_dragon;
 mod sierpinski_gasket;
@@ -16,41 +5,24 @@ mod sierpinski_pentagon;
 mod pythagorean_tree;
 mod appolonian_gasket;
 mod mobius_flame;
+mod fractal_flame;
 
 mod from_json;
 
 extern crate std;
 extern crate num;
-use itertools;
 
 extern crate rand;
 use self::rand::{Rng, SeedableRng};
 
-use numbers::{Real, Cplx};
+use numbers::Real;
 use super::IteratedFunctionSystem;
-use super::symmetry::Symmetry;
-use color::{RGB, HSV};
+use super::IteratedFunctionSystemConfig;
+use fractal::{Symmetry,Variation};
+use super::{Transformation,NonlinearTransformation,AffineTransformation,MobiusTransformation};
+use color::RGB;
 
 use super::{RngType, SeedType};
-use fractal::FractalBuilder;
-
-use std::f64::consts::PI as PI_;
-const PI: Real = PI_ as Real;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Transformation {
-    Affine(AffineTransformation),
-    Mobius(MobiusTransformation)
-}
-
-impl Transformation {
-    fn affine(a: Real, b: Real, c: Real, d: Real, e: Real, f: Real) -> Transformation {
-        Transformation::Affine(AffineTransformation::new(a, b, c, d, e, f))
-    }
-    fn mobius(a: Cplx, b: Cplx, c: Cplx, d: Cplx) -> Transformation {
-        Transformation::Mobius(MobiusTransformation::new(a, b, c, d))
-    }
-}
 
 pub struct FractalFlame<T>
     where T: Rng
@@ -166,125 +138,13 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
         }
     }
 
-    fn get_serializable(&self) -> FractalFlameConfig {
-        FractalFlameConfig {
+    fn get_serializable(&self) -> IteratedFunctionSystemConfig {
+        IteratedFunctionSystemConfig {
             probabilities: self.probabilities.clone(),
             colors: self.colors.clone(),
             transformations: self.transformations.clone(),
             variation: self.variation.clone(),
             description: self.description().to_owned(),
-        }
-    }
-}
-
-
-impl FractalBuilder
-{
-    pub fn fractal_flame(self) -> FractalFlame<RngType> {
-        let mut rng = self.seed_rng();
-
-        let number_of_functions = rng.gen_range(2, 7);
-
-        let prob: Vec<f64> = rng.gen_iter().take(number_of_functions).collect();
-        let mut p = 0.;
-        let p_norm: f64 = prob.iter().sum();
-        let mut probabilities: Vec<f64> = Vec::new();
-        for i in prob {
-            p += i/p_norm;
-            probabilities.push(p);
-        }
-
-        let mut colors: Vec<RGB> = Vec::new();
-        for _ in 0..number_of_functions {
-            let hsv = HSV(rng.gen(), 1., 1.);
-            colors.push(hsv.to_rgb());
-        }
-        let mut transformations: Vec<Transformation> =
-                itertools::repeat_call(|| Transformation::Affine(AffineTransformation::random(&mut rng)))
-                          .take(number_of_functions)
-                          .collect();
-
-        let variation = match self.variation {
-            Some(v) => NonlinearTransformation::new(v),
-            None => NonlinearTransformation::random(&mut rng)
-        };
-
-        // handle symmetries
-        let symmetry = match self.symmetry {
-            Some(s) => s,
-            None => Symmetry::random(&mut rng)
-        };
-
-        let number_of_symmetries: usize = match symmetry {
-            Symmetry::None => 1,
-            Symmetry::Vertical => {
-                transformations.push(
-                    Transformation::Affine(
-                        AffineTransformation::vertical_mirror()
-                    )
-                );
-                2
-            }
-            Symmetry::Horizontal => {
-                transformations.push(
-                    Transformation::Affine(
-                        AffineTransformation::horizontal_mirror()
-                    )
-                );
-                2
-            }
-            Symmetry::Rotational(x) => {
-                for i in 1..x {
-                    transformations.push(
-                        Transformation::Affine(
-                            AffineTransformation::rotate(2.*PI/x as Real * i as Real)
-                        )
-                    );
-                }
-                x
-            }
-        };
-
-        for i in 0..probabilities.len() {
-            probabilities[i] /= number_of_symmetries as f64;
-        }
-
-        p = 1./number_of_symmetries as f64;
-        for _ in 1..number_of_symmetries {
-            p += 1./number_of_symmetries as f64;
-            probabilities.push(p);
-            // black will be treated as transparent
-            // FIXME: .make colors Vec<Option<RGB>>
-            let hsv = HSV(0., 0., 0.);
-            colors.push(hsv.to_rgb());
-        }
-
-        let description = format!("Fractal Flame: '{}' Variation, {} affine transformations with {}",
-                                   variation.name(),
-                                   number_of_functions,
-                                   symmetry
-                                 );
-
-        info!("Will render {}", description);
-
-        debug!("number of functions    : {:?}", number_of_functions);
-        debug!("cumulative probabilites: {:?}", probabilities);
-        debug!("colors                 : {:?}", colors);
-        debug!("affine transformations : {:?}", transformations);
-        debug!("Variation              : {:?}", variation);
-        debug!("Symmetry               : {:?}", symmetry);
-
-        let number_of_functions = number_of_functions + number_of_symmetries - 1;
-
-        FractalFlame {
-            rng,
-            description,
-            number_of_functions,
-            probabilities,
-            colors,
-            transformations,
-            variation,
-            strict_bounds: false
         }
     }
 }
