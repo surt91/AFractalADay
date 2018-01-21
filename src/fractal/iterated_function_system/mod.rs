@@ -55,7 +55,10 @@ pub trait IteratedFunctionSystem : Sync {
 
     // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
-                         samples_per_pixel: usize)
+                         samples_per_pixel: usize,
+                         vibrancy: f64,
+                         gamma: f64
+        )
         -> (Vec<u8>, bool)
     {
         let (x, y) = resolution;
@@ -79,11 +82,13 @@ pub trait IteratedFunctionSystem : Sync {
         let cpus = num_cpus::get();
         let iterations_per_task = (samples_per_pixel - 1) / cpus;
 
+        let mut hist = ColoredHistogram::new(resolution, b, vibrancy, gamma);
+
         let (tx, rx) = channel();
         for _ in 0..cpus {
             let tx = tx.clone();
             let sampler = self.get_sampler();
-            let mut hist = ColoredHistogram::new(resolution, b);
+            let mut hist = hist.clone();
             thread::spawn(move || {
                 hist.feed(sampler.take((iterations_per_task) * (x * y) as usize));
                 tx.send(hist).unwrap();
@@ -94,7 +99,7 @@ pub trait IteratedFunctionSystem : Sync {
         let remainder = (samples_per_pixel - 1) - iterations_per_task*cpus;
         let sampler = self.get_sampler();
 
-        let mut hist = ColoredHistogram::new(resolution, b);
+
         // feed the remainder into the main histogram
         hist.feed(sampler.take(remainder * (x * y) as usize));
         // feed the values from the bounds estimation into the histogram

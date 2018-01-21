@@ -8,10 +8,13 @@ use self::rayon::prelude::*;
 use std::cmp::Ordering;
 
 /// data structure containing a 2d-histogram with 4 channels (rgba)
+#[derive(Clone)]
 pub struct ColoredHistogram {
     resolution: (u32, u32),
     bounds: (f32, f32, f32, f32),
-    bins: Vec<(f64, f64, f64, u64)>
+    bins: Vec<(f64, f64, f64, u64)>,
+    gamma: f64,
+    vibrancy: f64,
 }
 
 impl ColoredHistogram {
@@ -21,7 +24,14 @@ impl ColoredHistogram {
     ///
     /// * `resolution` - number of bins in x and y direction
     /// * `bounds` - minimum and maximum values, i.e., range of the histogram
-    pub fn new(resolution: (u32, u32), bounds: (f32, f32, f32, f32)) -> ColoredHistogram {
+    pub fn new(
+        resolution: (u32, u32),
+        bounds: (f32, f32, f32, f32),
+        vibrancy: f64,
+        gamma: f64
+    )
+    -> ColoredHistogram
+    {
         let (x_res, y_res) = resolution;
 
         let bins = vec![(0., 0., 0., 0u64); (x_res*y_res) as usize];
@@ -29,8 +39,20 @@ impl ColoredHistogram {
         ColoredHistogram {
             resolution,
             bounds,
-            bins
+            bins,
+            gamma,
+            vibrancy
         }
+    }
+
+    /// apply gamma correction and vibrancy
+    fn apply_vibrancy_and_gamma(&self, color: f64, alpha: u64) -> u8 {
+        let norm = 1. / alpha as f64;
+
+        let first = (self.vibrancy * color * norm * 255.) as u8;
+        let second = ((1.-self.vibrancy) * (color*norm).powf(1./self.gamma) * 255.) as u8;
+
+        first + second
     }
 
     /// normalize the four channels of the histogram to RGBA values, with a gamma correction
@@ -42,13 +64,11 @@ impl ColoredHistogram {
         let max_a = max_a.ln();
 
         // normalize
-        let gamma = 4.;
         self.bins.par_iter()
             .map(|&(r, g, b, a)| {
-                let norm = 1. / a as f64;
-                let r = ((r*norm).powf(1./gamma) * 255.) as u8;
-                let g = ((g*norm).powf(1./gamma) * 255.) as u8;
-                let b = ((b*norm).powf(1./gamma) * 255.) as u8;
+                let r = self.apply_vibrancy_and_gamma(r, a);
+                let g = self.apply_vibrancy_and_gamma(g, a);
+                let b = self.apply_vibrancy_and_gamma(b, a);
                 let a = ((a as f64).ln() / max_a * 255.) as u8;
                 RGBA(r, g, b, a)
             }

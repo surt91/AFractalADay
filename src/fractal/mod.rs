@@ -27,7 +27,10 @@ enum FractalInstance {
 
 pub struct Fractal {
     fractal: FractalInstance,
-    fractal_type: FractalType
+    fractal_type: FractalType,
+
+    vibrancy: f64,
+    gamma: f64,
 }
 
 pub struct FractalBuilder {
@@ -35,6 +38,8 @@ pub struct FractalBuilder {
     seed: Option<SeedType>,
     variation: Option<Variation>,
     symmetry: Option<Symmetry>,
+    vibrancy: Option<f64>,
+    gamma: Option<f64>,
 
     // for escape time
     a: Option<Coef>,
@@ -48,6 +53,8 @@ impl FractalBuilder {
             seed: None,
             variation: None,
             symmetry: None,
+            vibrancy: None,
+            gamma: None,
 
             a: None,
             f: None,
@@ -77,6 +84,16 @@ impl FractalBuilder {
         self
     }
 
+    pub fn vibrancy(mut self, vibrancy: &Option<f64>) -> FractalBuilder {
+        self.vibrancy = vibrancy.clone();
+        self
+    }
+
+    pub fn gamma(mut self, gamma: &Option<f64>) -> FractalBuilder {
+        self.gamma = gamma.clone();
+        self
+    }
+
     pub fn coefficient(mut self, a: Coef) -> FractalBuilder {
         self.a = Some(a);
         self
@@ -93,6 +110,9 @@ impl FractalBuilder {
     }
 
     pub fn build(self, fractal_type: &FractalType) -> Fractal {
+        let vibrancy = self.vibrancy.unwrap_or(0.9);
+        let gamma = self.gamma.unwrap_or(4.);
+
         let instance = match *fractal_type {
             FractalType::Newton => FractalInstance::EscapeTime(Box::new(self.newton())),
             FractalType::Julia => FractalInstance::EscapeTime(Box::new(self.julia())),
@@ -111,7 +131,9 @@ impl FractalBuilder {
 
         Fractal {
             fractal: instance,
-            fractal_type: fractal_type.clone()
+            fractal_type: fractal_type.clone(),
+            vibrancy,
+            gamma,
         }
     }
 }
@@ -120,7 +142,12 @@ impl Fractal {
     pub fn render(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
-            FractalInstance::IFS(ref mut f) => f.render(resolution, 1000)
+            FractalInstance::IFS(ref mut f) => f.render(
+                                                            resolution,
+                                                            1000,
+                                                            self.vibrancy,
+                                                            self.gamma
+                                                        )
         };
 
         let (x, y) = resolution;
