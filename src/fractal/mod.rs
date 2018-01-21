@@ -199,6 +199,16 @@ pub fn render_wrapper(fractal: &mut Fractal, filename: &str, dim: &(u32, u32)) -
     // TODO: we need something better than the variance to estimate the
     // quality of an image, maybe do an FFT and look for intermediate frequencies?
 
+    let finished = match fractal.fractal_type {
+          FractalType::FractalFlame
+        | FractalType::MobiusFlame
+        | FractalType::Newton
+        | FractalType::Mandelbrot
+        | FractalType::Julia
+          => finished,
+        _ => true
+    };
+
     (finished, description, json)
 }
 
