@@ -228,12 +228,5 @@ pub fn estimate_quality_after(rgb: &[RGBA], resolution: &(u32, u32)) -> bool {
     let var = color_variance(&hsv);
     info!("variance: {:.3}", var);
 
-    let ent = quality::entropy(&rgb);
-    info!("entropy: {:.2}", ent);
-    let rgb = quality::downscale(&rgb, resolution);
-    let rgb = quality::downscale(&rgb, &(resolution.0/2, resolution.1/2));
-    let ent16 = quality::entropy(&rgb);
-    info!("entropy after downscale (1:16): {:.2}", ent16);
-
-    var > 0.01 && (ent - ent16).abs() > 1. && ent < 10. && ent > 2.
+    var > 0.01
 }

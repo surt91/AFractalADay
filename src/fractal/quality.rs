@@ -32,10 +32,10 @@ pub fn downscale(pixel: &[RGBA], resolution: &(u32, u32)) -> Vec<RGBA> {
     for i in 0..x {
         for j in 0..y {
             out[i*y + j] = RGBA::blend(&[
-                                            &pixel[ 2*i   *y +  2*j],
-                                            &pixel[(2*i+1)*y +  2*j],
-                                            &pixel[ 2*i   *y + (2*j+1)],
-                                            &pixel[(2*i+1)*y + (2*j+1)]
+                                            &pixel[ 2*i    * 2*y +  2*j],
+                                            &pixel[(2*i+1) * 2*y +  2*j],
+                                            &pixel[ 2*i    * 2*y + (2*j+1)],
+                                            &pixel[(2*i+1) * 2*y + (2*j+1)]
                                         ]);
         }
     }
