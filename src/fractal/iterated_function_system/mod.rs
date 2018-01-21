@@ -8,8 +8,7 @@ pub use self::transformation::{Transformation,AffineTransformation,MobiusTransfo
 
 pub mod serialize;
 
-extern crate rand;
-use self::rand::Rng;
+use rand::Rng;
 
 use std::f64;
 use std::io;
@@ -20,7 +19,6 @@ use color::{RGB, RGBA, HSV, color_variance};
 use png;
 use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
-
 use self::serialize::IteratedFunctionSystemConfig;
 
 extern crate num_cpus;

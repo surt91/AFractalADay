@@ -1,6 +1,5 @@
-extern crate rand;
-use self::rand::Rng;
-use self::rand::distributions::{Normal, IndependentSample};
+use rand::Rng;
+use rand::distributions::{Normal, IndependentSample};
 
 use numbers::{Real, Cplx};
 

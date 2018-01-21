@@ -1,5 +1,4 @@
-extern crate rand;
-use self::rand::Rng;
+use rand::Rng;
 
 use numbers::Real;
 use std::ops::Mul;

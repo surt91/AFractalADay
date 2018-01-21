@@ -3,8 +3,6 @@ mod julia;
 mod mandelbrot;
 pub mod style;
 
-extern crate rand;
-
 extern crate rayon;
 use self::rayon::prelude::*;
 

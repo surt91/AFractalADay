@@ -1,18 +1,12 @@
-extern crate std;
-extern crate num;
-
-extern crate rand;
-use self::rand::Rng;
+use rand::Rng;
 
 use super::{EscapeTimeFractal, Convergence};
-use fractal::FractalBuilder;
+use fractal::{FractalBuilder, RngType};
 use numbers::{Coef, Cplx, ComplexFunction};
 use functions::{derivative, random_formula, random_coef};
 
 use super::style::{Style, Stylable};
 use color;
-
-use super::RngType;
 
 pub struct NewtonFractal {
     a: Coef,

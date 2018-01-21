@@ -1,9 +1,6 @@
-extern crate rand;
-
 use color::RGB;
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
-use fractal::FractalBuilder;
-use super::RngType;
+use fractal::{FractalBuilder, RngType};
 
 impl FractalBuilder
 {

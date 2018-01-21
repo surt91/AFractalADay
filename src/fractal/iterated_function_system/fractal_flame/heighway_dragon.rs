@@ -3,8 +3,7 @@ use self::rand::Rng;
 
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
-use fractal::FractalBuilder;
-use super::RngType;
+use fractal::{FractalBuilder, RngType};
 
 use numbers::Real;
 

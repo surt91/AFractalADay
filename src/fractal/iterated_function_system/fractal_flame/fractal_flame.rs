@@ -1,12 +1,10 @@
-extern crate rand;
-use self::rand::Rng;
+use rand::Rng;
 
 use itertools;
 
 use color::{HSV, RGB};
 use super::{Transformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
-use fractal::FractalBuilder;
-use super::RngType;
+use fractal::{FractalBuilder, RngType};
 
 use numbers::Real;
 use std::f64::consts::PI as PI_;

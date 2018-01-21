@@ -5,6 +5,8 @@ extern crate serde;
 extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 
+extern crate rand;
+
 pub mod fractal;
 pub mod color;
 pub mod numbers;

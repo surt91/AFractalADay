@@ -1,9 +1,7 @@
-extern crate rand;
-extern crate serde_json;
+use serde_json;
 
 use super::FractalFlame;
-use fractal::FractalBuilder;
-use super::RngType;
+use fractal::{FractalBuilder, RngType};
 
 use fractal::iterated_function_system::serialize::IteratedFunctionSystemConfig;
 

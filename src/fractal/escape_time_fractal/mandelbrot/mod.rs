@@ -1,22 +1,15 @@
-extern crate std;
-extern crate num;
-use self::num::PrimInt;
-
-extern crate rand;
-use self::rand::Rng;
+use rand::Rng;
 
 use std::f64::consts::PI;
 use std::cmp::max;
 
 use super::{EscapeTimeFractal, Convergence};
 use numbers::{Real, Cplx};
-
-use fractal::FractalBuilder;
+use fractal::{FractalBuilder, RngType};
 
 use super::style::Stylable;
 use color;
 
-use super::RngType;
 
 pub struct MandelbrotFractal {
     rng: RngType,
@@ -50,7 +43,7 @@ impl FractalBuilder {
             Cplx::new(x, y)
         };
 
-        let zoom = 2.pow(rng.gen_range(0, 14));
+        let zoom = 2u64.pow(rng.gen_range(0, 14));
 
         let description = format!("Mandelbrot Fractal at ~({:.2}), zoom {}x", shift, zoom);
 

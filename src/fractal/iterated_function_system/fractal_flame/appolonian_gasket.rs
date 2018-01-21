@@ -1,9 +1,6 @@
-extern crate rand;
-
 use color::RGB;
 use super::{Transformation, NonlinearTransformation, Variation, FractalFlame, AffineTransformation};
-use fractal::FractalBuilder;
-use super::RngType;
+use fractal::{FractalBuilder, RngType};
 
 use numbers::{Real,Cplx};
 use std::f64::consts::PI as PI_;

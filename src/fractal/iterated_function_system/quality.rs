@@ -1,7 +1,6 @@
 use numbers::Real;
 
-extern crate rand;
-use self::rand::Rng;
+use rand::{self, Rng};
 
 
 /// Estimates if the resulting fractal will be interesting

@@ -12,8 +12,7 @@ mod from_json;
 extern crate std;
 extern crate num;
 
-extern crate rand;
-use self::rand::{Rng, SeedableRng};
+use rand::{Rng, SeedableRng};
 
 use super::IteratedFunctionSystem;
 use super::IteratedFunctionSystemConfig;

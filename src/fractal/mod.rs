@@ -1,23 +1,22 @@
 mod escape_time_fractal;
 mod iterated_function_system;
 
+// reexport configuration types
 pub use self::escape_time_fractal::style::Style;
 pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::symmetry::Symmetry;
 
 extern crate serde_json;
 
-extern crate rand;
-use self::rand::{Rng, SeedableRng};
+use std::io;
+
+use FractalType;
+use numbers::{Coef, Formula};
+
+use rand::{self, Rng, SeedableRng};
 
 pub type RngType = rand::Isaac64Rng;
 pub type SeedType = [u64; 4];
-
-use FractalType;
-
-use numbers::{Coef, Formula};
-
-use std::io;
 
 enum FractalInstance {
     EscapeTime(Box<escape_time_fractal::EscapeTimeFractal>),

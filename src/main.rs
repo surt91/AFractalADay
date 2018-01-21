@@ -9,8 +9,7 @@ use std::fs;
 use std::io::prelude::*;
 
 extern crate rand;
-use self::rand::Rng;
-use self::rand::StdRng;
+use self::rand::{Rng, StdRng};
 
 #[macro_use] extern crate log;
 extern crate log_panics;

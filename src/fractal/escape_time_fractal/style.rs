@@ -1,12 +1,10 @@
-extern crate rand;
-
-use self::rand::Rng;
+use rand::Rng;
 use std::fmt;
 
 use color;
 use super::Convergence;
 
-use super::RngType;
+use fractal::RngType;
 
 pub trait Stylable {
     fn style(&self, &Convergence) -> color::HSV;

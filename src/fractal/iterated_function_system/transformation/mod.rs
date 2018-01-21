@@ -1,8 +1,8 @@
 use numbers::{Real,Cplx};
 
-pub mod affine_transformation;
-pub mod mobius_transformation;
-pub mod nonlinear_transformation;
+mod affine_transformation;
+mod mobius_transformation;
+mod nonlinear_transformation;
 
 pub use self::affine_transformation::AffineTransformation;
 pub use self::mobius_transformation::MobiusTransformation;

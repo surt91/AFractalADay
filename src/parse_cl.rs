@@ -1,15 +1,12 @@
-extern crate serde_json;
 extern crate clap;
+use self::clap::{App, Arg, ArgGroup};
 
 use std::fmt;
 use std::fs;
 use std::io::prelude::*;
 
-use self::clap::{App, Arg, ArgGroup};
 use FractalType;
-use fractal::Style;
-use fractal::Variation;
-use fractal::Symmetry;
+use fractal::{Style, Variation, Symmetry};
 
 #[derive(Debug)]
 pub struct Options {

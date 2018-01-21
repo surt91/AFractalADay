@@ -1,18 +1,11 @@
-extern crate std;
-extern crate num;
-
-extern crate rand;
-
 use super::{EscapeTimeFractal, Convergence};
-use fractal::FractalBuilder;
+use fractal::{FractalBuilder, RngType};
 use numbers::Cplx;
 
 use super::style::Stylable;
 use color;
 use functions::random_formula;
 use numbers::ComplexFunction;
-
-use super::RngType;
 
 
 pub struct JuliaFractal {
