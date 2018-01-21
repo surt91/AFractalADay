@@ -30,7 +30,7 @@ pub fn probably_good(vals: &[[Real; 2]], bounds: (f32, f32, f32, f32)) -> bool {
     }
 
     let dim = correlation_dimension(vals, width+height);
-    if dim < 1.2 || dim.is_nan() {
+    if dim < 1.02 || dim.is_nan() {
         info!("bad correlation dimension ({})", dim);
         return false
     }
