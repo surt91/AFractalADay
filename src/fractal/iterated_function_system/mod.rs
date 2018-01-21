@@ -8,6 +8,9 @@ pub use self::transformation::{Transformation,AffineTransformation,MobiusTransfo
 
 pub mod serialize;
 
+extern crate rand;
+use self::rand::Rng;
+
 use std::f64;
 use std::io;
 use itertools::Itertools;
@@ -18,7 +21,6 @@ use png;
 use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
 
-use self::fractal_flame::FractalFlameSampler;
 use self::serialize::IteratedFunctionSystemConfig;
 
 extern crate num_cpus;
@@ -32,7 +34,7 @@ pub trait IteratedFunctionSystem : Sync {
     fn description(&self) -> &str;
     fn needs_strict_bounds(&self) -> bool;
     fn get_rng(&mut self) -> &mut RngType;
-    fn get_sampler(&mut self) -> FractalFlameSampler<RngType>;
+    fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType>;
     fn get_serializable(&self) -> IteratedFunctionSystemConfig;
 
     fn estimate_quality(&mut self) -> bool {
@@ -124,5 +126,68 @@ pub trait IteratedFunctionSystem : Sync {
         let hsv: Vec<HSV> = rgb.iter().map(|c| c.blend_black().to_hsv()).collect();
         let var = color_variance(&hsv);
         Ok(var)
+    }
+}
+
+pub struct IteratedFunctionSystemSampler<T>
+    where T: Rng
+{
+    rng: T,
+    number_of_functions: usize,
+    probabilities: Vec<f64>,
+    colors: Vec<RGB>,
+    transformations: Vec<Transformation>,
+    variation: NonlinearTransformation,
+    p: [Real; 2],
+    r: f64,
+    g: f64,
+    b: f64,
+}
+
+impl <T> Iterator for IteratedFunctionSystemSampler<T>
+    where T: Rng
+{
+    type Item = ([Real; 2], RGB);
+
+    fn next(&mut self) -> Option<([Real; 2], RGB)> {
+        let r = self.rng.gen::<f64>();
+
+        let mut index = 0;
+        for i in 0..self.number_of_functions {
+            if r < self.probabilities[i] {
+                index = i;
+                break;
+            }
+        }
+
+        let mut is_symmetry_transformation = false;
+        let transformed = match self.transformations[index] {
+            Transformation::Affine(ref x) => {
+                is_symmetry_transformation = x.symmetry;
+                x.transform(self.p)
+            },
+            Transformation::Mobius(ref x) => {
+                x.transform(self.p[0], self.p[1])
+            }
+        };
+
+        // do not apply variation to symmetry transforms
+        if !is_symmetry_transformation {
+            self.p = self.variation.transform(transformed);
+        } else {
+            self.p = transformed;
+        }
+
+        let RGB(r, g, b) = self.colors[index];
+        // if it is black, ignore it
+        // FIXME: better would be Option<RGB>
+        if r != 0. || g != 0. || b != 0.
+        {
+            self.r = (r + self.r)/2.;
+            self.g = (g + self.g)/2.;
+            self.b = (b + self.b)/2.;
+        }
+
+        Some((self.p, RGB(self.r, self.g, self.b)))
     }
 }
