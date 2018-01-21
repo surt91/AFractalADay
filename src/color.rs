@@ -17,12 +17,21 @@ impl HSV {
     pub fn to_rgb(&self) -> RGB {
         hsv2rgb(self)
     }
+
+    pub fn to_u8(&self) -> u8 {
+        self.to_rgb().to_u8()
+    }
 }
 
 impl RGB {
     /// convert `RGB` into `HSV`
     pub fn to_hsv(&self) -> HSV {
         rgb2hsv(self)
+    }
+
+    pub fn to_u8(&self) -> u8 {
+        let &RGB(r, g, b) = self;
+        ((8. * r) as u8) << 5 | ((8. * g) as u8) << 2 | ((4.*b) as u8)
     }
 }
 
@@ -54,8 +63,7 @@ impl RGBA {
     }
 
     pub fn to_u8(&self) -> u8 {
-        let RGB(r, g, b) = self.blend_black();
-        ((8. * r) as u8) << 5 | ((8. * g) as u8) << 2 | ((4.*b) as u8)
+        self.blend_black().to_u8()
     }
 }
 
@@ -117,19 +125,17 @@ fn rgb2hsv(rgb: &RGB) -> HSV {
 /// count the number of `pixels` with the same color
 pub fn count_same(pixels: &[HSV]) -> usize {
     use std::collections::hash_map::HashMap;
-    let mut m: HashMap<(u8, u8, u8), usize> = HashMap::new();
+    let mut m: HashMap<u8, usize> = HashMap::new();
 
     for i in pixels {
-        let &HSV(h, s, v) = i;
+        let &HSV(_, s, v) = i;
 
         // only count colors, not black and white
         if v < 3e-3 || s < 3e-3 {
             continue;
         }
 
-        let col: (u8, u8, u8) = ((h*255.).floor() as u8,
-                                 (s*255.).floor() as u8,
-                                 (v*255.).floor() as u8);
+        let col = i.to_u8();
         let counter = m.entry(col).or_insert(0);
         *counter += 1;
     }
