@@ -288,3 +288,23 @@ pub fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32
 
     out
 }
+
+pub fn histogram1d<I>(vals: I, bounds: (usize, usize)) -> Vec<f64>
+    where I: Iterator<Item=usize>
+{
+    let (min, max) = bounds;
+    let mut counts = vec![0usize; max - min + 1];
+    let mut ctr = 0;
+    for z in vals {
+        // discard data outside of bounds
+        if z < min || z > max {
+            continue
+        }
+        counts[z] += 1;
+        ctr += 1;
+    }
+
+    counts.iter()
+          .map(|&x| x as f64 / ctr as f64)
+          .collect()
+}

@@ -52,6 +52,11 @@ impl RGBA {
             g as f64 / 255.,
             b as f64 / 255.)
     }
+
+    pub fn to_u8(&self) -> u8 {
+        let RGB(r, g, b) = self.blend_black();
+        ((8. * r) as u8) << 5 | ((8. * g) as u8) << 2 | ((4.*b) as u8)
+    }
 }
 
 /// convert a hsv color representations into a rgb representation
