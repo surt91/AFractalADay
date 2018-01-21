@@ -21,6 +21,8 @@ pub struct Options {
     pub fractal_type: FractalType,
     pub variation: Option<Variation>,
     pub symmetry: Option<Symmetry>,
+    pub vibrancy: Option<f64>,
+    pub gamma: Option<f64>,
 }
 
 impl fmt::Display for Options {
@@ -183,6 +185,18 @@ pub fn parse_cl() -> Options {
                     .group("symmetry")
                     .requires("iterated_function_system")
               )
+              .arg(Arg::with_name("vibrancy")
+                    .long("vibrancy")
+                    .takes_value(true)
+                    .help("sets the vibrancy of the colors (between [0, 1])")
+                    .requires("iterated_function_system")
+              )
+              .arg(Arg::with_name("gamma")
+                    .long("gamma")
+                    .takes_value(true)
+                    .help("sets the gamma correction of the colors")
+                    .requires("iterated_function_system")
+              )
               .arg(Arg::with_name("variation")
                     .long("variation")
                     .takes_value(true)
@@ -217,6 +231,13 @@ pub fn parse_cl() -> Options {
                         .or_else(|| None);
     let width = matches.value_of("width")
                        .and_then(|s| Some(s.parse::<u32>().expect("width needs to be an integer")))
+                       .or_else(|| None);
+
+    let vibrancy = matches.value_of("vibrancy")
+                       .and_then(|s| Some(s.parse::<f64>().expect("vibrancy needs to be a number")))
+                       .or_else(|| None);
+    let gamma = matches.value_of("gamma")
+                       .and_then(|s| Some(s.parse::<f64>().expect("gamma needs to be a number")))
                        .or_else(|| None);
 
     let fractal_type = if matches.is_present("newton") {
@@ -282,5 +303,7 @@ pub fn parse_cl() -> Options {
         optipng,
         variation,
         symmetry,
+        vibrancy,
+        gamma
     }
 }

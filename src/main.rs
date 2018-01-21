@@ -86,6 +86,8 @@ fn build_fractal(filename: &str,
                                          .style(&opt.style)
                                          .variation(&opt.variation)
                                          .symmetry(&opt.symmetry)
+                                         .vibrancy(&opt.vibrancy)
+                                         .gamma(&opt.gamma)
                                          .build(&fractal_type);
 
         let (finished, tmp_description, tmp_json) = render_wrapper(&mut fractal, filename, &dim);
