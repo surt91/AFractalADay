@@ -139,14 +139,15 @@ impl FractalBuilder {
 }
 
 impl Fractal {
-    pub fn render(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<bool> {
+    pub fn render(&mut self, resolution: (u32, u32), filename: &str, supersampling: bool) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
             FractalInstance::IFS(ref mut f) => f.render(
                                                             resolution,
                                                             1000,
                                                             self.vibrancy,
-                                                            self.gamma
+                                                            self.gamma,
+                                                            supersampling
                                                         )
         };
 
@@ -182,14 +183,22 @@ impl Fractal {
     }
 }
 
-pub fn render_wrapper(fractal: &mut Fractal, filename: &str, dim: &(u32, u32)) -> (bool, String, String) {
+pub fn render_wrapper(
+                        fractal: &mut Fractal,
+                        filename: &str,
+                        dim: &(u32, u32),
+                        supersampling: bool
+                     )
+                     -> (bool, String, String)
+{
     // for some fractals, we can estimate if it will look good
     // so abort, if not before rendering
     if ! fractal.estimate_quality_before() {
         return (false, "".to_string(), "".to_string())
     }
 
-    let finished = fractal.render(*dim, filename).expect("creation of fractal failed");
+    let finished = fractal.render(*dim, filename, supersampling)
+                          .expect("creation of fractal failed");
 
     let description = fractal.description().to_owned();
     info!("{}", description);

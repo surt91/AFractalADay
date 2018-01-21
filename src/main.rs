@@ -57,9 +57,12 @@ fn prepare(filename: &str) -> (String, String) {
     (img, json)
 }
 
-fn build_fractal(filename: &str,
-                  seed: usize,
-                  opt: &Options) -> (String, String) {
+fn build_fractal(
+    filename: &str,
+    seed: usize,
+    opt: &Options
+) -> (String, String)
+{
     let mut description;
     let mut json;
     let mut ctr = 0;
@@ -90,7 +93,8 @@ fn build_fractal(filename: &str,
                                          .gamma(&opt.gamma)
                                          .build(&fractal_type);
 
-        let (finished, tmp_description, tmp_json) = render_wrapper(&mut fractal, filename, &dim);
+        let (finished, tmp_description, tmp_json)
+            = render_wrapper(&mut fractal, filename, &dim, opt.supersampling);
 
         description = tmp_description;
         json = tmp_json;

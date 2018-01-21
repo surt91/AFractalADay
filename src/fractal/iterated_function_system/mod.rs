@@ -20,6 +20,7 @@ use self::quality::probably_good;
 use self::serialize::IteratedFunctionSystemConfig;
 
 use super::estimate_quality_after;
+use super::quality::downscale;
 
 extern crate num_cpus;
 use std::thread;
@@ -53,15 +54,21 @@ pub trait IteratedFunctionSystem : Sync {
         probably_good(&coords, b)
     }
 
-    // TODO: implement supersampling
     fn render(&mut self, resolution: (u32, u32),
                          samples_per_pixel: usize,
                          vibrancy: f64,
-                         gamma: f64
+                         gamma: f64,
+                         supersampling: bool
         )
         -> (Vec<u8>, bool)
     {
         let (x, y) = resolution;
+
+        let (x, y) = if supersampling {
+            (x*2, y*2)
+        } else {
+            (x, y)
+        };
 
         let sampler = self.get_sampler();
 
@@ -82,7 +89,7 @@ pub trait IteratedFunctionSystem : Sync {
         let cpus = num_cpus::get();
         let iterations_per_task = (samples_per_pixel - 1) / cpus;
 
-        let mut hist = ColoredHistogram::new(resolution, b, vibrancy, gamma);
+        let mut hist = ColoredHistogram::new((x, y), b, vibrancy, gamma);
 
         let (tx, rx) = channel();
         for _ in 0..cpus {
@@ -111,6 +118,13 @@ pub trait IteratedFunctionSystem : Sync {
         }
 
         let rgb = hist.normalize();
+
+        let rgb = if supersampling {
+            downscale(&rgb, &(x, y))
+        } else {
+            rgb
+        };
+
         let buffer: Vec<u8> = rgb.iter()
                                  .map(|rgba| {
                                      let &RGBA(r, g, b, a) = rgba;

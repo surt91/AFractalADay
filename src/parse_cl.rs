@@ -18,6 +18,7 @@ pub struct Options {
     pub tweet: bool,
     pub quiet: bool,
     pub optipng: bool,
+    pub supersampling: bool,
     pub fractal_type: FractalType,
     pub variation: Option<Variation>,
     pub symmetry: Option<Symmetry>,
@@ -79,6 +80,10 @@ pub fn parse_cl() -> Options {
                     .long("width")
                     .takes_value(true)
                     .help("the width of the output image in px")
+              )
+              .arg(Arg::with_name("supersampling")
+                    .long("supersampling")
+                    .help("sample the fractal at 4x the resolution")
               )
               .arg(Arg::with_name("quiet")
                     .short("q")
@@ -212,6 +217,7 @@ pub fn parse_cl() -> Options {
     let tweet = matches.is_present("tweet");
     let quiet = matches.is_present("quiet");
     let optipng = !matches.is_present("no-optipng");
+    let supersampling = matches.is_present("supersampling");
     let filename = matches.value_of("filename")
                           .and_then(|f| Some(f.to_string()))
                           .or_else(|| None);
@@ -300,6 +306,7 @@ pub fn parse_cl() -> Options {
         fractal_type,
         height,
         width,
+        supersampling,
         optipng,
         variation,
         symmetry,
