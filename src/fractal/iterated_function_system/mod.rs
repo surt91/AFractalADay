@@ -121,7 +121,7 @@ pub trait IteratedFunctionSystem : Sync {
         let hsv: Vec<HSV> = rgb.iter().map(|c| c.blend_black().to_hsv()).collect();
         let var = color_variance(&hsv);
 
-        let ent = quality::entropy(rgb);
+        let ent = quality::entropy(&rgb);
         info!("entropy: {:.2}", ent);
 
         (buffer, var)

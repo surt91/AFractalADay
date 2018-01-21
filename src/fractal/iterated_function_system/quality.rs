@@ -79,9 +79,15 @@ fn correlation_dimension(vals: &[[Real; 2]], span: Real) -> Real {
 
 /// Calculates the entropy of an image.
 ///
+/// # Arguments
+///
+/// * `pixel` - slice of the pixels of the image
+///
+/// # Remarks
+///
 /// Low entropy is a image of one color, high entropy is noise.
 /// Interesting images should be located at some range of intermediate entropies.
-pub fn entropy(pixel: Vec<RGBA>) -> f64 {
+pub fn entropy(pixel: &[RGBA]) -> f64 {
     use histogram::histogram1d;
     let hist = histogram1d(pixel.iter().map(|c| c.to_u8() as usize), (0, 255));
 
