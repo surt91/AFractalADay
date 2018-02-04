@@ -157,6 +157,25 @@ impl Fractal {
         Ok(good)
     }
 
+    /// same as render, but faster and lower quality
+    pub fn render_draft(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<bool> {
+        let (buffer, good) = match self.fractal {
+            FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
+            FractalInstance::IFS(ref mut f) => f.render(
+                                                            resolution,
+                                                            100,
+                                                            self.vibrancy,
+                                                            self.gamma,
+                                                            false
+                                                        )
+        };
+
+        let (x, y) = resolution;
+        png::save_png(filename, x, y, &buffer)?;
+
+        Ok(good)
+    }
+
     pub fn description(&self) -> &str {
         match self.fractal {
             FractalInstance::EscapeTime(ref f) => f.description(),
@@ -219,6 +238,27 @@ pub fn render_wrapper(
     };
 
     (finished, description, json)
+}
+
+pub fn render_draft(
+                        fractal: &mut Fractal,
+                        filename: &str,
+                        dim: &(u32, u32),
+                   )
+                     -> String
+{
+    // for some fractals, we can estimate if it will look good
+    // so abort, if not before rendering
+    if ! fractal.estimate_quality_before() {
+        return "".to_string()
+    }
+
+    fractal.render_draft(*dim, filename)
+           .expect("creation of fractal failed");
+
+    let json = fractal.json();
+
+    json
 }
 
 use color::{RGBA, HSV, color_variance};
