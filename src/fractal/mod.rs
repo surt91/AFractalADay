@@ -203,7 +203,7 @@ pub fn render_wrapper(
     let description = fractal.description().to_owned();
     info!("{}", description);
 
-    let json = serde_json::to_string_pretty(&fractal.json()).unwrap();
+    let json = fractal.json();
 
     // TODO: we need something better than the variance to estimate the
     // quality of an image, maybe do an FFT and look for intermediate frequencies?
