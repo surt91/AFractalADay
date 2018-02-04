@@ -166,7 +166,7 @@ impl Fractal {
     pub fn json(&self) -> String {
         match self.fractal {
             FractalInstance::EscapeTime(ref _f) => "todo".to_owned(),
-            FractalInstance::IFS(ref f) => serde_json::to_string_pretty(&f.get_serializable()).unwrap()
+            FractalInstance::IFS(ref f) => serde_json::to_string(&f.get_serializable()).unwrap()
         }
     }
 
