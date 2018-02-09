@@ -59,7 +59,9 @@ impl FractalBuilder
             colors,
             transformations,
             variation,
-            strict_bounds: true
+            strict_bounds: true,
+            gamma: self.gamma,
+            vibrancy: self.vibrancy
         }
     }
 }

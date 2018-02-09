@@ -18,6 +18,9 @@ impl FractalBuilder
         let transformations = ffc.transformations;
         let description = ffc.description;
         let variation = ffc.variation;
+        let strict_bounds = ffc.strict_bounds;
+        let gamma = ffc.gamma;
+        let vibrancy = ffc.vibrancy;
 
         info!("Will render {}", description);
 
@@ -35,7 +38,9 @@ impl FractalBuilder
             colors,
             transformations,
             variation,
-            strict_bounds: true
+            strict_bounds,
+            gamma,
+            vibrancy
         }
     }
 }

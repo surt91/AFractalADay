@@ -10,4 +10,6 @@ pub struct IteratedFunctionSystemConfig {
     pub variation: NonlinearTransformation,
     pub description: String,
     pub strict_bounds: bool,
+    pub gamma: f64,
+    pub vibrancy: f64
 }

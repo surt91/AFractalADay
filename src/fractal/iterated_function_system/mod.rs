@@ -32,6 +32,8 @@ use super::{RngType, SeedType};
 pub trait IteratedFunctionSystem : Sync {
     fn description(&self) -> &str;
     fn needs_strict_bounds(&self) -> bool;
+    fn gamma(&self) -> f64;
+    fn vibrancy(&self) -> f64;
     fn get_rng(&mut self) -> &mut RngType;
     fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType>;
     fn get_serializable(&self) -> IteratedFunctionSystemConfig;
@@ -56,8 +58,6 @@ pub trait IteratedFunctionSystem : Sync {
 
     fn render(&mut self, resolution: (u32, u32),
                          samples_per_pixel: usize,
-                         vibrancy: f64,
-                         gamma: f64,
                          supersampling: bool
         )
         -> (Vec<u8>, bool)
@@ -89,7 +89,7 @@ pub trait IteratedFunctionSystem : Sync {
         let cpus = num_cpus::get();
         let iterations_per_task = (samples_per_pixel - 1) / cpus;
 
-        let mut hist = ColoredHistogram::new((x, y), b, vibrancy, gamma);
+        let mut hist = ColoredHistogram::new((x, y), b, self.vibrancy(), self.gamma());
 
         let (tx, rx) = channel();
         for _ in 0..cpus {

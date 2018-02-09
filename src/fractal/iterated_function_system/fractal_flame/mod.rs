@@ -34,12 +34,22 @@ pub struct FractalFlame<T>
     transformations: Vec<Transformation>,
     variation: NonlinearTransformation,
     strict_bounds: bool,
+    gamma: f64,
+    vibrancy: f64
 }
 
 impl IteratedFunctionSystem for FractalFlame<RngType>
 {
     fn needs_strict_bounds(&self) -> bool {
         self.strict_bounds
+    }
+
+    fn gamma(&self) -> f64 {
+        self.gamma
+    }
+
+    fn vibrancy(&self) -> f64 {
+        self.vibrancy
     }
 
     fn description(&self) -> &str {
@@ -81,7 +91,9 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             transformations: self.transformations.clone(),
             variation: self.variation.clone(),
             description: self.description().to_owned(),
-            strict_bounds: self.strict_bounds.clone()
+            strict_bounds: self.strict_bounds.clone(),
+            gamma: self.gamma.clone(),
+            vibrancy: self.vibrancy.clone()
         }
     }
 }
