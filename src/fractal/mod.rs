@@ -82,9 +82,10 @@ impl FractalBuilder {
     }
 
     pub fn vibrancy(mut self, vibrancy: &Option<f64>) -> FractalBuilder {
-        if let &Some(v) = vibrancy {
-            self.vibrancy = v
-        }
+        self.vibrancy = match *vibrancy {
+            Some(v) => v,
+            None => rand::weak_rng().gen::<f64>()
+        };
         self
     }
 
