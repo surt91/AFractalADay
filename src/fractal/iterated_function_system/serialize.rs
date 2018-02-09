@@ -9,4 +9,5 @@ pub struct IteratedFunctionSystemConfig {
     pub transformations: Vec<Transformation>,
     pub variation: NonlinearTransformation,
     pub description: String,
+    pub strict_bounds: bool,
 }

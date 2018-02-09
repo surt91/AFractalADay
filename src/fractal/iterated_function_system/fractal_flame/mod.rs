@@ -81,6 +81,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             transformations: self.transformations.clone(),
             variation: self.variation.clone(),
             description: self.description().to_owned(),
+            strict_bounds: self.strict_bounds.clone()
         }
     }
 }
