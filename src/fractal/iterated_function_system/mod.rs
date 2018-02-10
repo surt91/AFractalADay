@@ -16,6 +16,7 @@ use itertools::Itertools;
 use numbers::Real;
 use color::{RGB, RGBA};
 use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
+use self::variation::Variation;
 use self::quality::probably_good;
 use self::serialize::IteratedFunctionSystemConfig;
 
@@ -186,8 +187,8 @@ impl <T> Iterator for IteratedFunctionSystemSampler<T>
             }
         };
 
-        // do not apply variation to symmetry transforms
-        if !is_symmetry_transformation {
+        // do not apply variation to symmetry transforms and do not bother about linear (identity)
+        if !is_symmetry_transformation && self.variation.variation != Variation::Linear {
             self.p = self.variation.transform(transformed);
         } else {
             self.p = transformed;
