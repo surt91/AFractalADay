@@ -80,7 +80,7 @@ fn build_fractal(
         }
     };
 
-    let dim = (opt.width.unwrap_or(2046), opt.height.unwrap_or(1022));
+    let dim = (opt.width.unwrap_or(1022), opt.height.unwrap_or(1022));
 
     // hacky do while loop
     while {
