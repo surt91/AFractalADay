@@ -35,8 +35,8 @@ pub struct FractalBuilder {
     seed: Option<SeedType>,
     variation: Option<Variation>,
     symmetry: Option<Symmetry>,
-    vibrancy: f64,
-    gamma: f64,
+    vibrancy: Option<f64>,
+    gamma: Option<f64>,
 
     // for escape time
     a: Option<Coef>,
@@ -50,8 +50,8 @@ impl FractalBuilder {
             seed: None,
             variation: None,
             symmetry: None,
-            vibrancy: 0.5,
-            gamma: 4.,
+            vibrancy: None,
+            gamma: None,
 
             a: None,
             f: None,
@@ -82,17 +82,12 @@ impl FractalBuilder {
     }
 
     pub fn vibrancy(mut self, vibrancy: &Option<f64>) -> FractalBuilder {
-        self.vibrancy = match *vibrancy {
-            Some(v) => v,
-            None => rand::weak_rng().gen::<f64>()
-        };
+        self.vibrancy = vibrancy.clone();
         self
     }
 
     pub fn gamma(mut self, gamma: &Option<f64>) -> FractalBuilder {
-        if let &Some(v) = gamma {
-            self.gamma = v
-        }
+        self.gamma = gamma.clone();
         self
     }
 

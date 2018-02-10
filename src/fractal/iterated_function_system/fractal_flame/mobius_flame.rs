@@ -41,6 +41,16 @@ impl FractalBuilder
             None => NonlinearTransformation::new(Variation::Linear)
         };
 
+        let gamma = match self.gamma {
+            Some(s) => s,
+            None => 4.
+        };
+
+        let vibrancy = match self.vibrancy {
+            Some(s) => s,
+            None => rng.gen()
+        };
+
         // handle symmetries
         let symmetry = match self.symmetry {
             Some(s) => s,
@@ -117,8 +127,8 @@ impl FractalBuilder
             transformations,
             variation,
             strict_bounds: false,
-            gamma: self.gamma,
-            vibrancy: self.vibrancy
+            gamma,
+            vibrancy,
         }
     }
 }

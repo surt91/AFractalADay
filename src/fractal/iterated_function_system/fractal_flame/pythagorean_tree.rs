@@ -43,6 +43,16 @@ impl FractalBuilder
             None => NonlinearTransformation::new(Variation::Linear)
         };
 
+        let gamma = match self.gamma {
+            Some(s) => s,
+            None => 4.
+        };
+
+        let vibrancy = match self.vibrancy {
+            Some(s) => s,
+            None => rng.gen()
+        };
+
         info!("Will render {}", description);
 
         debug!("number of functions    : {:?}", number_of_functions);
@@ -60,8 +70,8 @@ impl FractalBuilder
             transformations,
             variation,
             strict_bounds: true,
-            gamma: self.gamma,
-            vibrancy: self.vibrancy
+            gamma,
+            vibrancy,
         }
     }
 }

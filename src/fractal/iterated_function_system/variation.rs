@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Variation {
     Linear,
     Sinusoidal,

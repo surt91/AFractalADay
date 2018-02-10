@@ -8,7 +8,7 @@ const PI: Real = PI64 as Real;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NonlinearTransformation {
-    variation: Variation
+    pub variation: Variation
 }
 
 impl NonlinearTransformation {
