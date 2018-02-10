@@ -6,6 +6,7 @@ mod quality;
 pub use self::escape_time_fractal::style::Style;
 pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::symmetry::Symmetry;
+pub use self::iterated_function_system::serialize::IteratedFunctionSystemConfig;
 
 extern crate serde_json;
 
