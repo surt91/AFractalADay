@@ -7,10 +7,8 @@ use fractal::iterated_function_system::serialize::IteratedFunctionSystemConfig;
 
 impl FractalBuilder
 {
-    pub fn from_json(self, json: &str) -> FractalFlame<RngType> {
+    pub fn from_config(self, ffc: IteratedFunctionSystemConfig) -> FractalFlame<RngType> {
         let rng = self.seed_rng();
-
-        let ffc: IteratedFunctionSystemConfig = serde_json::from_str(json).expect("invalid json");
 
         let number_of_functions = ffc.probabilities.len();
         let probabilities = ffc.probabilities;
@@ -42,5 +40,10 @@ impl FractalBuilder
             gamma,
             vibrancy
         }
+    }
+
+    pub fn from_json(self, json: &str) -> FractalFlame<RngType> {
+        let ffc: IteratedFunctionSystemConfig = serde_json::from_str(json).expect("invalid json");
+        self.from_config(ffc)
     }
 }

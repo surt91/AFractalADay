@@ -14,7 +14,7 @@ fn default_vibrancy() -> f64 {
     0.5
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct IteratedFunctionSystemConfig {
     pub probabilities: Vec<f64>,
     pub colors: Vec<RGB>,

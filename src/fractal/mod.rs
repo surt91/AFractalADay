@@ -190,6 +190,67 @@ impl Fractal {
             _ => true,
         }
     }
+
+    pub fn combine(&self, other: &Fractal) -> Result<Fractal, ()> {
+        // both need to be IFS
+        let (f1, f2) = match (&self.fractal, &other.fractal) {
+            (&FractalInstance::IFS(ref a), &FractalInstance::IFS(ref b)) => (a, b),
+            _ => return Err(()),
+        };
+
+        let f1_config = f1.get_serializable();
+        let f2_config = f2.get_serializable();
+
+        use self::iterated_function_system::AffineTransformation;
+        use self::iterated_function_system::Transformation;
+
+        fn count_trafo(c: &IteratedFunctionSystemConfig) -> usize {
+            c.transformations.iter().filter(
+                |x| match x {
+                    &&Transformation::Affine(
+                        AffineTransformation{
+                            symmetry: x,
+                            ..
+                        }
+                    ) => !x,
+                    _ => true
+                }
+            )
+            .count()
+        }
+
+        // count trafos excluding symmetries
+        let f1_num_trafo = count_trafo(&f1_config);
+        let f2_num_trafo = count_trafo(&f2_config);
+
+        // create the new config
+        let mut f_config = f1_config.clone();
+        let mut rng = rand::thread_rng();
+
+        // TODO: take one trafos from f2 and add it to f, may overwrite
+        let f2_chosen_trafo = rng.gen_range(0, f2_num_trafo);
+        if rng.gen::<f64>() < 0.5 {
+            // overwrite
+            let overwrite = rng.gen_range(0, f1_num_trafo);
+            f_config.colors[overwrite] = f2_config.colors[f2_chosen_trafo].clone();
+            f_config.transformations[overwrite] = f2_config.transformations[f2_chosen_trafo].clone();
+        } else {
+            // add
+            let overwrite = rng.gen_range(0, f1_num_trafo);
+            let new_prob = f_config.probabilities[overwrite].clone();
+            f_config.probabilities[overwrite] = (f_config.probabilities[overwrite-1] + new_prob) / 2.;
+            f_config.probabilities.insert(overwrite+1, new_prob);
+            f_config.colors.insert(overwrite+1, f2_config.colors[f2_chosen_trafo].clone());
+            f_config.transformations.insert(overwrite+1, f2_config.transformations[f2_chosen_trafo].clone());
+        }
+
+        // TODO: add a symmetry from f1 or f2 (if applicable)
+
+
+        // FIXME ugly detour over json string
+        let json = serde_json::to_string(&f1_config).unwrap();
+        Ok(FractalBuilder::new().build(&FractalType::LoadJson(json)))
+    }
 }
 
 pub fn render_wrapper(
