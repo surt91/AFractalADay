@@ -248,7 +248,7 @@ impl Fractal {
 
 
         // FIXME ugly detour over json string
-        let json = serde_json::to_string(&f1_config).unwrap();
+        let json = serde_json::to_string(&f_config).unwrap();
         Ok(FractalBuilder::new().build(&FractalType::LoadJson(json)))
     }
 }
