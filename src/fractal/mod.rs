@@ -238,7 +238,9 @@ impl Fractal {
             // add
             let overwrite = rng.gen_range(0, f1_num_trafo);
             let new_prob = f_config.probabilities[overwrite].clone();
-            f_config.probabilities[overwrite] = (f_config.probabilities[overwrite-1] + new_prob) / 2.;
+            let previous_prob = if overwrite > 0 {f_config.probabilities[overwrite-1]} else {0.};
+            let reduced_old_prob = (previous_prob + new_prob) / 2.;
+            f_config.probabilities[overwrite] = reduced_old_prob;
             f_config.probabilities.insert(overwrite+1, new_prob);
             f_config.colors.insert(overwrite+1, f2_config.colors[f2_chosen_trafo].clone());
             f_config.transformations.insert(overwrite+1, f2_config.transformations[f2_chosen_trafo].clone());
