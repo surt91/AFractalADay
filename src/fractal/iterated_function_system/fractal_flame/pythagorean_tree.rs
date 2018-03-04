@@ -33,13 +33,10 @@ impl FractalBuilder
                                    0., 1., 0.),
         ];
 
-        let mut description = format!("Pythagorean Tree (α = {:.1}°)", alpha/PI*180.);
+        let description = format!("Pythagorean Tree (α = {:.1}°)", alpha/PI*180.);
 
         let variation = match self.variation {
-            Some(v) => {
-                description.push_str(&format!(" with Variation '{}'", v.name()));
-                NonlinearTransformation::new(v)
-            },
+            Some(v) => NonlinearTransformation::new(v),
             None => NonlinearTransformation::new(Variation::Linear)
         };
 

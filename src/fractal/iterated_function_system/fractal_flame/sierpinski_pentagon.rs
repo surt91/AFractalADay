@@ -43,13 +43,10 @@ impl FractalBuilder
                                    0., R, y3),
         ];
 
-        let mut description = "Sierpinski Pentagon".to_owned();
+        let description = "Sierpinski Pentagon".to_owned();
 
         let variation = match self.variation {
-            Some(v) => {
-                description.push_str(&format!(" with Variation '{}'", v.name()));
-                NonlinearTransformation::new(v)
-            },
+            Some(v) => NonlinearTransformation::new(v),
             None => NonlinearTransformation::new(Variation::Linear)
         };
 

@@ -40,13 +40,10 @@ impl FractalBuilder
                                    (2. as Real).sqrt() * BY_SQRT) ,
         ];
 
-        let mut description = "Heighway Dragon".to_owned();
+        let description = "Heighway Dragon".to_owned();
 
         let variation = match self.variation {
-            Some(v) => {
-                description.push_str(&format!(" with Variation '{}'", v.name()));
-                NonlinearTransformation::new(v)
-            },
+            Some(v) => NonlinearTransformation::new(v),
             None => NonlinearTransformation::new(Variation::Linear)
         };
 

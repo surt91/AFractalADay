@@ -101,8 +101,7 @@ impl FractalBuilder
             colors.push(hsv.to_rgb());
         }
 
-        let description = format!("Fractal Flame: '{}' Variation, {} affine transformations with {}",
-                                   variation.name(),
+        let description = format!("Fractal Flame: {} affine transformations with {}",
                                    number_of_functions,
                                    symmetry
                                  );

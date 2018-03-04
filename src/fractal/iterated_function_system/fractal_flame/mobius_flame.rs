@@ -101,8 +101,7 @@ impl FractalBuilder
             colors.push(hsv.to_rgb());
         }
 
-        let description = format!("Möbius Flame: '{}' Variation, {} Möbius transformations with {}",
-                                   variation.name(),
+        let description = format!("Möbius Flame: {} Möbius transformations with {}",
                                    number_of_functions,
                                    symmetry
                                  );

@@ -23,13 +23,10 @@ impl FractalBuilder
             Transformation::affine(-0.15, 0.28, 0., 0.26, 0.24, 0.44),
         ];
 
-        let mut description = "Barnsley Fern".to_owned();
+        let description = "Barnsley Fern".to_owned();
 
         let variation = match self.variation {
-            Some(v) => {
-                description.push_str(&format!(" with Variation '{}'", v.name()));
-                NonlinearTransformation::new(v)
-            },
+            Some(v) => NonlinearTransformation::new(v),
             None => NonlinearTransformation::new(Variation::Linear)
         };
 
