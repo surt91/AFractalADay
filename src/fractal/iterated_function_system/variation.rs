@@ -1,4 +1,6 @@
 use std::fmt;
+use numbers::Real;
+use rand::{Rng, thread_rng};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Variation {
@@ -11,6 +13,23 @@ pub enum Variation {
     Handkerchief,
     Heart,
     Disk,
+    Spiral,
+    Hyperbolic,
+    Diamond,
+    Ex,
+    Julia,
+    Bent,
+    // Waves,
+    Fisheye,
+    // Popcorn,
+    Exponential,
+    Power,
+    Cosine,
+    // Rings,
+    // Fan,
+    Blob(Real, Real, Real),
+    Pdj(Real, Real, Real, Real),
+    Fan2(Real, Real),
 }
 
 impl Variation {
@@ -29,6 +48,31 @@ impl Variation {
             6 => Some(Variation::Handkerchief),
             7 => Some(Variation::Heart),
             8 => Some(Variation::Disk),
+            9 => Some(Variation::Spiral),
+            10 => Some(Variation::Hyperbolic),
+            11 => Some(Variation::Diamond),
+            12 => Some(Variation::Ex),
+            13 => Some(Variation::Julia),
+            14 => Some(Variation::Bent),
+            16 => Some(Variation::Fisheye),
+            18 => Some(Variation::Exponential),
+            19 => Some(Variation::Power),
+            20 => Some(Variation::Cosine),
+            23 => Some(Variation::Blob(
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+            )),
+            24 => Some(Variation::Pdj(
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+            )),
+            25 => Some(Variation::Fan2(
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+            )),
             _ => None
         }
     }
@@ -44,6 +88,31 @@ impl Variation {
             "Handkerchief" => Some(Variation::Handkerchief),
             "Heart" => Some(Variation::Heart),
             "Disk" => Some(Variation::Disk),
+            "Spiral" => Some(Variation::Spiral),
+            "Hyperbolic" => Some(Variation::Hyperbolic),
+            "Diamond" => Some(Variation::Diamond),
+            "Ex" => Some(Variation::Ex),
+            "Julia" => Some(Variation::Julia),
+            "Bent" => Some(Variation::Bent),
+            "Fisheye" => Some(Variation::Fisheye),
+            "Exponential" => Some(Variation::Exponential),
+            "Power" => Some(Variation::Power),
+            "Cosine" => Some(Variation::Cosine),
+            "Blob" => Some(Variation::Blob(
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+            )),
+            "Pdj" => Some(Variation::Pdj(
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+            )),
+            "Fan2" => Some(Variation::Fan2(
+                thread_rng().gen_range(0.,1.),
+                thread_rng().gen_range(0.,1.),
+            )),
             s => s.parse::<usize>().ok().and_then(Variation::from_number)
         }
     }
@@ -59,6 +128,19 @@ impl Variation {
             Variation::Handkerchief => "Handkerchief",
             Variation::Heart => "Heart",
             Variation::Disk => "Disk",
+            Variation::Spiral => "Spiral",
+            Variation::Hyperbolic => "Hyperbolic",
+            Variation::Diamond => "Diamond",
+            Variation::Ex => "Ex",
+            Variation::Julia => "Julia",
+            Variation::Bent => "Bent",
+            Variation::Fisheye => "Fisheye",
+            Variation::Exponential => "Exponential",
+            Variation::Power => "Power",
+            Variation::Cosine => "Cosine",
+            Variation::Blob(_, _, _) => "Blob",
+            Variation::Pdj(_, _, _, _) => "Pdj",
+            Variation::Fan2(_, _) => "Fan2",
         }.to_owned()
     }
 
