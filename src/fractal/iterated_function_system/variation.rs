@@ -2,7 +2,7 @@ use std::fmt;
 use numbers::Real;
 use rand::{Rng, thread_rng};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Rand)]
 pub enum Variation {
     Linear,
     Sinusoidal,
@@ -33,83 +33,43 @@ pub enum Variation {
 }
 
 impl Variation {
-    pub fn num() -> usize {
-        9
-    }
-
     pub fn from_number(num: usize) -> Option<Variation> {
-        match num {
-            0 => Some(Variation::Linear),
-            1 => Some(Variation::Sinusoidal),
-            2 => Some(Variation::Spherical),
-            3 => Some(Variation::Swirl),
-            4 => Some(Variation::Horseshoe),
-            5 => Some(Variation::Polar),
-            6 => Some(Variation::Handkerchief),
-            7 => Some(Variation::Heart),
-            8 => Some(Variation::Disk),
-            9 => Some(Variation::Spiral),
-            10 => Some(Variation::Hyperbolic),
-            11 => Some(Variation::Diamond),
-            12 => Some(Variation::Ex),
-            13 => Some(Variation::Julia),
-            14 => Some(Variation::Bent),
-            16 => Some(Variation::Fisheye),
-            18 => Some(Variation::Exponential),
-            19 => Some(Variation::Power),
-            20 => Some(Variation::Cosine),
-            23 => Some(Variation::Blob(
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-            )),
-            24 => Some(Variation::Pdj(
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-            )),
-            25 => Some(Variation::Fan2(
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-            )),
-            _ => None
-        }
+        Variation::from_string(&format!("{}", num))
     }
 
     pub fn from_string(name: &str) -> Option<Variation> {
         match name {
-            "Linear" => Some(Variation::Linear),
-            "Sinusoidal" => Some(Variation::Sinusoidal),
-            "Spherical" => Some(Variation::Spherical),
-            "Swirl" => Some(Variation::Swirl),
-            "Horseshoe" => Some(Variation::Horseshoe),
-            "Polar" => Some(Variation::Polar),
-            "Handkerchief" => Some(Variation::Handkerchief),
-            "Heart" => Some(Variation::Heart),
-            "Disk" => Some(Variation::Disk),
-            "Spiral" => Some(Variation::Spiral),
-            "Hyperbolic" => Some(Variation::Hyperbolic),
-            "Diamond" => Some(Variation::Diamond),
-            "Ex" => Some(Variation::Ex),
-            "Julia" => Some(Variation::Julia),
-            "Bent" => Some(Variation::Bent),
-            "Fisheye" => Some(Variation::Fisheye),
-            "Exponential" => Some(Variation::Exponential),
-            "Power" => Some(Variation::Power),
-            "Cosine" => Some(Variation::Cosine),
-            "Blob" => Some(Variation::Blob(
+            "Linear" | "0" => Some(Variation::Linear),
+            "Sinusoidal" | "1" => Some(Variation::Sinusoidal),
+            "Spherical" | "2" => Some(Variation::Spherical),
+            "Swirl" | "3" => Some(Variation::Swirl),
+            "Horseshoe" | "4" => Some(Variation::Horseshoe),
+            "Polar" | "5" => Some(Variation::Polar),
+            "Handkerchief" | "6" => Some(Variation::Handkerchief),
+            "Heart" | "7" => Some(Variation::Heart),
+            "Disk" | "8" => Some(Variation::Disk),
+            "Spiral" | "9" => Some(Variation::Spiral),
+            "Hyperbolic" | "10" => Some(Variation::Hyperbolic),
+            "Diamond" | "11" => Some(Variation::Diamond),
+            "Ex" | "12" => Some(Variation::Ex),
+            "Julia" | "13" => Some(Variation::Julia),
+            "Bent" | "14" => Some(Variation::Bent),
+            "Fisheye" | "16" => Some(Variation::Fisheye),
+            "Exponential" | "18" => Some(Variation::Exponential),
+            "Power" | "19" => Some(Variation::Power),
+            "Cosine" | "20" => Some(Variation::Cosine),
+            "Blob" | "23" => Some(Variation::Blob(
                 thread_rng().gen_range(0.,1.),
                 thread_rng().gen_range(0.,1.),
                 thread_rng().gen_range(0.,1.),
             )),
-            "Pdj" => Some(Variation::Pdj(
+            "Pdj" | "24" => Some(Variation::Pdj(
                 thread_rng().gen_range(0.,1.),
                 thread_rng().gen_range(0.,1.),
                 thread_rng().gen_range(0.,1.),
                 thread_rng().gen_range(0.,1.),
             )),
-            "Fan2" => Some(Variation::Fan2(
+            "Fan2" | "25" => Some(Variation::Fan2(
                 thread_rng().gen_range(0.,1.),
                 thread_rng().gen_range(0.,1.),
             )),
@@ -145,10 +105,11 @@ impl Variation {
     }
 
     pub fn list() -> Vec<String> {
-        (0..Variation::num()).map(|i| Variation::from_number(i)
-                                                .unwrap()
-                                                .name())
-                             .collect()
+        let implemented = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 19, 20, 23, 24, 25];
+        implemented.iter()
+                   .map(|&i| Variation::from_number(i)
+                                      .map_or("n/a".to_owned(), |x| x.name()))
+                   .collect()
     }
 }
 

@@ -21,8 +21,7 @@ impl NonlinearTransformation {
     pub fn random<T>(rng: &mut T) -> NonlinearTransformation
         where T: Rng
     {
-        let rn = rng.gen_range(0, Variation::num());
-        let variation = Variation::from_number(rn).unwrap();
+        let variation = rng.gen::<Variation>();
 
         NonlinearTransformation {
             variation
