@@ -16,6 +16,7 @@ impl FractalBuilder
         let transformations = ffc.transformations;
         let description = ffc.description;
         let variation = ffc.variation;
+        let post_transform = ffc.post_transform;
         let strict_bounds = ffc.strict_bounds;
         let gamma = ffc.gamma;
         let vibrancy = ffc.vibrancy;
@@ -36,6 +37,7 @@ impl FractalBuilder
             colors,
             transformations,
             variation,
+            post_transform,
             strict_bounds,
             gamma,
             vibrancy

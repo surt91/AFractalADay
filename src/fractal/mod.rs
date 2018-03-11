@@ -5,6 +5,7 @@ mod quality;
 // reexport configuration types
 pub use self::escape_time_fractal::style::Style;
 pub use self::iterated_function_system::variation::Variation;
+pub use self::iterated_function_system::transformation::Transformation;
 pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::serialize::IteratedFunctionSystemConfig;
 
@@ -35,6 +36,7 @@ pub struct FractalBuilder {
     // for iterated function systems
     seed: Option<SeedType>,
     variation: Option<Variation>,
+    post_transform: Option<Transformation>,
     symmetry: Option<Symmetry>,
     vibrancy: Option<f64>,
     gamma: Option<f64>,
@@ -50,6 +52,7 @@ impl FractalBuilder {
         FractalBuilder {
             seed: None,
             variation: None,
+            post_transform: None,
             symmetry: None,
             vibrancy: None,
             gamma: None,

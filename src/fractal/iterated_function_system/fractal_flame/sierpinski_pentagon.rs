@@ -50,6 +50,11 @@ impl FractalBuilder
             None => NonlinearTransformation::new(Variation::Linear)
         };
 
+        let post_transform = match self.post_transform {
+            Some(v) => v,
+            None => Transformation::random(&mut rng)
+        };
+
         let gamma = match self.gamma {
             Some(s) => s,
             None => 4.
@@ -76,6 +81,7 @@ impl FractalBuilder
             colors,
             transformations,
             variation,
+            post_transform,
             strict_bounds: true,
             gamma,
             vibrancy,

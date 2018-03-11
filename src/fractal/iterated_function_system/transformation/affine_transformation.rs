@@ -40,6 +40,14 @@ impl AffineTransformation {
         out
     }
 
+    pub fn identity() -> AffineTransformation {
+        AffineTransformation {
+            parameters: [1., 0., 0.,
+                         0., 1., 0.],
+            symmetry: true
+        }
+    }
+
     pub fn vertical_mirror() -> AffineTransformation {
         AffineTransformation {
             parameters: [-1., 0., 0.,

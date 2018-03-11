@@ -5,7 +5,7 @@ use fractal::{FractalBuilder, RngType};
 impl FractalBuilder
 {
     pub fn barnsley_fern(self) -> FractalFlame<RngType> {
-        let rng = self.seed_rng();
+        let mut rng = self.seed_rng();
 
         let number_of_functions = 4;
         let probabilities = vec![0.01, 0.86, 0.93, 1.];
@@ -28,6 +28,11 @@ impl FractalBuilder
         let variation = match self.variation {
             Some(v) => NonlinearTransformation::new(v),
             None => NonlinearTransformation::new(Variation::Linear)
+        };
+
+        let post_transform = match self.post_transform {
+            Some(v) => v,
+            None => Transformation::random(&mut rng)
         };
 
         let gamma = match self.gamma {
@@ -56,6 +61,7 @@ impl FractalBuilder
             colors,
             transformations,
             variation,
+            post_transform,
             strict_bounds: true,
             gamma,
             vibrancy,

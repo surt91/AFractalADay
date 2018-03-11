@@ -41,6 +41,11 @@ impl FractalBuilder
             None => NonlinearTransformation::random(&mut rng)
         };
 
+        let post_transform = match self.post_transform {
+            Some(v) => v,
+            None => Transformation::random(&mut rng)
+        };
+
         // handle symmetries
         let symmetry = match self.symmetry {
             Some(s) => s,
@@ -125,6 +130,7 @@ impl FractalBuilder
             colors,
             transformations,
             variation,
+            post_transform,
             strict_bounds: false,
             gamma,
             vibrancy,

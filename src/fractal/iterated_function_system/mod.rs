@@ -3,7 +3,7 @@ mod quality;
 pub mod variation;
 pub mod symmetry;
 
-mod transformation;
+pub mod transformation;
 pub use self::transformation::{Transformation,AffineTransformation,MobiusTransformation,NonlinearTransformation};
 
 pub mod serialize;

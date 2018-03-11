@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use numbers::{Real,Cplx};
 
 mod affine_transformation;
@@ -20,5 +22,15 @@ impl Transformation {
     }
     pub fn mobius(a: Cplx, b: Cplx, c: Cplx, d: Cplx) -> Transformation {
         Transformation::Mobius(MobiusTransformation::new(a, b, c, d))
+    }
+
+    pub fn random<T>(rng: &mut T) -> Transformation
+        where T: Rng
+    {
+        if rng.gen::<Real>() > 0.5 {
+            Transformation::Mobius(MobiusTransformation::random(rng))
+        } else {
+            Transformation::Affine(AffineTransformation::random(rng))
+        }
     }
 }

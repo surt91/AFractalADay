@@ -33,6 +33,7 @@ pub struct FractalFlame<T>
     colors: Vec<RGB>,
     transformations: Vec<Transformation>,
     variation: NonlinearTransformation,
+    post_transform: Transformation,
     strict_bounds: bool,
     gamma: f64,
     vibrancy: f64
@@ -90,6 +91,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             colors: self.colors.clone(),
             transformations: self.transformations.clone(),
             variation: self.variation.clone(),
+            post_transform: self.post_transform.clone(),
             description: self.description().to_owned(),
             strict_bounds: self.strict_bounds.clone(),
             gamma: self.gamma.clone(),
