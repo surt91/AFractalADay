@@ -14,7 +14,7 @@ use self::rand::{Rng, StdRng};
 #[macro_use] extern crate log;
 extern crate log_panics;
 extern crate simplelog;
-use simplelog::{ CombinedLogger, SimpleLogger, WriteLogger, LogLevelFilter, Config};
+use simplelog::{ CombinedLogger, SimpleLogger, WriteLogger, LevelFilter, Config};
 
 extern crate time;
 
@@ -27,7 +27,7 @@ use parse_cl::{parse_cl, Options};
 
 // only log errors to stdout, but everything to a log file
 fn init_logging(quiet: bool) {
-    let level = if quiet {LogLevelFilter::Error} else {LogLevelFilter::Info};
+    let level = if quiet {LevelFilter::Error} else {LevelFilter::Info};
     log_panics::init();
     let _ = CombinedLogger::init(
         vec![
@@ -37,7 +37,7 @@ fn init_logging(quiet: bool) {
                                                    .create(true)
                                                    .open("fractals.log")
                                                    .expect("Failed to create log file!")),
-            WriteLogger::new(LogLevelFilter::Debug, Config::default(),
+            WriteLogger::new(LevelFilter::Debug, Config::default(),
                              fs::OpenOptions::new().append(true)
                                                    .create(true)
                                                    .open("fractals.debug")
