@@ -36,8 +36,8 @@ impl MobiusTransformation {
         }
     }
 
-    pub fn transform(&self, x: Real, y: Real) -> [Real; 2] {
-        let z = Cplx::new(x, y);
+    pub fn transform(&self, p: [Real; 2]) -> [Real; 2] {
+        let z = Cplx::new(p[0], p[1]);
         let a = Cplx::new(self.parameters[0], self.parameters[1]);
         let b = Cplx::new(self.parameters[2], self.parameters[3]);
         let c = Cplx::new(self.parameters[4], self.parameters[5]);

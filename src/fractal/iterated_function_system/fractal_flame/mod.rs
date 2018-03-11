@@ -78,6 +78,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             colors: self.colors.clone(),
             transformations: self.transformations.clone(),
             variation: self.variation.clone(),
+            post_transform: self.post_transform.clone(),
             p,
             r,
             g,

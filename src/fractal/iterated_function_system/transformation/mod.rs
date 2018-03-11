@@ -33,4 +33,16 @@ impl Transformation {
             Transformation::Affine(AffineTransformation::random(rng))
         }
     }
+
+    pub fn transform(&self, p: [Real; 2]) -> [Real; 2]
+    {
+        match *self {
+            Transformation::Affine(ref x) => {
+                x.transform(p)
+            },
+            Transformation::Mobius(ref x) => {
+                x.transform(p)
+            }
+        }
+    }
 }

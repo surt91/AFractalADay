@@ -153,6 +153,7 @@ pub struct IteratedFunctionSystemSampler<T>
     colors: Vec<RGB>,
     transformations: Vec<Transformation>,
     variation: NonlinearTransformation,
+    post_transform: Transformation,
     p: [Real; 2],
     r: f64,
     g: f64,
@@ -182,7 +183,7 @@ impl <T> Iterator for IteratedFunctionSystemSampler<T>
                 x.transform(self.p)
             },
             Transformation::Mobius(ref x) => {
-                x.transform(self.p[0], self.p[1])
+                x.transform(self.p)
             }
         };
 
@@ -192,6 +193,8 @@ impl <T> Iterator for IteratedFunctionSystemSampler<T>
         } else {
             self.p = transformed;
         }
+
+        self.p = self.post_transform.transform(self.p);
 
         let RGB(r, g, b) = self.colors[index];
         // if it is black, ignore it
