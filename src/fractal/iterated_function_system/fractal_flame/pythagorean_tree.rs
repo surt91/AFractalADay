@@ -17,10 +17,10 @@ impl FractalBuilder
         let number_of_functions = 3;
         let probabilities = vec![0.33, 0.66, 1.];
 
-        let mut colors: Vec<RGB> = Vec::new();
+        let mut colors: Vec<Option<RGB>> = Vec::new();
         for _ in 0..number_of_functions {
             let hsv = HSV(rng.gen(), 1., 1.);
-            colors.push(hsv.to_rgb());
+            colors.push(Some(hsv.to_rgb()));
         }
 
         let alpha: Real = rng.gen_range(0., PI/2.);

@@ -11,10 +11,10 @@ impl FractalBuilder
         let probabilities = vec![0.01, 0.86, 0.93, 1.];
 
         let colors = vec![
-            RGB(0.5, 0.5, 0.1),
-            RGB(0.02, 0.6, 0.001),
-            RGB(0.8, 0.8, 0.),
-            RGB(0.8, 0.6, 0.)
+            Some(RGB(0.5, 0.5, 0.1)),
+            Some(RGB(0.02, 0.6, 0.001)),
+            Some(RGB(0.8, 0.8, 0.)),
+            Some(RGB(0.8, 0.6, 0.))
         ];
         let transformations = vec![
             Transformation::affine(0., 0., 0., 0., 0.16, 0.),

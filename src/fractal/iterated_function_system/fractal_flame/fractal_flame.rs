@@ -26,10 +26,10 @@ impl FractalBuilder
             probabilities.push(p);
         }
 
-        let mut colors: Vec<RGB> = Vec::new();
+        let mut colors: Vec<Option<RGB>> = Vec::new();
         for _ in 0..number_of_functions {
             let hsv = HSV(rng.gen(), 1., 1.);
-            colors.push(hsv.to_rgb());
+            colors.push(Some(hsv.to_rgb()));
         }
         let mut transformations: Vec<Transformation> =
                 itertools::repeat_call(|| Transformation::Affine(AffineTransformation::random(&mut rng)))
@@ -107,10 +107,7 @@ impl FractalBuilder
         for _ in 1..number_of_symmetries {
             p += 1./number_of_symmetries as f64;
             probabilities.push(p);
-            // black will be treated as transparent
-            // FIXME: .make colors Vec<Option<RGB>>
-            let hsv = HSV(0., 0., 0.);
-            colors.push(hsv.to_rgb());
+            colors.push(None);
         }
 
         let description = format!("Fractal Flame: {} affine transformations with {}",

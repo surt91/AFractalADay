@@ -30,7 +30,7 @@ pub struct FractalFlame<T>
     pub description: String,
     number_of_functions: usize,
     probabilities: Vec<f64>,
-    colors: Vec<RGB>,
+    colors: Vec<Option<RGB>>,
     transformations: Vec<Transformation>,
     variation: NonlinearTransformation,
     post_transform: Transformation,
@@ -69,9 +69,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
         let rng = RngType::from_seed(&self.rng.gen::<SeedType>());
 
         let p = [0.05, 0.05];
-        let r = 0.;
-        let g = 0.;
-        let b = 0.;
+        let rgb = RGB(0., 0., 0.);
 
         IteratedFunctionSystemSampler {
             rng,
@@ -84,9 +82,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             final_transform: self.final_transform.clone(),
             final_color: self.final_color.clone(),
             p,
-            r,
-            g,
-            b,
+            rgb
         }
     }
 

@@ -29,7 +29,7 @@ fn default_final_color() -> Option<RGB> {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct IteratedFunctionSystemConfig {
     pub probabilities: Vec<f64>,
-    pub colors: Vec<RGB>,
+    pub colors: Vec<Option<RGB>>,
     pub transformations: Vec<Transformation>,
     pub variation: NonlinearTransformation,
     #[serde(default = "default_post_transform")]

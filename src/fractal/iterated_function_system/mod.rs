@@ -150,16 +150,14 @@ pub struct IteratedFunctionSystemSampler<T>
     rng: T,
     number_of_functions: usize,
     probabilities: Vec<f64>,
-    colors: Vec<RGB>,
+    colors: Vec<Option<RGB>>,
     transformations: Vec<Transformation>,
     variation: NonlinearTransformation,
     post_transform: Transformation,
     final_transform: NonlinearTransformation,
     final_color: Option<RGB>,
     p: [Real; 2],
-    r: f64,
-    g: f64,
-    b: f64,
+    rgb: RGB
 }
 
 impl <T> Iterator for IteratedFunctionSystemSampler<T>
@@ -198,31 +196,27 @@ impl <T> Iterator for IteratedFunctionSystemSampler<T>
 
         self.p = self.post_transform.transform(self.p);
 
-        let RGB(r, g, b) = self.colors[index];
-        // if it is black, ignore it
-        // FIXME: better would be Option<RGB>
-        if r != 0. || g != 0. || b != 0.
-        {
-            self.r = (r + self.r)/2.;
-            self.g = (g + self.g)/2.;
-            self.b = (b + self.b)/2.;
-        }
+        if let Some(RGB(tr, tg, tb)) = self.colors[index] {
+            let RGB(r, g, b) = self.rgb;
+            self.rgb = RGB(
+                (r + tr)/2.,
+                (g + tg)/2.,
+                (b + tb)/2.
+            )
+        };
 
         let p = self.final_transform.transform(self.p);
         let rgb = match self.final_color {
             Some(ref c) => {
                 let RGB(rf, gf, bf) = c.clone();
+                let RGB(r, g, b) = self.rgb;
                 RGB(
-                    (rf + self.r)/2.,
-                    (gf + self.g)/2.,
-                    (bf + self.b)/2.
+                    (rf + r)/2.,
+                    (gf + g)/2.,
+                    (bf + b)/2.
                 )
             },
-            None => RGB(
-                self.r,
-                self.g,
-                self.b
-            )
+            None => self.rgb.clone()
         };
 
         Some((p, rgb))
