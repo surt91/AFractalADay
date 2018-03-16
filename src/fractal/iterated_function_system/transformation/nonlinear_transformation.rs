@@ -17,6 +17,10 @@ impl NonlinearTransformation {
         }
     }
 
+    pub fn identity() -> NonlinearTransformation {
+        NonlinearTransformation::new(Variation::Linear)
+    }
+
     pub fn random<T>(rng: &mut T) -> NonlinearTransformation
         where T: Rng
     {

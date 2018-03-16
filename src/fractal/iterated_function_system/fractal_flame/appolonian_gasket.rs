@@ -39,12 +39,12 @@ impl FractalBuilder
 
         let variation = match self.variation {
             Some(v) => NonlinearTransformation::new(v),
-            None => NonlinearTransformation::new(Variation::Linear)
+            None => NonlinearTransformation::identity()
         };
 
         let post_transform = match self.post_transform {
             Some(v) => v,
-            None => Transformation::random(&mut rng)
+            None => Transformation::identity()
         };
 
         let gamma = match self.gamma {

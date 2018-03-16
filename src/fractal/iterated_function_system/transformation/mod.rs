@@ -34,6 +34,10 @@ impl Transformation {
         }
     }
 
+    pub fn identity() -> Transformation {
+        Transformation::Affine(AffineTransformation::identity())
+    }
+
     pub fn transform(&self, p: [Real; 2]) -> [Real; 2]
     {
         match *self {

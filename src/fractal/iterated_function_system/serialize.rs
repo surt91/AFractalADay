@@ -1,6 +1,5 @@
 use super::NonlinearTransformation;
 use super::Transformation;
-use super::AffineTransformation;
 use color::RGB;
 
 fn default_bounds() -> bool {
@@ -16,7 +15,7 @@ fn default_vibrancy() -> f64 {
 }
 
 fn default_post_transform() -> Transformation {
-    Transformation::Affine(AffineTransformation::identity())
+    Transformation::identity()
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
