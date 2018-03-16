@@ -1,7 +1,7 @@
 use rand::Rng;
 
 use color::{HSV, RGB};
-use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
+use super::{Transformation, NonlinearTransformation, FractalFlame};
 use fractal::{FractalBuilder, RngType};
 
 use numbers::Real;
@@ -42,6 +42,13 @@ impl FractalBuilder
             None => Transformation::identity()
         };
 
+        let final_transform = match self.final_transform {
+            Some(v) => NonlinearTransformation::new(v),
+            None => NonlinearTransformation::identity()
+        };
+
+        let final_color = None;
+
         let gamma = match self.gamma {
             Some(s) => s,
             None => 4.
@@ -69,6 +76,8 @@ impl FractalBuilder
             transformations,
             variation,
             post_transform,
+            final_transform,
+            final_color,
             strict_bounds: true,
             gamma,
             vibrancy,

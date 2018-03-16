@@ -1,11 +1,11 @@
 use color::RGB;
-use super::{Transformation, NonlinearTransformation, Variation, FractalFlame};
+use super::{Transformation, NonlinearTransformation, FractalFlame};
 use fractal::{FractalBuilder, RngType};
 
 impl FractalBuilder
 {
     pub fn barnsley_fern(self) -> FractalFlame<RngType> {
-        let mut rng = self.seed_rng();
+        let rng = self.seed_rng();
 
         let number_of_functions = 4;
         let probabilities = vec![0.01, 0.86, 0.93, 1.];
@@ -35,6 +35,13 @@ impl FractalBuilder
             None => Transformation::identity()
         };
 
+        let final_transform = match self.final_transform {
+            Some(v) => NonlinearTransformation::new(v),
+            None => NonlinearTransformation::identity()
+        };
+
+        let final_color = None;
+
         let gamma = match self.gamma {
             Some(s) => s,
             None => 4.
@@ -62,6 +69,8 @@ impl FractalBuilder
             transformations,
             variation,
             post_transform,
+            final_transform,
+            final_color,
             strict_bounds: true,
             gamma,
             vibrancy,

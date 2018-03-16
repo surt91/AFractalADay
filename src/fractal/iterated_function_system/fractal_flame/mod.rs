@@ -17,7 +17,7 @@ use rand::{Rng, SeedableRng};
 use super::IteratedFunctionSystem;
 use super::IteratedFunctionSystemConfig;
 use super::IteratedFunctionSystemSampler;
-use fractal::{Symmetry,Variation};
+use fractal::Symmetry;
 use super::{Transformation,NonlinearTransformation,AffineTransformation,MobiusTransformation};
 use color::RGB;
 
@@ -34,6 +34,8 @@ pub struct FractalFlame<T>
     transformations: Vec<Transformation>,
     variation: NonlinearTransformation,
     post_transform: Transformation,
+    final_transform: NonlinearTransformation,
+    final_color: Option<RGB>,
     strict_bounds: bool,
     gamma: f64,
     vibrancy: f64
@@ -79,6 +81,8 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             transformations: self.transformations.clone(),
             variation: self.variation.clone(),
             post_transform: self.post_transform.clone(),
+            final_transform: self.final_transform.clone(),
+            final_color: self.final_color.clone(),
             p,
             r,
             g,
@@ -93,6 +97,8 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
             transformations: self.transformations.clone(),
             variation: self.variation.clone(),
             post_transform: self.post_transform.clone(),
+            final_transform: self.final_transform.clone(),
+            final_color: self.final_color.clone(),
             description: self.description().to_owned(),
             strict_bounds: self.strict_bounds.clone(),
             gamma: self.gamma.clone(),

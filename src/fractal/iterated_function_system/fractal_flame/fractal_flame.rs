@@ -46,6 +46,13 @@ impl FractalBuilder
             None => Transformation::random(&mut rng)
         };
 
+        let final_transform = match self.final_transform {
+            Some(v) => NonlinearTransformation::new(v),
+            None => NonlinearTransformation::random(&mut rng)
+        };
+
+        let final_color = Some(HSV(rng.gen(), 1., 1.).to_rgb());
+
         // handle symmetries
         let symmetry = match self.symmetry {
             Some(s) => s,
@@ -131,6 +138,8 @@ impl FractalBuilder
             transformations,
             variation,
             post_transform,
+            final_transform,
+            final_color,
             strict_bounds: false,
             gamma,
             vibrancy,

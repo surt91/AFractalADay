@@ -18,6 +18,14 @@ fn default_post_transform() -> Transformation {
     Transformation::identity()
 }
 
+fn default_final_transform() -> NonlinearTransformation {
+    NonlinearTransformation::identity()
+}
+
+fn default_final_color() -> Option<RGB> {
+    None
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct IteratedFunctionSystemConfig {
     pub probabilities: Vec<f64>,
@@ -26,6 +34,10 @@ pub struct IteratedFunctionSystemConfig {
     pub variation: NonlinearTransformation,
     #[serde(default = "default_post_transform")]
     pub post_transform: Transformation,
+    #[serde(default = "default_final_transform")]
+    pub final_transform: NonlinearTransformation,
+    #[serde(default = "default_final_color")]
+    pub final_color: Option<RGB>,
     pub description: String,
     #[serde(default = "default_bounds")]
     pub strict_bounds: bool,

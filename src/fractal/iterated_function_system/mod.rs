@@ -154,6 +154,8 @@ pub struct IteratedFunctionSystemSampler<T>
     transformations: Vec<Transformation>,
     variation: NonlinearTransformation,
     post_transform: Transformation,
+    final_transform: NonlinearTransformation,
+    final_color: Option<RGB>,
     p: [Real; 2],
     r: f64,
     g: f64,
@@ -206,6 +208,23 @@ impl <T> Iterator for IteratedFunctionSystemSampler<T>
             self.b = (b + self.b)/2.;
         }
 
-        Some((self.p, RGB(self.r, self.g, self.b)))
+        let p = self.final_transform.transform(self.p);
+        let rgb = match self.final_color {
+            Some(ref c) => {
+                let RGB(rf, gf, bf) = c.clone();
+                RGB(
+                    (rf + self.r)/2.,
+                    (gf + self.g)/2.,
+                    (bf + self.b)/2.
+                )
+            },
+            None => RGB(
+                self.r,
+                self.g,
+                self.b
+            )
+        };
+
+        Some((p, rgb))
     }
 }

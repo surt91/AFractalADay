@@ -4,7 +4,7 @@ use itertools;
 
 use color::{HSV, RGB};
 use super::{Transformation, MobiusTransformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
-use fractal::{FractalBuilder, RngType, Variation};
+use fractal::{FractalBuilder, RngType};
 
 use numbers::Real;
 use std::f64::consts::PI as PI_;
@@ -45,6 +45,13 @@ impl FractalBuilder
             Some(v) => v,
             None => Transformation::identity()
         };
+
+        let final_transform = match self.final_transform {
+            Some(v) => NonlinearTransformation::new(v),
+            None => NonlinearTransformation::identity()
+        };
+
+        let final_color = None;
 
         let gamma = match self.gamma {
             Some(s) => s,
@@ -131,6 +138,8 @@ impl FractalBuilder
             transformations,
             variation,
             post_transform,
+            final_transform,
+            final_color,
             strict_bounds: false,
             gamma,
             vibrancy,
