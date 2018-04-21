@@ -36,6 +36,7 @@ pub enum FractalType {
     MobiusFlame,
     FractalFlame,
     LoadJson(String),
+    KochCurve,
 }
 
 impl fmt::Display for FractalType {

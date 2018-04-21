@@ -1,5 +1,6 @@
 mod escape_time_fractal;
 mod iterated_function_system;
+mod lsystem;
 mod quality;
 
 // reexport configuration types
@@ -24,7 +25,8 @@ pub type SeedType = [u64; 4];
 
 enum FractalInstance {
     EscapeTime(Box<escape_time_fractal::EscapeTimeFractal>),
-    IFS(Box<iterated_function_system::IteratedFunctionSystem>)
+    IFS(Box<iterated_function_system::IteratedFunctionSystem>),
+    LSys(Box<lsystem::LSystem>),
 }
 
 pub struct Fractal {
@@ -127,6 +129,7 @@ impl FractalBuilder {
             FractalType::MobiusFlame => FractalInstance::IFS(Box::new(self.mobius_flame())),
             FractalType::FractalFlame => FractalInstance::IFS(Box::new(self.fractal_flame())),
             FractalType::LoadJson(ref json) => FractalInstance::IFS(Box::new(self.from_json(&json))),
+            FractalType::KochCurve => FractalInstance::LSys(Box::new(self.koch_curve())),
             FractalType::Random => unreachable!()
         };
 
@@ -145,7 +148,8 @@ impl Fractal {
                                                             resolution,
                                                             1000,
                                                             supersampling
-                                                        )
+                                                        ),
+            FractalInstance::LSys(ref mut f) => f.render(resolution, None, None),
         };
 
         let (x, y) = resolution;
@@ -162,7 +166,8 @@ impl Fractal {
                                                             resolution,
                                                             100,
                                                             false
-                                                        )
+                                                        ),
+            FractalInstance::LSys(ref mut f) => f.render(resolution, None, None),
         };
 
         let (x, y) = resolution;
@@ -174,13 +179,15 @@ impl Fractal {
     pub fn description(&self) -> &str {
         match self.fractal {
             FractalInstance::EscapeTime(ref f) => f.description(),
-            FractalInstance::IFS(ref f) => f.description()
+            FractalInstance::IFS(ref f) => f.description(),
+            FractalInstance::LSys(ref f) => f.description()
         }
     }
     pub fn json(&self) -> String {
         match self.fractal {
             FractalInstance::EscapeTime(ref _f) => "todo".to_owned(),
-            FractalInstance::IFS(ref f) => serde_json::to_string(&f.get_serializable()).unwrap()
+            FractalInstance::IFS(ref f) => serde_json::to_string(&f.get_serializable()).unwrap(),
+            FractalInstance::LSys(ref _f) => "todo".to_owned(),
         }
     }
 

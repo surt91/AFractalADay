@@ -156,11 +156,22 @@ pub fn parse_cl() -> Options {
                     .takes_value(true)
                     .group("iterated_function_system")
               )
+              .arg(Arg::with_name("kochcurve")
+                    .long("kochcurve")
+                    .help("render a Koch curve")
+                    .group("lsystem")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
+                  .conflicts_with("lsystem")
               )
               .group(ArgGroup::with_name("escape_time")
                   .conflicts_with("iterated_function_system")
+                  .conflicts_with("lsystem")
+              )
+              .group(ArgGroup::with_name("lsystem")
+                  .conflicts_with("iterated_function_system")
+                  .conflicts_with("escape_time")
               )
               .group(ArgGroup::with_name("symmetry")
                   .conflicts_with("escape_time")
@@ -274,6 +285,8 @@ pub fn parse_cl() -> Options {
         let mut json = String::new();
         file.read_to_string(&mut json).expect("can not read file");
         FractalType::LoadJson(json)
+    } else if matches.is_present("kochcurve") {
+        FractalType::KochCurve
     } else {
         FractalType::Random
     };
