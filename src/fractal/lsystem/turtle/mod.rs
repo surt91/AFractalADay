@@ -7,6 +7,8 @@ use std::cmp;
 extern crate rayon;
 use self::rayon::prelude::*;
 
+use color;
+
 pub trait Turtle {
     fn forward(&mut self, d: f64);
     fn turn(&mut self, a: f64);
@@ -101,7 +103,7 @@ impl Canvas {
         pixels.par_iter()
             .map(|&(j, i)| {
                 let mut color = vec![255, 255, 255, 255];
-                    for &(ref p1, ref p2, ref p3, ref p4) in rects.iter() {
+                    for (n, &(ref p1, ref p2, ref p3, ref p4)) in rects.iter().enumerate() {
                         let q = Point::new(
                             i as f64 * scale_r + min_x,
                             j as f64 * scale_r + min_y
@@ -109,9 +111,9 @@ impl Canvas {
 
                         if q.in_rect(&p1, &p2, &p3, &p4) {
                             // TODO color by length?
-                            let r = 0.;
-                            let g = 0.;
-                            let b = 0.;
+                            let progress = n as f64 / rects.len() as f64;
+                            let hsv = color::HSV(progress, 1., 1.);
+                            let color::RGB(r, g, b) = hsv.to_rgb();
                             color = vec![(r * 255.) as u8, (g * 255.) as u8, (b * 255.) as u8, 255];
                             break
                         }
