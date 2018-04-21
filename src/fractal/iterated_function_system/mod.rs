@@ -11,7 +11,9 @@ pub mod serialize;
 use rand::Rng;
 
 use std::f64;
-use itertools::Itertools;
+
+extern crate rayon;
+use self::rayon::prelude::*;
 
 use numbers::Real;
 use color::{RGB, RGBA};
@@ -125,7 +127,7 @@ pub trait IteratedFunctionSystem : Sync {
             rgb
         };
 
-        let buffer: Vec<u8> = rgb.iter()
+        let buffer: Vec<u8> = rgb.par_iter()
                                  .map(|rgba| {
                                      let &RGBA(r, g, b, a) = rgba;
                                      let alpha = a as f64 / 255.;

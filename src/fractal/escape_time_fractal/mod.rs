@@ -6,8 +6,6 @@ pub mod style;
 extern crate rayon;
 use self::rayon::prelude::*;
 
-use itertools::Itertools;
-
 use numbers::{Real, Cplx};
 use color;
 use self::style::Stylable;
@@ -73,7 +71,7 @@ pub trait EscapeTimeFractal : Sync + Stylable {
                                          .map(|i| self.style(i))
                                          .collect();
 
-        let buffer: Vec<u8> = hsv.iter()
+        let buffer: Vec<u8> = hsv.par_iter()
                                 .map(|hsv| {
                                     let color::RGB(r, g, b) = hsv.to_rgb();
                                     let a = 255;
