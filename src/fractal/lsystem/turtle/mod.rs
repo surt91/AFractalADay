@@ -81,31 +81,39 @@ impl Canvas {
         let stroke = cmp::min(x, y) / 1000 + 1;
         let stroke_r = stroke as f64 * scale_r;
 
+        let rects: Vec<(Point, Point, Point, Point)> = points.windows(2)
+            .map(|line| {
+                if let &[ref a, ref b] = line {
+                    let bearing = (a.y-b.y).atan2(a.x-b.x);
+                    let p1 = a.clone() + Point::step(stroke_r, bearing + PI/2.) + Point::step(stroke_r, bearing);
+                    let p2 = a.clone() + Point::step(stroke_r, bearing - PI/2.) + Point::step(stroke_r, bearing);
+                    let p3 = b.clone() + Point::step(stroke_r, bearing - PI/2.) - Point::step(stroke_r, bearing);
+                    let p4 = b.clone() + Point::step(stroke_r, bearing + PI/2.) - Point::step(stroke_r, bearing);
+                    (p1, p2, p3, p4)
+                } else {
+                    let p = Point::new(0., 0.);
+                    (p.clone(), p.clone(), p.clone(), p.clone())
+                }
+            })
+            .collect();
+
         let pixels: Vec<(i32, i32)> = iproduct!(0..y as i32, 0..x as i32).collect();
         pixels.par_iter()
             .map(|&(j, i)| {
                 let mut color = vec![255, 255, 255, 255];
-                    for line in points.windows(2) {
-                        if let &[ref a, ref b] = line {
-                            // construct them once before
-                            let q = Point::new(
-                                i as f64 * scale_r + min_x,
-                                j as f64 * scale_r + min_y
-                            );
-                            let bearing = (a.y-b.y).atan2(a.x-b.x);
-                            let p1 = a.clone() + Point::step(stroke_r, bearing + PI/2.) + Point::step(stroke_r, bearing);
-                            let p2 = a.clone() + Point::step(stroke_r, bearing - PI/2.) + Point::step(stroke_r, bearing);
-                            let p3 = b.clone() + Point::step(stroke_r, bearing - PI/2.) - Point::step(stroke_r, bearing);
-                            let p4 = b.clone() + Point::step(stroke_r, bearing + PI/2.) - Point::step(stroke_r, bearing);
+                    for &(ref p1, ref p2, ref p3, ref p4) in rects.iter() {
+                        let q = Point::new(
+                            i as f64 * scale_r + min_x,
+                            j as f64 * scale_r + min_y
+                        );
 
-                            if q.in_rect(&p1, &p2, &p3, &p4) {
-                                // TODO color by length?
-                                let r = 0.;
-                                let g = 0.;
-                                let b = 0.;
-                                color = vec![(r * 255.) as u8, (g * 255.) as u8, (b * 255.) as u8, 255];
-                                break
-                            }
+                        if q.in_rect(&p1, &p2, &p3, &p4) {
+                            // TODO color by length?
+                            let r = 0.;
+                            let g = 0.;
+                            let b = 0.;
+                            color = vec![(r * 255.) as u8, (g * 255.) as u8, (b * 255.) as u8, 255];
+                            break
                         }
                     }
                 color
