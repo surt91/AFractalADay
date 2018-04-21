@@ -161,6 +161,11 @@ pub fn parse_cl() -> Options {
                     .help("render a Koch curve")
                     .group("lsystem")
               )
+              .arg(Arg::with_name("sierpinskitriangle")
+                    .long("sierpinskitriangle")
+                    .help("render a Sierpinski triangle")
+                    .group("lsystem")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
                   .conflicts_with("lsystem")
@@ -287,6 +292,8 @@ pub fn parse_cl() -> Options {
         FractalType::LoadJson(json)
     } else if matches.is_present("kochcurve") {
         FractalType::KochCurve
+    } else if matches.is_present("sierpinskitriangle") {
+        FractalType::SierpinskiTriangle
     } else {
         FractalType::Random
     };

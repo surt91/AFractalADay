@@ -1,4 +1,5 @@
 mod koch_curve;
+mod sierpinski_triangle;
 mod turtle;
 
 pub trait LSystem : Sync {
