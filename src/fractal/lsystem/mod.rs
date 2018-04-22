@@ -9,8 +9,8 @@ pub trait LSystem : Sync {
     fn get_canvas(&self) -> turtle::Canvas;
 
     fn render(&mut self, resolution: (u32, u32),
-                         scale: Option<f64>,
-                         center: Option<(f64, f64)>)
+                         _scale: Option<f64>,
+                         _center: Option<(f64, f64)>)
         -> (Vec<u8>, bool)
     {
         (self.get_canvas().render(resolution), true)

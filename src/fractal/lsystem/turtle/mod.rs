@@ -73,16 +73,23 @@ impl Canvas {
 
         let w = max_x - min_x;
         let h = max_y - min_y;
-        let scale = x as f64 / w;
+        let scale = f64::min(x as f64 / w, y as f64 / h);
         let scale_r = 1. / scale;
+        let x_offset = x as f64 - w * scale;
+        let y_offset = y as f64 - h * scale;
+        let min_x = min_x - x_offset / 2. * scale_r;
+        let min_y = min_y - y_offset / 2. * scale_r;
+
 
         // let y = (h * scale) as i32;
 
         let points = &self.points;
 
-        let stroke = cmp::min(x, y) / 1000 + 1;
+        let stroke = cmp::min(cmp::min(x, y) / 1000 + 1, 3);
         let stroke_r = stroke as f64 * scale_r;
 
+        // TODO: sort them in some hierachical structure and discard many at once
+        // TODO: maybe a quadtree? or something simple such as cells?
         let rects: Vec<(Point, Point, Point, Point)> = points.windows(2)
             .map(|line| {
                 if let &[ref a, ref b] = line {
@@ -102,7 +109,7 @@ impl Canvas {
         let pixels: Vec<(i32, i32)> = iproduct!(0..y as i32, 0..x as i32).collect();
         pixels.par_iter()
             .map(|&(j, i)| {
-                let mut color = vec![255, 255, 255, 255];
+                let mut color = vec![255, 255, 255, 0];
                     for (n, &(ref p1, ref p2, ref p3, ref p4)) in rects.iter().enumerate() {
                         let q = Point::new(
                             i as f64 * scale_r + min_x,
