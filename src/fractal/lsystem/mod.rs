@@ -5,7 +5,7 @@ mod gosper_curve;
 mod bush;
 mod penrose;
 
-mod turtle;
+extern crate turtle;
 
 pub trait LSystem : Sync {
     fn description(&self) -> &str;

@@ -29,6 +29,8 @@ serde = "*"
 serde_derive = "*"
 serde_json = "*"
 
+turtle = { git = "https://github.com/surt91/turtle" }
+
 [dev-dependencies]
 assert_approx_eq = "*"
 
