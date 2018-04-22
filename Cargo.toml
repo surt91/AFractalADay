@@ -29,10 +29,12 @@ serde = "*"
 serde_derive = "*"
 serde_json = "*"
 
-turtle = { git = "https://github.com/surt91/turtle" }
-
 [dev-dependencies]
 assert_approx_eq = "*"
+
+[dependencies.turtle]
+version = "0.1"
+git = "https://github.com/surt91/turtle"
 
 [dependencies.my_twitter]
 path = "my_twitter"
