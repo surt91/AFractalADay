@@ -182,6 +182,11 @@ pub fn parse_cl() -> Options {
                     .help("render a bush")
                     .group("lsystem")
               )
+              .arg(Arg::with_name("penrose")
+                    .long("penrose")
+                    .help("render a Penrose tiling")
+                    .group("lsystem")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
                   .conflicts_with("lsystem")
@@ -326,6 +331,8 @@ pub fn parse_cl() -> Options {
         FractalType::GosperCurve
     } else if matches.is_present("bush") {
         FractalType::Bush
+    } else if matches.is_present("penrose") {
+        FractalType::PenroseTiling
     } else {
         FractalType::Random
     };

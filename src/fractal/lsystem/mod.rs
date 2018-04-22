@@ -3,6 +3,8 @@ mod sierpinski_arrowhead;
 mod hilbert_curve;
 mod gosper_curve;
 mod bush;
+mod penrose;
+
 mod turtle;
 
 pub trait LSystem : Sync {

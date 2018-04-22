@@ -43,6 +43,7 @@ pub enum FractalType {
     HilbertCurve,
     GosperCurve,
     Bush,
+    PenroseTiling,
 }
 
 impl fmt::Display for FractalType {
