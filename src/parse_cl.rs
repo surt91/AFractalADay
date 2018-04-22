@@ -24,6 +24,7 @@ pub struct Options {
     pub symmetry: Option<Symmetry>,
     pub vibrancy: Option<f64>,
     pub gamma: Option<f64>,
+    pub iterations: Option<u32>,
 }
 
 impl fmt::Display for Options {
@@ -233,6 +234,13 @@ pub fn parse_cl() -> Options {
                     .possible_values(&Variation::list().iter().map(|s| s.as_ref()).collect::<Vec<&str>>().as_slice())
                     .requires("iterated_function_system")
               )
+              .arg(Arg::with_name("iterations")
+                    .short("N")
+                    .long("iterations")
+                    .takes_value(true)
+                    .help("sets the number of iterations for the L-system")
+                    .requires("lsystem")
+              )
               .get_matches();
 
     let tweet = matches.is_present("tweet");
@@ -265,6 +273,9 @@ pub fn parse_cl() -> Options {
                        .or_else(|| None);
     let gamma = matches.value_of("gamma")
                        .and_then(|s| Some(s.parse::<f64>().expect("gamma needs to be a number")))
+                       .or_else(|| None);
+    let iterations = matches.value_of("iterations")
+                       .and_then(|s| Some(s.parse::<u32>().expect("iterations needs to be a unsigned integer")))
                        .or_else(|| None);
 
     let fractal_type = if matches.is_present("newton") {
@@ -338,6 +349,7 @@ pub fn parse_cl() -> Options {
         variation,
         symmetry,
         vibrancy,
-        gamma
+        gamma,
+        iterations,
     }
 }

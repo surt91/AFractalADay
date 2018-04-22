@@ -9,7 +9,8 @@ extern crate rayon;
 use self::rayon::prelude::*;
 
 pub struct SierpinskiArrowhead {
-
+    iterations: u32,
+    description: String,
 }
 
 enum Alphabet {
@@ -21,7 +22,7 @@ enum Alphabet {
 
 impl LSystem for SierpinskiArrowhead {
     fn description(&self) -> &str {
-        "Sierpinski arrowhead"
+        &self.description
     }
 
     fn get_canvas(&self) -> Canvas {
@@ -35,8 +36,7 @@ impl LSystem for SierpinskiArrowhead {
 
         let mut state = vec![Alphabet::A];
 
-        let n = 6;
-        for _ in 0..n {
+        for _ in 0..self.iterations {
             state = state.par_iter()
                 .map(|i|
                     match i {
@@ -77,6 +77,17 @@ impl LSystem for SierpinskiArrowhead {
 impl FractalBuilder
 {
     pub fn sierpinski_arrowhead(self) -> SierpinskiArrowhead {
-        SierpinskiArrowhead {}
+        let iterations = match self.iterations {
+            Some(n) => n,
+            None => 6
+        };
+        let description = format!("Sierpinski arrowhead, n = {}", iterations);
+
+        info!("Will render {}", description);
+
+        SierpinskiArrowhead {
+            description,
+            iterations,
+        }
     }
 }

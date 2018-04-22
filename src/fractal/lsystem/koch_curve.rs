@@ -7,7 +7,8 @@ extern crate rayon;
 use self::rayon::prelude::*;
 
 pub struct KochCurve {
-
+    iterations: u32,
+    description: String,
 }
 
 enum Alphabet {
@@ -18,7 +19,7 @@ enum Alphabet {
 
 impl LSystem for KochCurve {
     fn description(&self) -> &str {
-        "Koch Curve"
+        &self.description
     }
 
     fn get_canvas(&self) -> Canvas {
@@ -31,8 +32,7 @@ impl LSystem for KochCurve {
 
         let mut state = vec![Alphabet::F];
 
-        let n = 5;
-        for _ in 0..n {
+        for _ in 0..self.iterations {
             state = state.par_iter()
                 .map(|i|
                     match i {
@@ -70,6 +70,17 @@ impl LSystem for KochCurve {
 impl FractalBuilder
 {
     pub fn koch_curve(self) -> KochCurve {
-        KochCurve {}
+        let iterations = match self.iterations {
+            Some(n) => n,
+            None => 6
+        };
+        let description = format!("Koch curve, n = {}", iterations);
+
+        info!("Will render {}", description);
+
+        KochCurve {
+            description,
+            iterations,
+        }
     }
 }

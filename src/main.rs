@@ -91,6 +91,7 @@ fn build_fractal(
                                          .symmetry(&opt.symmetry)
                                          .vibrancy(&opt.vibrancy)
                                          .gamma(&opt.gamma)
+                                         .iterations(&opt.iterations)
                                          .build(&fractal_type);
 
         let (finished, tmp_description, tmp_json)

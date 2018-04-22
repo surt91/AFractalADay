@@ -5,7 +5,6 @@ mod turtle;
 
 pub trait LSystem : Sync {
     fn description(&self) -> &str;
-    // fn iterate(&mut self, n: u32);
     fn get_canvas(&self) -> turtle::Canvas;
 
     fn render(&mut self, resolution: (u32, u32),

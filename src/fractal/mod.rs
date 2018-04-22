@@ -47,7 +47,10 @@ pub struct FractalBuilder {
     // for escape time
     a: Option<Coef>,
     f: Option<Formula>,
-    style: Option<Style>
+    style: Option<Style>,
+
+    // for L systems
+    iterations: Option<u32>,
 }
 
 impl FractalBuilder {
@@ -63,7 +66,9 @@ impl FractalBuilder {
 
             a: None,
             f: None,
-            style: None
+            style: None,
+
+            iterations: None,
         }
     }
     pub fn seed_rng(&self) -> RngType {
@@ -96,6 +101,11 @@ impl FractalBuilder {
 
     pub fn gamma(mut self, gamma: &Option<f64>) -> FractalBuilder {
         self.gamma = gamma.clone();
+        self
+    }
+
+    pub fn iterations(mut self, iterations: &Option<u32>) -> FractalBuilder {
+        self.iterations = iterations.clone();
         self
     }
 

@@ -7,7 +7,8 @@ extern crate rayon;
 use self::rayon::prelude::*;
 
 pub struct HilbertCurve {
-
+    iterations: u32,
+    description: String,
 }
 
 enum Alphabet {
@@ -20,7 +21,7 @@ enum Alphabet {
 
 impl LSystem for HilbertCurve {
     fn description(&self) -> &str {
-        "Hilbert Curve"
+        &self.description
     }
 
     fn get_canvas(&self) -> Canvas {
@@ -33,8 +34,7 @@ impl LSystem for HilbertCurve {
 
         let mut state = vec![Alphabet::L];
 
-        let n = 5;
-        for _ in 0..n {
+        for _ in 0..self.iterations {
             state = state.par_iter()
                 .map(|i|
                     match i {
@@ -89,6 +89,17 @@ impl LSystem for HilbertCurve {
 impl FractalBuilder
 {
     pub fn hilbert_curve(self) -> HilbertCurve {
-        HilbertCurve {}
+        let iterations = match self.iterations {
+            Some(n) => n,
+            None => 6
+        };
+        let description = format!("Hilbert curve, n = {}", iterations);
+
+        info!("Will render {}", description);
+
+        HilbertCurve {
+            description,
+            iterations,
+        }
     }
 }
