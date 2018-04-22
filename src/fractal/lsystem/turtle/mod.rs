@@ -168,7 +168,7 @@ impl Canvas {
         }
 
         let pixels: Vec<(i32, i32)> = iproduct!(0..y as i32, 0..x as i32).collect();
-        pixels.iter()
+        pixels.par_iter()
             .map(|&(j, i)| {
                 let mut color = vec![255, 255, 255, 0];
                 let q = Point::new(
