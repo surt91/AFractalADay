@@ -8,7 +8,7 @@ use super::turtle::{Turtle, Canvas};
 extern crate rayon;
 use self::rayon::prelude::*;
 
-pub struct KochCurve {
+pub struct SierpinskiTriangle {
 
 }
 
@@ -19,7 +19,7 @@ enum Alphabet {
     M,
 }
 
-impl LSystem for KochCurve {
+impl LSystem for SierpinskiTriangle {
     fn description(&self) -> &str {
         "Koch Curve"
     }
@@ -76,7 +76,7 @@ impl LSystem for KochCurve {
 
 impl FractalBuilder
 {
-    pub fn sierpinski_triangle(self) -> KochCurve {
-        KochCurve {}
+    pub fn sierpinski_triangle(self) -> SierpinskiTriangle {
+        SierpinskiTriangle {}
     }
 }
