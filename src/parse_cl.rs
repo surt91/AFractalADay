@@ -166,6 +166,11 @@ pub fn parse_cl() -> Options {
                     .help("render a Sierpinski triangle")
                     .group("lsystem")
               )
+              .arg(Arg::with_name("hilbertcurve")
+                    .long("hilbertcurve")
+                    .help("render a Hilbert curve")
+                    .group("lsystem")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
                   .conflicts_with("lsystem")
@@ -294,6 +299,8 @@ pub fn parse_cl() -> Options {
         FractalType::KochCurve
     } else if matches.is_present("sierpinskitriangle") {
         FractalType::SierpinskiTriangle
+    } else if matches.is_present("hilbertcurve") {
+        FractalType::HilbertCurve
     } else {
         FractalType::Random
     };

@@ -131,6 +131,7 @@ impl FractalBuilder {
             FractalType::LoadJson(ref json) => FractalInstance::IFS(Box::new(self.from_json(&json))),
             FractalType::KochCurve => FractalInstance::LSys(Box::new(self.koch_curve())),
             FractalType::SierpinskiTriangle => FractalInstance::LSys(Box::new(self.sierpinski_triangle())),
+            FractalType::HilbertCurve => FractalInstance::LSys(Box::new(self.hilbert_curve())),
             FractalType::Random => unreachable!()
         };
 

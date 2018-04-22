@@ -38,6 +38,7 @@ pub enum FractalType {
     LoadJson(String),
     KochCurve,
     SierpinskiTriangle,
+    HilbertCurve,
 }
 
 impl fmt::Display for FractalType {
