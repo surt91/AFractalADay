@@ -161,9 +161,9 @@ pub fn parse_cl() -> Options {
                     .help("render a Koch curve")
                     .group("lsystem")
               )
-              .arg(Arg::with_name("sierpinskitriangle")
-                    .long("sierpinskitriangle")
-                    .help("render a Sierpinski triangle")
+              .arg(Arg::with_name("sierpinskiarrowhead")
+                    .long("sierpinskiarrowhead")
+                    .help("render a Sierpinski arrowhead")
                     .group("lsystem")
               )
               .arg(Arg::with_name("hilbertcurve")
@@ -297,8 +297,8 @@ pub fn parse_cl() -> Options {
         FractalType::LoadJson(json)
     } else if matches.is_present("kochcurve") {
         FractalType::KochCurve
-    } else if matches.is_present("sierpinskitriangle") {
-        FractalType::SierpinskiTriangle
+    } else if matches.is_present("sierpinskiarrowhead") {
+        FractalType::SierpinskiArrowhead
     } else if matches.is_present("hilbertcurve") {
         FractalType::HilbertCurve
     } else {

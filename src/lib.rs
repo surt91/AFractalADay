@@ -37,7 +37,7 @@ pub enum FractalType {
     FractalFlame,
     LoadJson(String),
     KochCurve,
-    SierpinskiTriangle,
+    SierpinskiArrowhead,
     HilbertCurve,
 }
 

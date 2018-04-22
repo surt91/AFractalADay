@@ -8,7 +8,7 @@ use super::turtle::{Turtle, Canvas};
 extern crate rayon;
 use self::rayon::prelude::*;
 
-pub struct SierpinskiTriangle {
+pub struct SierpinskiArrowhead {
 
 }
 
@@ -19,9 +19,9 @@ enum Alphabet {
     M,
 }
 
-impl LSystem for SierpinskiTriangle {
+impl LSystem for SierpinskiArrowhead {
     fn description(&self) -> &str {
-        "Koch Curve"
+        "Sierpinski arrowhead"
     }
 
     fn get_canvas(&self) -> Canvas {
@@ -76,7 +76,7 @@ impl LSystem for SierpinskiTriangle {
 
 impl FractalBuilder
 {
-    pub fn sierpinski_triangle(self) -> SierpinskiTriangle {
-        SierpinskiTriangle {}
+    pub fn sierpinski_arrowhead(self) -> SierpinskiArrowhead {
+        SierpinskiArrowhead {}
     }
 }

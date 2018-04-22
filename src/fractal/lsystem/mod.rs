@@ -1,5 +1,5 @@
 mod koch_curve;
-mod sierpinski_triangle;
+mod sierpinski_arrowhead;
 mod hilbert_curve;
 mod turtle;
 
