@@ -1,3 +1,5 @@
+#![feature(iterator_flatten)]
+
 #[macro_use] extern crate itertools;
 #[macro_use] extern crate log;
 #[macro_use] extern crate rand_derive;
@@ -40,6 +42,7 @@ pub enum FractalType {
     SierpinskiArrowhead,
     HilbertCurve,
     GosperCurve,
+    Bush,
 }
 
 impl fmt::Display for FractalType {

@@ -13,6 +13,9 @@ pub trait Turtle {
     fn forward(&mut self, d: f64);
     fn turn(&mut self, a: f64);
 
+    fn push(&mut self);
+    fn pop(&mut self);
+
     fn turn_right(&mut self) {
         self.turn(-PI/2.);
     }
@@ -22,38 +25,68 @@ pub trait Turtle {
     }
 }
 
-pub struct Canvas {
-    points : Vec<Point>,
+#[derive(Clone, Debug)]
+struct State {
+    position: Point,
     direction: f64,
+}
+
+pub struct Canvas {
+    paths: Vec<Vec<Point>>,
+    state: State,
+    stack: Vec<State>,
 }
 
 impl Turtle for Canvas {
     fn forward(&mut self, d: f64) {
-        let head = self.points.last().unwrap().clone();
-        let next = Point::step(d, self.direction) + head;
-        self.points.push(next);
+        self.state.position += Point::step(d, self.state.direction);
+        self.paths.last_mut().unwrap().push(self.state.position.clone());
     }
 
     fn turn(&mut self, a: f64) {
-        self.direction += a;
+        self.state.direction += a;
+    }
+
+    fn push(&mut self) {
+        self.stack.push(self.state.clone());
+    }
+
+    fn pop(&mut self) {
+        self.state = self.stack.pop().unwrap(); // panics for ill defined l systems
+        self.paths.push(Vec::new());
+        self.paths.last_mut().unwrap().push(self.state.position.clone());
     }
 }
 
 impl Canvas {
     pub fn new() -> Canvas {
-        let points = vec![Point::new(0., 0.); 1];
+        let start = Point::new(0., 0.);
+        let points = vec![start.clone()];
+        let paths = vec![points];
+        let state = State {
+            position: start,
+            direction: 0.0,
+        };
 
         Canvas {
-            points,
-            direction: 0.,
+            paths,
+            state,
+            stack: Vec::new(),
         }
     }
 
     fn bounds(&self) -> (f64, f64, f64, f64) {
-        let mut max_x = self.points.iter().map(|p| p.x).fold(-1./0. /* -inf */, f64::max);
-        let mut max_y = self.points.iter().map(|p| p.y).fold(-1./0. /* -inf */, f64::max);
-        let mut min_x = self.points.iter().map(|p| p.x).fold(1./0. /* inf */, f64::min);
-        let mut min_y = self.points.iter().map(|p| p.y).fold(1./0. /* inf */, f64::min);
+        let mut max_x: f64 = -1./0.; // -inf
+        let mut max_y: f64 = -1./0.; // -inf
+        let mut min_x: f64 = 1./0.; // inf
+        let mut min_y: f64 = 1./0.; // inf
+
+        for p in &self.paths {
+            max_x = max_x.max(p.iter().map(|p| p.x).fold(-1./0. /* -inf */, f64::max));
+            max_y = max_y.max(p.iter().map(|p| p.y).fold(-1./0. /* -inf */, f64::max));
+            min_x = min_x.min(p.iter().map(|p| p.x).fold(1./0. /* inf */, f64::min));
+            min_y = min_y.min(p.iter().map(|p| p.y).fold(1./0. /* inf */, f64::min));
+        }
 
         let w = max_x - min_x;
         max_x += 0.1*w;
@@ -80,33 +113,34 @@ impl Canvas {
         let min_x = min_x - x_offset / 2. * scale_r;
         let min_y = min_y - y_offset / 2. * scale_r;
 
-
-        // let y = (h * scale) as i32;
-
-        let points = &self.points;
-
         let stroke = cmp::min(cmp::min(x, y) / 1000 + 1, 3);
         let stroke_r = stroke as f64 * scale_r;
 
+        let pixels: Vec<(i32, i32)> = iproduct!(0..y as i32, 0..x as i32).collect();
+
+        let lines = self.paths.iter().map(|p| {p.windows(2)});
+
         // TODO: sort them in some hierachical structure and discard many at once
         // TODO: maybe a quadtree? or something simple such as cells?
-        let rects: Vec<(Point, Point, Point, Point)> = points.windows(2)
-            .map(|line| {
-                if let &[ref a, ref b] = line {
-                    let bearing = (a.y-b.y).atan2(a.x-b.x);
-                    let p1 = a.clone() + Point::step(stroke_r, bearing + PI/2.) + Point::step(stroke_r, bearing);
-                    let p2 = a.clone() + Point::step(stroke_r, bearing - PI/2.) + Point::step(stroke_r, bearing);
-                    let p3 = b.clone() + Point::step(stroke_r, bearing - PI/2.) - Point::step(stroke_r, bearing);
-                    let p4 = b.clone() + Point::step(stroke_r, bearing + PI/2.) - Point::step(stroke_r, bearing);
-                    (p1, p2, p3, p4)
-                } else {
-                    let p = Point::new(0., 0.);
-                    (p.clone(), p.clone(), p.clone(), p.clone())
-                }
+        let rects: Vec<(Point, Point, Point, Point)> = lines
+            .map(|path| {
+                path.map(|line| {
+                    if let &[ref a, ref b] = line {
+                        let bearing = (a.y-b.y).atan2(a.x-b.x);
+                        let p1 = a.clone() + Point::step(stroke_r, bearing + PI/2.) + Point::step(stroke_r, bearing);
+                        let p2 = a.clone() + Point::step(stroke_r, bearing - PI/2.) + Point::step(stroke_r, bearing);
+                        let p3 = b.clone() + Point::step(stroke_r, bearing - PI/2.) - Point::step(stroke_r, bearing);
+                        let p4 = b.clone() + Point::step(stroke_r, bearing + PI/2.) - Point::step(stroke_r, bearing);
+                        (p1, p2, p3, p4)
+                    } else {
+                        let p = Point::new(0., 0.);
+                        (p.clone(), p.clone(), p.clone(), p.clone())
+                    }
+                })
             })
+            .flatten()
             .collect();
 
-        let pixels: Vec<(i32, i32)> = iproduct!(0..y as i32, 0..x as i32).collect();
         pixels.par_iter()
             .map(|&(j, i)| {
                 let mut color = vec![255, 255, 255, 0];
@@ -117,7 +151,6 @@ impl Canvas {
                         );
 
                         if q.in_rect(&p1, &p2, &p3, &p4) {
-                            // TODO color by length?
                             let progress = n as f64 / rects.len() as f64;
                             let hsv = color::HSV(progress, 1., 1.);
                             let color::RGB(r, g, b) = hsv.to_rgb();

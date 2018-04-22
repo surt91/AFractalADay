@@ -2,6 +2,7 @@ mod koch_curve;
 mod sierpinski_arrowhead;
 mod hilbert_curve;
 mod gosper_curve;
+mod bush;
 mod turtle;
 
 pub trait LSystem : Sync {

@@ -177,6 +177,11 @@ pub fn parse_cl() -> Options {
                     .help("render a Gosper curve")
                     .group("lsystem")
               )
+              .arg(Arg::with_name("bush")
+                    .long("bush")
+                    .help("render a bush")
+                    .group("lsystem")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
                   .conflicts_with("lsystem")
@@ -319,6 +324,8 @@ pub fn parse_cl() -> Options {
         FractalType::HilbertCurve
     } else if matches.is_present("gospercurve") {
         FractalType::GosperCurve
+    } else if matches.is_present("bush") {
+        FractalType::Bush
     } else {
         FractalType::Random
     };
