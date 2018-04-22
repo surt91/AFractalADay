@@ -39,6 +39,7 @@ pub enum FractalType {
     KochCurve,
     SierpinskiArrowhead,
     HilbertCurve,
+    GosperCurve,
 }
 
 impl fmt::Display for FractalType {

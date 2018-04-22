@@ -142,6 +142,7 @@ impl FractalBuilder {
             FractalType::KochCurve => FractalInstance::LSys(Box::new(self.koch_curve())),
             FractalType::SierpinskiArrowhead => FractalInstance::LSys(Box::new(self.sierpinski_arrowhead())),
             FractalType::HilbertCurve => FractalInstance::LSys(Box::new(self.hilbert_curve())),
+            FractalType::GosperCurve => FractalInstance::LSys(Box::new(self.gosper_curve())),
             FractalType::Random => unreachable!()
         };
 
