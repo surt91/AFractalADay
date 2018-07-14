@@ -9,6 +9,7 @@ pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::transformation::Transformation;
 pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::serialize::IteratedFunctionSystemConfig;
+pub use self::lsystem::generic::Lrules;
 
 extern crate serde_json;
 
@@ -51,6 +52,9 @@ pub struct FractalBuilder {
 
     // for L systems
     iterations: Option<u32>,
+    start: Option<String>,
+    rules: Option<Lrules>,
+    angle: Option<f64>,
 }
 
 impl FractalBuilder {
@@ -69,6 +73,9 @@ impl FractalBuilder {
             style: None,
 
             iterations: None,
+            start: None,
+            rules: None,
+            angle:None,
         }
     }
     pub fn seed_rng(&self) -> RngType {
@@ -145,6 +152,7 @@ impl FractalBuilder {
             FractalType::GosperCurve => FractalInstance::LSys(Box::new(self.gosper_curve())),
             FractalType::Bush => FractalInstance::LSys(Box::new(self.bush())),
             FractalType::PenroseTiling => FractalInstance::LSys(Box::new(self.penrose_tiling())),
+            FractalType::RandomLSystem => FractalInstance::LSys(Box::new(self.generic())),
             FractalType::Random => unreachable!()
         };
 

@@ -187,6 +187,11 @@ pub fn parse_cl() -> Options {
                     .help("render a Penrose tiling")
                     .group("lsystem")
               )
+              .arg(Arg::with_name("random_lsystem")
+                    .long("lsystem")
+                    .help("render a random lsystem")
+                    .group("lsystem")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
                   .conflicts_with("lsystem")
@@ -333,6 +338,8 @@ pub fn parse_cl() -> Options {
         FractalType::Bush
     } else if matches.is_present("penrose") {
         FractalType::PenroseTiling
+    } else if matches.is_present("random_lsystem") {
+        FractalType::RandomLSystem
     } else {
         FractalType::Random
     };

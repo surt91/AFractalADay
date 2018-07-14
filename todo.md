@@ -17,3 +17,8 @@ TODO
 *   parse function from cla
 *   neural net classifier: interesting <-> not interesting
 *   vibrancy and gamma need to be saved in the json export
+
+*   Generic L-systems:
+    -   pass rules per cli
+    -   random generation of rules
+    -   pass specific systems as rule-strings instead of the current overheady way

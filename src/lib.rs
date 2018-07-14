@@ -44,6 +44,7 @@ pub enum FractalType {
     GosperCurve,
     Bush,
     PenroseTiling,
+    RandomLSystem,
 }
 
 impl fmt::Display for FractalType {

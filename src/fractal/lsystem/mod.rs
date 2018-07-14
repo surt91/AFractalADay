@@ -4,6 +4,7 @@ mod hilbert_curve;
 mod gosper_curve;
 mod bush;
 mod penrose;
+pub mod generic;
 
 extern crate turtle;
 
