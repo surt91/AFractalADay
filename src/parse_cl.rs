@@ -1,12 +1,13 @@
 extern crate clap;
 use self::clap::{App, Arg, ArgGroup};
 
+use std::f64::consts::PI;
 use std::fmt;
 use std::fs;
 use std::io::prelude::*;
 
 use FractalType;
-use fractal::{Style, Variation, Symmetry};
+use fractal::{Style, Variation, Symmetry, Alphabet, Lrules};
 
 #[derive(Debug)]
 pub struct Options {
@@ -25,6 +26,9 @@ pub struct Options {
     pub vibrancy: Option<f64>,
     pub gamma: Option<f64>,
     pub iterations: Option<u32>,
+    pub start: Option<Vec<Alphabet>>,
+    pub rules: Option<Lrules>,
+    pub angle: Option<f64>,
 }
 
 impl fmt::Display for Options {
@@ -261,6 +265,24 @@ pub fn parse_cl() -> Options {
                     .help("sets the number of iterations for the L-system")
                     .requires("lsystem")
               )
+              .arg(Arg::with_name("start")
+                    .long("start")
+                    .takes_value(true)
+                    .help("sets the starting state for the L-system")
+                    .requires("lsystem")
+              )
+              .arg(Arg::with_name("rules")
+                    .long("rules")
+                    .takes_value(true)
+                    .help("sets the substitution rules for the L-system")
+                    .requires("lsystem")
+              )
+              .arg(Arg::with_name("angle")
+                    .long("angle")
+                    .takes_value(true)
+                    .help("sets the angle for the L-system")
+                    .requires("lsystem")
+              )
               .get_matches();
 
     let tweet = matches.is_present("tweet");
@@ -294,9 +316,24 @@ pub fn parse_cl() -> Options {
     let gamma = matches.value_of("gamma")
                        .and_then(|s| Some(s.parse::<f64>().expect("gamma needs to be a number")))
                        .or_else(|| None);
+
     let iterations = matches.value_of("iterations")
                        .and_then(|s| Some(s.parse::<u32>().expect("iterations needs to be a unsigned integer")))
                        .or_else(|| None);
+    let angle = matches.value_of("angle")
+                       .and_then(|s| Some(s.parse::<f64>().expect("angle needs to be a number") / 180.*PI))
+                       .or_else(|| None);
+
+    let start = match matches.value_of("start")
+    {
+        Some(x) => Some(x.chars().map(|c| Alphabet::new(c)).collect()),
+        None => None
+    };
+    let rules = match matches.value_of("rules")
+    {
+        Some(x) => Some(Lrules::from_string(x)),
+        None => None
+    };
 
     let fractal_type = if matches.is_present("newton") {
         FractalType::Newton
@@ -379,5 +416,8 @@ pub fn parse_cl() -> Options {
         vibrancy,
         gamma,
         iterations,
+        start,
+        rules,
+        angle,
     }
 }

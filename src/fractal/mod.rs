@@ -9,7 +9,7 @@ pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::transformation::Transformation;
 pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::serialize::IteratedFunctionSystemConfig;
-pub use self::lsystem::Lrules;
+pub use self::lsystem::{Alphabet, Lrules, LSystem};
 
 extern crate serde_json;
 
@@ -52,7 +52,7 @@ pub struct FractalBuilder {
 
     // for L systems
     iterations: Option<u32>,
-    start: Option<String>,
+    start: Option<Vec<Alphabet>>,
     rules: Option<Lrules>,
     angle: Option<f64>,
 }
@@ -128,6 +128,21 @@ impl FractalBuilder {
 
     pub fn style(mut self, style: &Option<Style>) -> FractalBuilder {
         self.style = style.clone();
+        self
+    }
+
+    pub fn start(mut self, start: &Option<Vec<Alphabet>>) -> FractalBuilder {
+        self.start = start.clone();
+        self
+    }
+
+    pub fn rules(mut self, rules: &Option<Lrules>) -> FractalBuilder {
+        self.rules = rules.clone();
+        self
+    }
+
+    pub fn angle(mut self, angle: &Option<f64>) -> FractalBuilder {
+        self.angle = angle.clone();
         self
     }
 

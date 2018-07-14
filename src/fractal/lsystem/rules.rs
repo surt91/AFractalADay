@@ -8,7 +8,7 @@ use itertools::Itertools;
 use super::Alphabet;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Lrules {
     rules: HashMap<Alphabet, Vec<Alphabet>>
 }

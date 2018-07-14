@@ -1,5 +1,7 @@
 use std::f64::consts::PI;
 
+use itertools::Itertools;
+
 use fractal::FractalBuilder;
 
 use super::LSystem;
@@ -61,7 +63,7 @@ impl FractalBuilder
             None => 5
         };
         let start = match self.start.clone() {
-            Some(s) => Alphabet::parse(&s),
+            Some(s) => s,
             None => Alphabet::parse("F")
         };
         let rules = match self.rules {
@@ -74,7 +76,7 @@ impl FractalBuilder
         };
 
         let rule_string = format!("{}", rules);
-        let start_string = format!("{}", self.start.unwrap_or("F".to_string()));
+        let start_string = format!("{}", start.iter().map(|x| format!("{}", x)).join(""));
 
         let description = format!(
             "L-System, start = {}, rules = ({}), angle = {:.0}°, n = {}",
