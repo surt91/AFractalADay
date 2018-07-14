@@ -9,7 +9,7 @@ pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::transformation::Transformation;
 pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::serialize::IteratedFunctionSystemConfig;
-pub use self::lsystem::generic::Lrules;
+pub use self::lsystem::Lrules;
 
 extern crate serde_json;
 
