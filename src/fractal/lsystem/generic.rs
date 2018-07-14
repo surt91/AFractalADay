@@ -39,12 +39,15 @@ impl Lrules {
             rule.trim();
             let mut it = rule.chars();
             let key = it.next().unwrap();
+
             // jump over :
-            if it.next().unwrap() != ':' {
+            let delimiter = it.by_ref().skip_while(|&x| x == ' ').next().unwrap();
+            if delimiter != ':' && delimiter != '→' {
                 error!("Rule is not valid: not exactly one symbols as key in '{}'", rule);
                 panic!();
             }
-            let rule = it.collect::<String>();
+
+            let rule = it.skip_while(|&x| x == ' ').collect::<String>();
             rules.insert(Alphabet::new(key), parse(&rule));
         }
 
@@ -69,7 +72,7 @@ impl fmt::Display for Lrules {
 
             match key {
                 Alphabet::F | Alphabet::Marker(_)
-                    => rule_strings.push(format!("{}:{}", key, rule_string)),
+                    => rule_strings.push(format!("{} → {}", key, rule_string)),
                 _ => ()
             };
         }
