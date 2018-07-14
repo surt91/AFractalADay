@@ -2,81 +2,12 @@ use std::f64::consts::PI;
 
 use fractal::FractalBuilder;
 
-use super::LSystem;
-use super::turtle::{Turtle, Canvas};
+use super::{Generic, Alphabet, Lrules};
 
-extern crate rayon;
-use self::rayon::prelude::*;
-
-pub struct SierpinskiArrowhead {
-    iterations: u32,
-    description: String,
-}
-
-enum Alphabet {
-    A,
-    B,
-    P,
-    M,
-}
-
-impl LSystem for SierpinskiArrowhead {
-    fn description(&self) -> &str {
-        &self.description
-    }
-
-    fn get_canvas(&self) -> Canvas {
-        let mut canvas = Canvas::new();
-
-        // variables : A B
-        // constants : + −
-        // start  : A
-        // rules  : (A → B−A−B), (B → A+B+A)
-        // angle  : 60°
-
-        let mut state = vec![Alphabet::A];
-
-        for _ in 0..self.iterations {
-            state = state.par_iter()
-                .map(|i|
-                    match i {
-                        &Alphabet::A => vec![
-                            Alphabet::B,
-                            Alphabet::M,
-                            Alphabet::A,
-                            Alphabet::M,
-                            Alphabet::B,
-                        ],
-                        &Alphabet::B => vec![
-                            Alphabet::A,
-                            Alphabet::P,
-                            Alphabet::B,
-                            Alphabet::P,
-                            Alphabet::A,
-                        ],
-                        &Alphabet::P => vec![Alphabet::P],
-                        &Alphabet::M => vec![Alphabet::M],
-                    }
-                )
-                .flatten()
-                .collect();
-        }
-
-        for i in state {
-            match i {
-                Alphabet::A | Alphabet::B => canvas.forward(1.),
-                Alphabet::P => canvas.turn(PI/3.),
-                Alphabet::M => canvas.turn(-PI/3.),
-            };
-        }
-
-        canvas
-    }
-}
 
 impl FractalBuilder
 {
-    pub fn sierpinski_arrowhead(self) -> SierpinskiArrowhead {
+    pub fn sierpinski_arrowhead(self) -> Generic {
         let iterations = match self.iterations {
             Some(n) => n,
             None => 6
@@ -85,9 +16,12 @@ impl FractalBuilder
 
         info!("Will render {}", description);
 
-        SierpinskiArrowhead {
+        Generic {
             description,
             iterations,
+            start: Alphabet::parse("A"),
+            rules: Lrules::from_string("F → /, A → BF-AF-BF, B → AF+BF+AF"),
+            angle: PI/3.,
         }
     }
 }
