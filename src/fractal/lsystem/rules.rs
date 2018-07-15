@@ -64,7 +64,6 @@ impl Lrules {
     }
 
     pub fn random(seed: Option<SeedType>) -> Lrules {
-        // TODO implement
         // first select a random number of symbols, the symbolset
         let mut rng = match seed {
             Some(s) => RngType::from_seed(s),
@@ -98,18 +97,24 @@ impl Lrules {
         allowed_symbols.push(Alphabet::new(']'));
         allowed_symbols.push(Alphabet::new('+'));
         allowed_symbols.push(Alphabet::new('-'));
+        rules.insert(Alphabet::new('['), vec![Alphabet::new('[')]);
+        rules.insert(Alphabet::new(']'), vec![Alphabet::new(']')]);
+        rules.insert(Alphabet::new('+'), vec![Alphabet::new('+')]);
+        rules.insert(Alphabet::new('-'), vec![Alphabet::new('-')]);
 
         for s in &symbolset {
+            let num = rng.gen_range(1, 10);
             let mut tmp = iter::repeat(())
-                             .map(|()| rng.choose(&symbolset).unwrap().clone())
-                             .take(num_start)
+                             .map(|()| rng.choose(&allowed_symbols).unwrap().clone())
+                             .take(num)
                              .collect::<Vec<Alphabet>>();
+
             // search for closing brackets and add a opening bracket
             let mut rule: Vec<Alphabet> = Vec::new();
             for (n, c) in tmp.iter().enumerate() {
                 if c == &Alphabet::new(']') {
-                    let idx = rng.gen_range(0, n);
-                    rule.insert(idx, Alphabet::new(']'));
+                    let idx = rng.gen_range(0, n+1);
+                    rule.insert(idx, Alphabet::new('['));
                 }
                 rule.push(c.clone());
             }
