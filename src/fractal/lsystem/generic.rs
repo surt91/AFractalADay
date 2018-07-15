@@ -16,7 +16,6 @@ use self::rayon::prelude::*;
 pub struct Generic {
     pub iterations: u32,
     pub description: String,
-    pub start: Vec<Alphabet>,
     pub rules: Lrules,
     pub angle: f64,
 }
@@ -29,7 +28,7 @@ impl LSystem for Generic {
     fn get_canvas(&self) -> Canvas {
         let mut canvas = Canvas::new();
 
-        let mut state = self.start.clone();
+        let mut state = self.rules.start().clone();
 
         for _ in 0..self.iterations {
             state = state.par_iter()
@@ -68,7 +67,7 @@ impl FractalBuilder
         };
         let rules = match self.rules {
             Some(m) => m,
-            None => Lrules::random()
+            None => Lrules::random(self.seed)
         };
         let angle = match self.angle {
             Some(f) => f,
@@ -91,7 +90,6 @@ impl FractalBuilder
         Generic {
             description,
             iterations,
-            start,
             rules,
             angle
         }

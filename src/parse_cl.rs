@@ -7,7 +7,7 @@ use std::fs;
 use std::io::prelude::*;
 
 use FractalType;
-use fractal::{Style, Variation, Symmetry, Alphabet, Lrules};
+use fractal::{Style, Variation, Symmetry, Lrules};
 
 #[derive(Debug)]
 pub struct Options {
@@ -26,7 +26,6 @@ pub struct Options {
     pub vibrancy: Option<f64>,
     pub gamma: Option<f64>,
     pub iterations: Option<u32>,
-    pub start: Option<Vec<Alphabet>>,
     pub rules: Option<Lrules>,
     pub angle: Option<f64>,
 }
@@ -270,12 +269,14 @@ pub fn parse_cl() -> Options {
                     .takes_value(true)
                     .help("sets the starting state for the L-system")
                     .requires("lsystem")
+                    .requires("rules")
               )
               .arg(Arg::with_name("rules")
                     .long("rules")
                     .takes_value(true)
                     .help("sets the substitution rules for the L-system")
                     .requires("lsystem")
+                    .requires("start")
               )
               .arg(Arg::with_name("angle")
                     .long("angle")
@@ -324,15 +325,10 @@ pub fn parse_cl() -> Options {
                        .and_then(|s| Some(s.parse::<f64>().expect("angle needs to be a number") / 180.*PI))
                        .or_else(|| None);
 
-    let start = match matches.value_of("start")
+    let rules = match (matches.value_of("start"), matches.value_of("rules"))
     {
-        Some(x) => Some(x.chars().map(|c| Alphabet::new(c)).collect()),
-        None => None
-    };
-    let rules = match matches.value_of("rules")
-    {
-        Some(x) => Some(Lrules::from_string(x)),
-        None => None
+        (Some(s), Some(r)) => Some(Lrules::from_string(s, r)),
+        _ => None
     };
 
     let fractal_type = if matches.is_present("newton") {
@@ -416,7 +412,6 @@ pub fn parse_cl() -> Options {
         vibrancy,
         gamma,
         iterations,
-        start,
         rules,
         angle,
     }

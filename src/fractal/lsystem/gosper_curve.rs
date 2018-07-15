@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use fractal::FractalBuilder;
 
-use super::{Generic, Alphabet, Lrules};
+use super::{Generic, Lrules};
 
 impl FractalBuilder
 {
@@ -18,8 +18,7 @@ impl FractalBuilder
         Generic {
             description,
             iterations,
-            start: Alphabet::parse("A"),
-            rules: Lrules::from_string("F → /, A → AF-BF--BF+AF++AFAF+BF-, B → +AF-BFBF--BF-AF++AF+BF"),
+            rules: Lrules::from_string("A", "F → /, A → AF-BF--BF+AF++AFAF+BF-, B → +AF-BFBF--BF-AF++AF+BF"),
             angle: PI/3.,
         }
     }

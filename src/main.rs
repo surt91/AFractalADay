@@ -91,7 +91,6 @@ fn build_fractal(
                                          .vibrancy(&opt.vibrancy)
                                          .gamma(&opt.gamma)
                                          .iterations(&opt.iterations)
-                                         .start(&opt.start)
                                          .rules(&opt.rules)
                                          .angle(&opt.angle)
                                          .build(&fractal_type);
