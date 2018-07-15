@@ -1,4 +1,5 @@
 use rand::Rng;
+use rand::distributions::Standard;
 
 use itertools;
 
@@ -17,7 +18,7 @@ impl FractalBuilder
 
         let number_of_functions = rng.gen_range(2, 7);
 
-        let prob: Vec<f64> = rng.gen_iter().take(number_of_functions).collect();
+        let prob: Vec<f64> = rng.sample_iter(&Standard).take(number_of_functions).collect();
         let mut p = 0.;
         let p_norm: f64 = prob.iter().sum();
         let mut probabilities: Vec<f64> = Vec::new();

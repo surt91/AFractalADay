@@ -66,7 +66,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
 
     fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType> {
         // let s = self.rng.gen::<SeedType>();
-        let rng = RngType::from_seed(&self.rng.gen::<SeedType>());
+        let rng = RngType::from_seed(self.rng.gen::<SeedType>());
 
         let p = [0.05, 0.05];
         let rgb = RGB(0., 0., 0.);

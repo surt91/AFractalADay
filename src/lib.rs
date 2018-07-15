@@ -2,7 +2,6 @@
 
 #[macro_use] extern crate itertools;
 #[macro_use] extern crate log;
-#[macro_use] extern crate rand_derive;
 
 extern crate serde;
 extern crate serde_json;

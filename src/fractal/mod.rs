@@ -19,10 +19,11 @@ use png;
 use FractalType;
 use numbers::{Coef, Formula};
 
-use rand::{self, Rng, SeedableRng};
+use rand::{Rng, SeedableRng, Isaac64Rng, FromEntropy};
+use rand::rngs::SmallRng;
 
-pub type RngType = rand::Isaac64Rng;
-pub type SeedType = [u64; 4];
+pub type RngType = Isaac64Rng;
+pub type SeedType = [u8; 32];
 
 enum FractalInstance {
     EscapeTime(Box<escape_time_fractal::EscapeTimeFractal>),
@@ -80,14 +81,13 @@ impl FractalBuilder {
     }
     pub fn seed_rng(&self) -> RngType {
         match self.seed {
-            Some(x) => RngType::from_seed(&x),
-            None => RngType::from_seed(&rand::weak_rng().gen::<SeedType>())
+            Some(x) => RngType::from_seed(x),
+            None => RngType::from_seed(SmallRng::from_entropy().gen::<SeedType>())
         }
     }
 
     pub fn seed(mut self, seed: usize) -> FractalBuilder {
-        let s = [seed];
-        self.seed = Some(rand::StdRng::from_seed(&s).gen::<SeedType>());
+        self.seed = Some(Isaac64Rng::new_from_u64(seed as u64).gen::<SeedType>());
         self
     }
 
@@ -275,7 +275,7 @@ impl Fractal {
 
         // create the new config
         let mut f_config = f1_config.clone();
-        let mut rng = rand::thread_rng();
+        let mut rng = SmallRng::from_entropy();
 
         // TODO: take one trafos from f2 and add it to f, may overwrite
         let f2_chosen_trafo = rng.gen_range(0, f2_num_trafo);

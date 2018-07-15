@@ -1,12 +1,15 @@
 use std::fmt;
 use rand::{Rng, thread_rng};
+use rand::distributions::{Distribution, Standard};
 
 use numbers::Real;
 use std::f64::consts::PI as PI64;
 
 const PI: Real = PI64 as Real;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Rand)]
+const VARIATION_NUMBERS: [u8; 22] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 19, 20, 23, 24, 25];
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Variation {
     Linear,
     Sinusoidal,
@@ -109,9 +112,8 @@ impl Variation {
     }
 
     pub fn list() -> Vec<String> {
-        let implemented = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 19, 20, 23, 24, 25];
-        implemented.iter()
-                   .map(|&i| Variation::from_number(i)
+        VARIATION_NUMBERS.iter()
+                   .map(|&i| Variation::from_number(i as usize)
                                       .map_or("n/a".to_owned(), |x| x.name()))
                    .collect()
     }
@@ -242,5 +244,11 @@ impl Variation {
 impl fmt::Display for Variation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.name())
+    }
+}
+
+impl Distribution<Variation> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Variation {
+        Variation::from_number(*rng.choose(&VARIATION_NUMBERS).unwrap() as usize).unwrap()
     }
 }

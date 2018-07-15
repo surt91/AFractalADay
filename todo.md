@@ -22,3 +22,5 @@ TODO
     -   pass rules per cli
     -   random generation of rules
     -   pass specific systems as rule-strings instead of the current overheady way
+
+*   wait for rand to enable arbitrary hashable values as seed, then refactor

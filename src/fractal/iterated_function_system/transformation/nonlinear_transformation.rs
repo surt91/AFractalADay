@@ -1,4 +1,5 @@
 use rand::Rng;
+use rand::distributions::Standard;
 
 use fractal::Variation;
 use numbers::Real;
@@ -25,8 +26,8 @@ impl NonlinearTransformation {
         where T: Rng
     {
         let num = rng.gen_range(1, 10);
-        let variations = rng.gen_iter::<Variation>().take(num).collect();
-        let probabilities: Vec<Real> = rng.gen_iter::<Real>().take(num).collect();
+        let variations: Vec<Variation> = rng.sample_iter(&Standard).take(num).collect();
+        let probabilities: Vec<Real> = rng.sample_iter(&Standard).take(num).collect();
         let sum = probabilities.iter().sum::<Real>();
         let probabilities = probabilities.iter().map(|x| x/sum).collect();
 

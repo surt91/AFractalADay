@@ -1,5 +1,5 @@
 use rand::Rng;
-use rand::distributions::{Normal, IndependentSample};
+use rand::distributions::{Normal, Distribution};
 
 use numbers::{Real, Cplx};
 
@@ -28,10 +28,10 @@ impl MobiusTransformation {
         let normal = Normal::new(0., 0.6);
         MobiusTransformation {
             parameters: [
-                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
-                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
-                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
-                normal.ind_sample(rng) as Real, normal.ind_sample(rng) as Real,
+                normal.sample(rng) as Real, normal.sample(rng) as Real,
+                normal.sample(rng) as Real, normal.sample(rng) as Real,
+                normal.sample(rng) as Real, normal.sample(rng) as Real,
+                normal.sample(rng) as Real, normal.sample(rng) as Real,
             ]
         }
     }

@@ -13,8 +13,7 @@ required-features = ["binaries"]
 [dependencies]
 png = "*"
 num = "*"
-rand = "0.4"
-rand_derive = "*"
+rand = "^0.5"
 itertools = "*"
 rayon = "*"
 num_cpus = "*"

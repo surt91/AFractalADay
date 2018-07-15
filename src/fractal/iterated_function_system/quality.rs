@@ -1,6 +1,7 @@
 use numbers::Real;
 
-use rand::{self, Rng};
+use rand::rngs::SmallRng;
+use rand::{Rng, FromEntropy};
 
 /// Estimates if the resulting fractal will be interesting
 ///
@@ -59,7 +60,7 @@ fn correlation_dimension(vals: &[[Real; 2]], span: Real) -> Real {
     let r1: Real = span/100.;
     let r2: Real = 10.*r1;
 
-    let mut rng = rand::weak_rng();
+    let mut rng = SmallRng::from_entropy();
 
     for (n, i) in vals.iter().enumerate().skip(20) {
         let j = vals[rng.gen_range(0, n)];
