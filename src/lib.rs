@@ -45,6 +45,7 @@ pub enum FractalType {
     PenroseTiling,
     Pentigree,
     Tritile,
+    LDragon,
     RandomLSystem,
 }
 

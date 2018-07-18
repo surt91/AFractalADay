@@ -90,4 +90,14 @@ impl FractalBuilder
             self.iterations,
         )
     }
+
+    pub fn ldragon(&self) -> Generic {
+        Generic::from_rules(
+            &format!("Dragon curve"),
+            "FX",
+            "X → X+YF+, Y → -FX-Y",
+            PI/2.,
+            self.iterations,
+        )
+    }
 }

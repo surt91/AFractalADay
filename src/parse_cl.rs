@@ -200,6 +200,11 @@ pub fn parse_cl() -> Options {
                     .help("render a Triangular tiling")
                     .group("lsystem")
               )
+              .arg(Arg::with_name("ldragon")
+                    .long("ldragon")
+                    .help("render a Dragon curve as L-system")
+                    .group("lsystem")
+              )
               .arg(Arg::with_name("random_lsystem")
                     .long("lsystem")
                     .help("render a random lsystem")
@@ -385,6 +390,8 @@ pub fn parse_cl() -> Options {
         FractalType::Pentigree
     } else if matches.is_present("tritile") {
         FractalType::Tritile
+    } else if matches.is_present("ldragon") {
+        FractalType::LDragon
     } else if matches.is_present("random_lsystem") {
         FractalType::RandomLSystem
     } else {
