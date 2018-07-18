@@ -44,6 +44,7 @@ pub enum FractalType {
     Bush,
     PenroseTiling,
     Pentigree,
+    Tritile,
     RandomLSystem,
 }
 

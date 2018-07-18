@@ -80,4 +80,14 @@ impl FractalBuilder
             self.iterations,
         )
     }
+
+    pub fn tritile(&self) -> Generic {
+        Generic::from_rules(
+            &format!("Tritile"),
+            "OFF",
+            "F → F-FF-, O → -[OFF]-",
+            PI/3.,
+            self.iterations,
+        )
+    }
 }
