@@ -20,6 +20,30 @@ pub struct Generic {
     pub angle: f64,
 }
 
+impl Generic {
+    pub fn from_rules(
+        description: &str,
+        start: &str,
+        rules: &str,
+        angle: f64,
+        iterations: Option<u32>
+    ) -> Generic {
+        let iterations = match iterations {
+            Some(n) => n,
+            None => 6
+        };
+
+        info!("Will render {}, n = {}", description, iterations);
+
+        Generic {
+            description: description.to_owned(),
+            iterations,
+            rules: Lrules::from_string(start, rules),
+            angle,
+        }
+    }
+}
+
 impl LSystem for Generic {
     fn description(&self) -> &str {
         &self.description

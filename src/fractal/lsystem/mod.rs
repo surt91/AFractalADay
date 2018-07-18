@@ -1,13 +1,7 @@
-mod koch_curve;
-mod sierpinski_arrowhead;
-mod hilbert_curve;
-mod gosper_curve;
-mod bush;
-mod penrose;
-
-pub mod generic;
 pub mod rules;
 pub mod alphabet;
+pub mod generic;
+pub mod special;
 
 pub use self::generic::Generic;
 pub use self::alphabet::Alphabet;
