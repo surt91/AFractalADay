@@ -70,4 +70,14 @@ impl FractalBuilder
             self.iterations,
         )
     }
+
+    pub fn pentigree(&self) -> Generic {
+        Generic::from_rules(
+            &format!("Pentigree"),
+            "F-F-F-F-F",
+            "F → F-F++F+F-F-F",
+            2.*PI/5.,
+            self.iterations,
+        )
+    }
 }

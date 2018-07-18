@@ -43,6 +43,7 @@ pub enum FractalType {
     GosperCurve,
     Bush,
     PenroseTiling,
+    Pentigree,
     RandomLSystem,
 }
 

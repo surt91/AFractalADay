@@ -167,6 +167,7 @@ impl FractalBuilder {
             FractalType::GosperCurve => FractalInstance::LSys(Box::new(self.gosper_curve())),
             FractalType::Bush => FractalInstance::LSys(Box::new(self.bush())),
             FractalType::PenroseTiling => FractalInstance::LSys(Box::new(self.penrose_tiling())),
+            FractalType::Pentigree => FractalInstance::LSys(Box::new(self.pentigree())),
             FractalType::RandomLSystem => FractalInstance::LSys(Box::new(self.generic())),
             FractalType::Random => unreachable!()
         };
