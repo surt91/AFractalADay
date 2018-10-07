@@ -122,4 +122,8 @@ impl FractalBuilder
             angle
         }
     }
+
+    pub fn lsys_from_json(json: &str) -> Result<Generic, serde_json::Error> {
+        serde_json::from_str(json)
+    }
 }

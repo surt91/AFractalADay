@@ -48,8 +48,8 @@ impl FractalBuilder
         }
     }
 
-    pub fn from_json(self, json: &str) -> FractalFlame<RngType> {
-        let ffc: IteratedFunctionSystemConfig = serde_json::from_str(json).expect("invalid json");
-        self.from_config(ffc)
+    pub fn ifs_from_json(self, json: &str) -> Result<FractalFlame<RngType>, serde_json::Error> {
+        let ffc: IteratedFunctionSystemConfig = serde_json::from_str(json)?;
+        Ok(self.from_config(ffc))
     }
 }

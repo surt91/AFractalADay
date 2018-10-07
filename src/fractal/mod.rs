@@ -36,6 +36,12 @@ pub struct Fractal {
     fractal_type: FractalType,
 }
 
+impl std::fmt::Debug for Fractal {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self.fractal_type)
+    }
+}
+
 pub struct FractalBuilder {
     // for iterated function systems
     seed: Option<SeedType>,
@@ -160,7 +166,6 @@ impl FractalBuilder {
             FractalType::AppolonianGasket => FractalInstance::IFS(Box::new(self.appolonian_gasket())),
             FractalType::MobiusFlame => FractalInstance::IFS(Box::new(self.mobius_flame())),
             FractalType::FractalFlame => FractalInstance::IFS(Box::new(self.fractal_flame())),
-            FractalType::LoadJson(ref json) => FractalInstance::IFS(Box::new(self.from_json(&json))),
             FractalType::KochCurve => FractalInstance::LSys(Box::new(self.koch_curve())),
             FractalType::SierpinskiArrowhead => FractalInstance::LSys(Box::new(self.sierpinski_arrowhead())),
             FractalType::HilbertCurve => FractalInstance::LSys(Box::new(self.hilbert_curve())),
@@ -171,7 +176,14 @@ impl FractalBuilder {
             FractalType::Tritile => FractalInstance::LSys(Box::new(self.tritile())),
             FractalType::LDragon => FractalInstance::LSys(Box::new(self.ldragon())),
             FractalType::RandomLSystem => FractalInstance::LSys(Box::new(self.generic())),
-            FractalType::Random => unreachable!()
+            FractalType::Random => unreachable!(),
+            // FIXME This has to be replaced by a better approach
+            FractalType::LoadJson(ref json) => {
+                self.ifs_from_json(&json)
+                    .and_then(|x| Ok(FractalInstance::IFS(Box::new(x))))
+                    .or_else::<Fractal, _>(|_| Ok(FractalInstance::LSys(Box::new(FractalBuilder::lsys_from_json(&json).unwrap()))))
+                    .expect("invalid json")
+            },
         };
 
         Fractal {
