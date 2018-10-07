@@ -12,6 +12,7 @@ extern crate turtle;
 pub trait LSystem : Sync {
     fn description(&self) -> &str;
     fn get_canvas(&self) -> turtle::Canvas;
+    fn get_serializable(&self) -> Generic;
 
     fn render(&mut self, resolution: (u32, u32),
                          _scale: Option<f64>,

@@ -228,7 +228,7 @@ impl Fractal {
         match self.fractal {
             FractalInstance::EscapeTime(ref _f) => "todo".to_owned(),
             FractalInstance::IFS(ref f) => serde_json::to_string(&f.get_serializable()).unwrap(),
-            FractalInstance::LSys(ref _f) => "todo".to_owned(),
+            FractalInstance::LSys(ref f) => serde_json::to_string(&f.get_serializable()).unwrap(),
         }
     }
 

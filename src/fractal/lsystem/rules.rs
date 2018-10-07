@@ -11,7 +11,7 @@ use itertools::Itertools;
 use super::Alphabet;
 use fractal::{SeedType, RngType};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Lrules {
     start: Vec<Alphabet>,
     rules: HashMap<Alphabet, Vec<Alphabet>>,

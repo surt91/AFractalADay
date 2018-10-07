@@ -12,7 +12,7 @@ use super::Lrules;
 extern crate rayon;
 use self::rayon::prelude::*;
 
-
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Generic {
     pub iterations: u32,
     pub description: String,
@@ -47,6 +47,10 @@ impl Generic {
 impl LSystem for Generic {
     fn description(&self) -> &str {
         &self.description
+    }
+
+    fn get_serializable(&self) -> Generic {
+        self.clone()
     }
 
     fn get_canvas(&self) -> Canvas {

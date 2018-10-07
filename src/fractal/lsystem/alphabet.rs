@@ -1,6 +1,6 @@
 use fmt;
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub enum Alphabet {
     F,
     BL,
