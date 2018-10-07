@@ -11,10 +11,31 @@ use itertools::Itertools;
 use super::Alphabet;
 use fractal::{SeedType, RngType};
 
+use serde::ser::Serializer;
+use serde::{Deserialize, Deserializer};
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Lrules {
     start: Vec<Alphabet>,
     rules: HashMap<Alphabet, Vec<Alphabet>>,
+}
+
+pub fn lrule_serialize<S>(x: &Lrules, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_str(&format!("{}&{}", x.start.iter().map(|a| a.to_string()).join(""), x))
+}
+
+pub fn lrule_deserialize<'de, D>(deserializer: D) -> Result<Lrules, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+    let mut split = s.split("&");
+    let start_string = split.next().unwrap();
+    let rule_string = split.next().unwrap();
+    Ok(Lrules::from_string(start_string, &rule_string))
 }
 
 impl Lrules {

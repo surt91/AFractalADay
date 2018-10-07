@@ -8,6 +8,7 @@ use super::LSystem;
 use super::turtle::{Turtle, Canvas};
 use super::Alphabet;
 use super::Lrules;
+use super::rules::{lrule_serialize,lrule_deserialize};
 
 extern crate rayon;
 use self::rayon::prelude::*;
@@ -16,6 +17,7 @@ use self::rayon::prelude::*;
 pub struct Generic {
     pub iterations: u32,
     pub description: String,
+    #[serde(serialize_with = "lrule_serialize", deserialize_with = "lrule_deserialize")]
     pub rules: Lrules,
     pub angle: f64,
 }
