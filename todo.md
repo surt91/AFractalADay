@@ -1,6 +1,7 @@
 TODO
 ----
 
+*   use egg-mode from crates.io as soon as its updated to 0.13
 *   more fractal types
     *   L systems <https://en.wikipedia.org/wiki/L-system>
         *   randomized L systems
