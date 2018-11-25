@@ -1,3 +1,5 @@
+extern crate serde_json;
+
 use std::f64::consts::PI;
 
 use itertools::Itertools;

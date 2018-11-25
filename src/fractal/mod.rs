@@ -13,6 +13,7 @@ pub use self::lsystem::{Alphabet, Lrules, LSystem};
 
 extern crate serde_json;
 
+use std;
 use std::io;
 use png;
 
