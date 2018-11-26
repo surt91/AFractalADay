@@ -1,12 +1,10 @@
-mod fractal_flame;
+pub mod fractal_flame;
 mod quality;
 pub mod variation;
 pub mod symmetry;
 
 pub mod transformation;
 pub use self::transformation::{Transformation,AffineTransformation,MobiusTransformation,NonlinearTransformation};
-
-pub mod serialize;
 
 use rand::Rng;
 
@@ -19,7 +17,6 @@ use numbers::Real;
 use color::{RGB, RGBA};
 use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
-use self::serialize::IteratedFunctionSystemConfig;
 
 use super::estimate_quality_after;
 use super::quality::downscale;
@@ -28,7 +25,9 @@ extern crate num_cpus;
 use std::thread;
 use std::sync::mpsc::channel;
 
-use super::{RngType, SeedType};
+use self::fractal_flame::FractalFlame;
+
+use super::{RngType, SeedType, default_rng};
 
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {
@@ -38,7 +37,7 @@ pub trait IteratedFunctionSystem : Sync {
     fn vibrancy(&self) -> f64;
     fn get_rng(&mut self) -> &mut RngType;
     fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType>;
-    fn get_serializable(&self) -> IteratedFunctionSystemConfig;
+    fn get_serializable(&self) -> FractalFlame;
 
     fn estimate_quality_before(&mut self) -> bool {
         let sampler = self.get_sampler();

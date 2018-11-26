@@ -1,6 +1,6 @@
 use color::RGB;
 use super::{Transformation, NonlinearTransformation, FractalFlame, AffineTransformation};
-use fractal::{FractalBuilder, RngType};
+use fractal::FractalBuilder;
 
 use numbers::{Real,Cplx};
 use std::f64::consts::PI as PI_;
@@ -8,7 +8,7 @@ const PI: Real = PI_ as Real;
 
 impl FractalBuilder
 {
-    pub fn appolonian_gasket(self) -> FractalFlame<RngType> {
+    pub fn appolonian_gasket(self) -> FractalFlame {
         let rng = self.seed_rng();
 
         let number_of_functions = 3;

@@ -2,7 +2,7 @@ use rand::Rng;
 
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, FractalFlame};
-use fractal::{FractalBuilder, RngType};
+use fractal::FractalBuilder;
 
 use numbers::Real;
 
@@ -13,7 +13,7 @@ const R: Real = (3. - 2.23606797749979)/2.;
 
 impl FractalBuilder
 {
-    pub fn sierpinski_pentagon(self) -> FractalFlame<RngType> {
+    pub fn sierpinski_pentagon(self) -> FractalFlame {
         let mut rng = self.seed_rng();
 
         let number_of_functions = 5;

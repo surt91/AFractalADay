@@ -15,33 +15,65 @@ extern crate num;
 use rand::{Rng, SeedableRng};
 
 use super::IteratedFunctionSystem;
-use super::IteratedFunctionSystemConfig;
 use super::IteratedFunctionSystemSampler;
 use fractal::Symmetry;
 use super::{Transformation,NonlinearTransformation,AffineTransformation,MobiusTransformation};
 use color::RGB;
 
-use super::{RngType, SeedType};
+use super::{RngType, SeedType, default_rng};
 
-pub struct FractalFlame<T>
-    where T: Rng
-{
-    rng: T,
-    pub description: String,
-    number_of_functions: usize,
-    probabilities: Vec<f64>,
-    colors: Vec<Option<RGB>>,
-    transformations: Vec<Transformation>,
-    variation: NonlinearTransformation,
-    post_transform: Transformation,
-    final_transform: NonlinearTransformation,
-    final_color: Option<RGB>,
-    strict_bounds: bool,
-    gamma: f64,
-    vibrancy: f64
+
+fn default_bounds() -> bool {
+    false
 }
 
-impl IteratedFunctionSystem for FractalFlame<RngType>
+fn default_gamma() -> f64 {
+    4.0
+}
+
+fn default_vibrancy() -> f64 {
+    0.5
+}
+
+fn default_post_transform() -> Transformation {
+    Transformation::identity()
+}
+
+fn default_final_transform() -> NonlinearTransformation {
+    NonlinearTransformation::identity()
+}
+
+fn default_final_color() -> Option<RGB> {
+    None
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct FractalFlame
+{
+    #[serde(skip)]
+    #[serde(default = "default_rng")]
+    rng: RngType,
+    pub description: String,
+    pub number_of_functions: usize,
+    pub probabilities: Vec<f64>,
+    pub colors: Vec<Option<RGB>>,
+    pub transformations: Vec<Transformation>,
+    pub variation: NonlinearTransformation,
+    #[serde(default = "default_post_transform")]
+    pub post_transform: Transformation,
+    #[serde(default = "default_final_transform")]
+    pub final_transform: NonlinearTransformation,
+    #[serde(default = "default_final_color")]
+    pub final_color: Option<RGB>,
+    #[serde(default = "default_bounds")]
+    pub strict_bounds: bool,
+    #[serde(default = "default_gamma")]
+    pub gamma: f64,
+    #[serde(default = "default_vibrancy")]
+    pub vibrancy: f64
+}
+
+impl IteratedFunctionSystem for FractalFlame
 {
     fn needs_strict_bounds(&self) -> bool {
         self.strict_bounds
@@ -86,19 +118,7 @@ impl IteratedFunctionSystem for FractalFlame<RngType>
         }
     }
 
-    fn get_serializable(&self) -> IteratedFunctionSystemConfig {
-        IteratedFunctionSystemConfig {
-            probabilities: self.probabilities.clone(),
-            colors: self.colors.clone(),
-            transformations: self.transformations.clone(),
-            variation: self.variation.clone(),
-            post_transform: self.post_transform.clone(),
-            final_transform: self.final_transform.clone(),
-            final_color: self.final_color.clone(),
-            description: self.description().to_owned(),
-            strict_bounds: self.strict_bounds.clone(),
-            gamma: self.gamma.clone(),
-            vibrancy: self.vibrancy.clone()
-        }
+    fn get_serializable(&self) -> FractalFlame {
+        self.clone()
     }
 }

@@ -5,7 +5,7 @@ use itertools;
 
 use color::{HSV, RGB};
 use super::{Transformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
-use fractal::{FractalBuilder, RngType};
+use fractal::FractalBuilder;
 
 use numbers::Real;
 use std::f64::consts::PI as PI_;
@@ -13,7 +13,7 @@ const PI: Real = PI_ as Real;
 
 impl FractalBuilder
 {
-    pub fn fractal_flame(self) -> FractalFlame<RngType> {
+    pub fn fractal_flame(self) -> FractalFlame {
         let mut rng = self.seed_rng();
 
         let number_of_functions = rng.gen_range(2, 7);

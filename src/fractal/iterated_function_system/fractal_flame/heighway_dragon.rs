@@ -3,7 +3,7 @@ use self::rand::Rng;
 
 use color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, FractalFlame};
-use fractal::{FractalBuilder, RngType};
+use fractal::FractalBuilder;
 
 use numbers::Real;
 
@@ -13,7 +13,7 @@ const BY_SQRT: Real = FRAC_1_SQRT_2 as Real;
 
 impl FractalBuilder
 {
-    pub fn heighway_dragon(self) -> FractalFlame<RngType> {
+    pub fn heighway_dragon(self) -> FractalFlame {
         let mut rng = self.seed_rng();
 
         let number_of_functions = 2;

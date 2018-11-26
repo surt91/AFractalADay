@@ -1,10 +1,10 @@
 use color::RGB;
 use super::{Transformation, NonlinearTransformation, FractalFlame};
-use fractal::{FractalBuilder, RngType};
+use fractal::FractalBuilder;
 
 impl FractalBuilder
 {
-    pub fn barnsley_fern(self) -> FractalFlame<RngType> {
+    pub fn barnsley_fern(self) -> FractalFlame {
         let rng = self.seed_rng();
 
         let number_of_functions = 4;

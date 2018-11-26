@@ -8,7 +8,7 @@ pub use self::escape_time_fractal::style::Style;
 pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::transformation::Transformation;
 pub use self::iterated_function_system::symmetry::Symmetry;
-pub use self::iterated_function_system::serialize::IteratedFunctionSystemConfig;
+pub use self::iterated_function_system::fractal_flame::FractalFlame;
 pub use self::lsystem::{Alphabet, Lrules, LSystem};
 
 extern crate serde_json;
@@ -25,6 +25,10 @@ use rand::rngs::SmallRng;
 
 pub type RngType = Isaac64Rng;
 pub type SeedType = [u8; 32];
+
+fn default_rng() -> RngType {
+    RngType::from_seed(SmallRng::from_entropy().gen::<SeedType>())
+}
 
 enum FractalInstance {
     EscapeTime(Box<escape_time_fractal::EscapeTimeFractal>),
@@ -180,10 +184,17 @@ impl FractalBuilder {
             FractalType::Random => unreachable!(),
             // FIXME This has to be replaced by a better approach
             FractalType::LoadJson(ref json) => {
-                self.ifs_from_json(&json)
-                    .and_then(|x| Ok(FractalInstance::IFS(Box::new(x))))
-                    .or_else::<Fractal, _>(|_| Ok(FractalInstance::LSys(Box::new(FractalBuilder::lsys_from_json(&json).unwrap()))))
-                    .expect("invalid json")
+                let out: FractalInstance;
+                let ifs = FractalBuilder::ifs_from_json(&json);
+                let lsys = FractalBuilder::lsys_from_json(&json);
+                if ifs.is_ok() {
+                    out = FractalInstance::IFS(Box::new(ifs.unwrap()))
+                } else if lsys.is_ok() {
+                    out = FractalInstance::LSys(Box::new(lsys.unwrap()))
+                } else {
+                    panic!("invalid json");
+                }
+                out
             },
         };
 
@@ -237,11 +248,12 @@ impl Fractal {
             FractalInstance::LSys(ref f) => f.description()
         }
     }
+
     pub fn json(&self) -> String {
         match self.fractal {
-            FractalInstance::EscapeTime(ref _f) => "todo".to_owned(),
-            FractalInstance::IFS(ref f) => serde_json::to_string(&f.get_serializable()).unwrap(),
-            FractalInstance::LSys(ref f) => serde_json::to_string(&f.get_serializable()).unwrap(),
+            FractalInstance::EscapeTime(ref _f) => {println!("escape"); "todo".to_owned()},
+            FractalInstance::IFS(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("IFS: {:#?}", &f.get_serializable()))},
+            FractalInstance::LSys(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))},
         }
     }
 
@@ -270,7 +282,7 @@ impl Fractal {
         use self::iterated_function_system::AffineTransformation;
         use self::iterated_function_system::Transformation;
 
-        fn count_trafo(c: &IteratedFunctionSystemConfig) -> usize {
+        fn count_trafo(c: &FractalFlame) -> usize {
             c.transformations.iter().filter(
                 |x| match x {
                     &&Transformation::Affine(
