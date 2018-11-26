@@ -5,13 +5,16 @@ use std::cmp::max;
 
 use super::{EscapeTimeFractal, Convergence};
 use numbers::{Real, Cplx};
-use fractal::{FractalBuilder, RngType};
+use fractal::{FractalBuilder, RngType, default_rng};
 
 use super::style::Stylable;
 use color;
 
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MandelbrotFractal {
+    #[serde(skip)]
+    #[serde(default = "default_rng")]
     rng: RngType,
     pub description: String,
     max_count: u64,
@@ -57,6 +60,10 @@ impl FractalBuilder {
             shift,
             zoom: zoom as f32
         }
+    }
+
+    pub fn mandelbrot_from_json(json: &str) -> Result<MandelbrotFractal, serde_json::Error> {
+        serde_json::from_str(json)
     }
 }
 

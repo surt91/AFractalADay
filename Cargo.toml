@@ -1,6 +1,6 @@
 [package]
 name = "a_fractal_a_day"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Hendrik Schawe <surt91@gmail.com>"]
 description = "This is a Twitter bot, which can tweet pictures of random fractals."
 homepage = "https://twitter.com/AFractalADay"
@@ -12,8 +12,8 @@ required-features = ["binaries"]
 
 [dependencies]
 png = "*"
-num = "*"
 rand = "^0.5"
+num = {version = "*", features = ["serde"]}
 itertools = "*"
 rayon = "*"
 num_cpus = "*"

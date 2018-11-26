@@ -187,10 +187,14 @@ impl FractalBuilder {
                 let out: FractalInstance;
                 let ifs = FractalBuilder::ifs_from_json(&json);
                 let lsys = FractalBuilder::lsys_from_json(&json);
+                let mandelbrot = FractalBuilder::mandelbrot_from_json(&json);
+
                 if ifs.is_ok() {
                     out = FractalInstance::IFS(Box::new(ifs.unwrap()))
                 } else if lsys.is_ok() {
                     out = FractalInstance::LSys(Box::new(lsys.unwrap()))
+                } else if mandelbrot.is_ok() {
+                    out = FractalInstance::EscapeTime(Box::new(mandelbrot.unwrap()))
                 } else {
                     panic!("invalid json");
                 }
