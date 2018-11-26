@@ -1,6 +1,6 @@
 mod newton;
 mod julia;
-mod mandelbrot;
+pub mod mandelbrot;
 pub mod style;
 
 extern crate rayon;
@@ -11,12 +11,15 @@ use color;
 use self::style::Stylable;
 use super::estimate_quality_after;
 
+use self::mandelbrot::MandelbrotFractal;
+
 use super::RngType;
 
 pub struct Convergence {
     pub count: f64,
     pub value: Cplx
 }
+
 
 /// The `EscapeTimeFractal` trait applies to all ``Julia set type'' fractals, i.e., all fractals
 /// that can be visualized by assigning every pixel a color dependent on a value and an iteration
@@ -25,6 +28,11 @@ pub trait EscapeTimeFractal : Sync + Stylable {
     fn description(&self) -> &str;
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut RngType;
+
+    // FIXME: maybe enum of all varaints?
+    fn get_serializable(&self) -> Option<MandelbrotFractal> {
+        None
+    }
 
     fn raster(&self, resolution: (u32, u32), scale: (f64, f64), center: (f64, f64)) -> Vec<Convergence> {
         let (x, y) = resolution;

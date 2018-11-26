@@ -115,4 +115,8 @@ impl EscapeTimeFractal for MandelbrotFractal {
     fn get_rng(&mut self) -> &mut RngType {
         &mut self.rng
     }
+
+    fn get_serializable(&self) -> Option<MandelbrotFractal> {
+        Some(self.clone())
+    }
 }
