@@ -125,12 +125,10 @@ impl FractalBuilder
         debug!("Variation              : {:?}", variation);
         debug!("Symmetry               : {:?}", symmetry);
 
-        let number_of_functions = number_of_functions + number_of_symmetries - 1;
 
         FractalFlame {
             rng,
             description,
-            number_of_functions,
             probabilities,
             colors,
             transformations,

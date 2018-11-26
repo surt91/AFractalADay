@@ -83,7 +83,6 @@ impl FractalBuilder
         FractalFlame {
             rng,
             description,
-            number_of_functions,
             probabilities,
             colors,
             transformations,

@@ -54,7 +54,6 @@ pub struct FractalFlame
     #[serde(default = "default_rng")]
     rng: RngType,
     pub description: String,
-    pub number_of_functions: usize,
     pub probabilities: Vec<f64>,
     pub colors: Vec<Option<RGB>>,
     pub transformations: Vec<Transformation>,
@@ -105,7 +104,7 @@ impl IteratedFunctionSystem for FractalFlame
 
         IteratedFunctionSystemSampler {
             rng,
-            number_of_functions: self.number_of_functions,
+            number_of_functions: self.probabilities.len(),
             probabilities: self.probabilities.clone(),
             colors: self.colors.clone(),
             transformations: self.transformations.clone(),
