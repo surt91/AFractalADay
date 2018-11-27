@@ -9,6 +9,7 @@ use fractal::{FractalBuilder, RngType, default_rng};
 
 use super::style::Stylable;
 use color;
+use colormap;
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -71,18 +72,13 @@ impl Stylable for MandelbrotFractal {
     // TODO: more and nicer styles
     fn style(&self, conv: &Convergence) -> color::HSV {
         let c = conv.count;
-        let mut h = c / (self.max_count - 1) as f64;
-        let s = 1f64;
-        let mut v = 1f64;
+        let h = c / (self.max_count - 1) as f64;
 
-        if h > 1. || !h.is_finite() {
-            v = 0.;
-            h = 1.;
-        }
-        // h = (3.141592*h).sin();
-        h = h.sqrt();
+        let cm = colormap::Colormap::viridis();
 
-        color::HSV(h, s, v)
+        // println!("{:?}", h);
+
+        cm.value(&h).to_hsv()
     }
 
     fn style_name(&self) -> &str {

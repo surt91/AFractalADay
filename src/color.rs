@@ -37,6 +37,19 @@ impl RGB {
         let &RGB(r, g, b) = self;
         ((8. * r) as u8) << 5 | ((8. * g) as u8) << 2 | ((4.*b) as u8)
     }
+
+    pub fn interpolate(a: &RGB, b: &RGB) -> RGB {
+        let &RGB(r1, g1, b1) = a;
+        let &RGB(r2, g2, b2) = b;
+        RGB((r1+r2)/2., (g1+g2)/2., (b1+b2)/2.)
+    }
+
+    pub fn interpolate_weight(a: &RGB, b: &RGB, p: f64) -> RGB {
+        let &RGB(r1, g1, b1) = a;
+        let &RGB(r2, g2, b2) = b;
+        let q = 1.-p;
+        RGB(p*r1+q*r2, p*g1+q*g2, p*b1+q*b2)
+    }
 }
 
 impl RGBA {
