@@ -96,9 +96,11 @@ impl EscapeTimeFractal for NewtonFractal {
         let mut tmp;
 
         let kernel: Box<Fn(Cplx) -> Cplx> = match self.a {
+            Coef::Real(x) if (1. - x).abs() < 1e-4 => Box::new(move |state| state - self.f.eval(state) / self.f.derivative(&state)),
+            Coef::Real(x) => Box::new(move |state| state - x * self.f.eval(state) / self.f.derivative(&state)),
             Coef::Complex(z) => Box::new(move |state| state - z * self.f.eval(state) / self.f.derivative(&state)),
-            Coef::Real(x) => Box::new(move |state| state - x * self.f.eval(state) / self.f.derivative(&state))
         };
+
         // this is a do while loop, mind that the "body" is actually the
         // condition and the body is empty, thus omitted
         while {
