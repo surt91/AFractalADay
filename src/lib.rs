@@ -122,6 +122,7 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
                          .arg(input)
                          .arg(outfile)
                          .output();
+    postprocess_image(outfile);
 
     size = fs::metadata(outfile).map(|x| x.len()).unwrap_or(0);
 
@@ -149,6 +150,7 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
                              .arg(input)
                              .arg(outfile)
                              .output();
+        postprocess_image(outfile);
 
         size = fs::metadata(outfile).map(|x| x.len()).unwrap_or(0);
 
