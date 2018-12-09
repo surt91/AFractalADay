@@ -93,6 +93,7 @@ fn build_fractal(
                                          .iterations(&opt.iterations)
                                          .rules(&opt.rules)
                                          .angle(&opt.angle)
+                                         .rpn(&opt.rpn)
                                          .build(&fractal_type);
 
         let (finished, tmp_description, tmp_json)

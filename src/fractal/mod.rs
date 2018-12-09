@@ -138,6 +138,11 @@ impl FractalBuilder {
         self
     }
 
+    pub fn rpn(mut self, rpn: &Option<String>) -> FractalBuilder {
+        self.f = rpn.clone().and_then(|x| Some(ComplexFunction::rpn_from_string(&x)));
+        self
+    }
+
     pub fn style(mut self, style: &Option<Style>) -> FractalBuilder {
         self.style = style.clone();
         self

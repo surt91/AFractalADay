@@ -151,7 +151,9 @@ pub enum ComplexFunction {
 
 impl ComplexFunction {
     pub fn rpn_from_string(s: &str) -> ComplexFunction {
-        let v = s.split(" ").map(|t| Op::from_str(t).unwrap()).collect::<Vec<Op>>();
+        let v = s.split(" ")
+            .map(|t| Op::from_str(t).unwrap())
+            .collect::<Vec<Op>>();
         ComplexFunction::RPN(v)
     }
 

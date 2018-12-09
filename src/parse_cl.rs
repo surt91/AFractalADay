@@ -28,6 +28,7 @@ pub struct Options {
     pub iterations: Option<u32>,
     pub rules: Option<Lrules>,
     pub angle: Option<f64>,
+    pub rpn: Option<String>
 }
 
 impl fmt::Display for Options {
@@ -272,6 +273,14 @@ pub fn parse_cl() -> Options {
                     .possible_values(&Variation::list().iter().map(|s| s.as_ref()).collect::<Vec<&str>>().as_slice())
                     .requires("iterated_function_system")
               )
+              .arg(Arg::with_name("rpn")
+                  .long("rpn")
+                  .long("reverse-polish-notation")
+                  .help("give a formula to visualize as a newton fractal in reverse polish 
+                        notation, must be enclosed in quotations")
+                  .takes_value(true)
+                  .requires("escape_time")
+              )
               .arg(Arg::with_name("iterations")
                     .short("N")
                     .long("iterations")
@@ -332,6 +341,10 @@ pub fn parse_cl() -> Options {
     let gamma = matches.value_of("gamma")
                        .and_then(|s| Some(s.parse::<f64>().expect("gamma needs to be a number")))
                        .or_else(|| None);
+
+    let rpn = matches.value_of("rpn")
+                     .and_then(|f| Some(f.to_string()))
+                     .or_else(|| None);
 
     let iterations = matches.value_of("iterations")
                        .and_then(|s| Some(s.parse::<u32>().expect("iterations needs to be a unsigned integer")))
@@ -435,5 +448,6 @@ pub fn parse_cl() -> Options {
         iterations,
         rules,
         angle,
+        rpn,
     }
 }
