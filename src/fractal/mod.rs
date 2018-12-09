@@ -18,7 +18,7 @@ use std::io;
 use png;
 
 use FractalType;
-use numbers::{Coef, Formula};
+use numbers::{Coef, ComplexFunction};
 
 use rand::{Rng, SeedableRng, Isaac64Rng, FromEntropy};
 use rand::rngs::SmallRng;
@@ -60,7 +60,7 @@ pub struct FractalBuilder {
 
     // for escape time
     a: Option<Coef>,
-    f: Option<Formula>,
+    f: Option<ComplexFunction>,
     style: Option<Style>,
 
     // for L systems
@@ -133,7 +133,7 @@ impl FractalBuilder {
         self
     }
 
-    pub fn formula(mut self, f: Formula) -> FractalBuilder {
+    pub fn formula(mut self, f: ComplexFunction) -> FractalBuilder {
         self.f = Some(f);
         self
     }

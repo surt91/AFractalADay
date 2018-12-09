@@ -4,7 +4,6 @@ use numbers::Cplx;
 
 use super::style::Stylable;
 use color;
-use functions::random_formula;
 use numbers::ComplexFunction;
 
 
@@ -23,7 +22,7 @@ impl FractalBuilder {
         // most defaults will be random
         let f = match self.f {
             Some(x) => x,
-            None => random_formula(&mut rng)
+            None => ComplexFunction::random(&mut rng)
         };
 
         // let style = match self.style {
@@ -31,13 +30,13 @@ impl FractalBuilder {
         //     None => Style::random_style(&mut rng)
         // };
 
-        let description = format!("Julia Fractal of {}", f.readable);
+        let description = format!("Julia Fractal of {}", f.human_readable());
 
         info!("Will render {}", description);
         // FIXME: For Julia fractals the colors need to be normalized somehow
 
         JuliaFractal {
-            f: f.callable,
+            f,
             description,
             rng,
             max_count: 1000
@@ -85,7 +84,7 @@ impl EscapeTimeFractal for JuliaFractal {
         // but here we will use some arbitrary function
 
         while {
-            state = (self.f)(state);
+            state = self.f.eval(state);
             ctr += 1;
 
             state.norm_sqr() < threshold && ctr < self.max_count && !state.re.is_nan() && !state.im.is_nan()

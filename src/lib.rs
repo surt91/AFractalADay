@@ -11,7 +11,6 @@ pub mod fractal;
 pub mod color;
 pub mod colormap;
 pub mod numbers;
-pub mod functions;
 pub mod histogram;
 pub mod png;
 

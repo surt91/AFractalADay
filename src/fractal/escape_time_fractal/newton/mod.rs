@@ -3,7 +3,6 @@ use rand::Rng;
 use super::{EscapeTimeFractal, Convergence};
 use fractal::{FractalBuilder, RngType};
 use numbers::{Coef, Cplx, ComplexFunction};
-use functions::{derivative, random_formula, random_coef};
 
 use super::style::{Style, Stylable};
 use color;
@@ -26,12 +25,12 @@ impl FractalBuilder {
         // most defaults will be random
         let f = match self.f {
             Some(x) => x,
-            None => random_formula(&mut rng)
+            None => ComplexFunction::random(&mut rng)
         };
 
         let a = match self.a {
             Some(x) => x,
-            None => random_coef(&mut rng)
+            None => Coef::random(&mut rng)
         };
 
         let style = match self.style {
@@ -45,7 +44,7 @@ impl FractalBuilder {
             Coef::Real(x) => format!("Generalized Newton Fractal (x = {}) of ", x),
             Coef::Complex(y) => format!("Generalized Newton Fractal (x = {}) of ", y)
         };
-        description += &f.readable;
+        description += &f.human_readable();
 
         info!("Will render {}", description);
         info!("use style '{}'", style);
@@ -59,7 +58,7 @@ impl FractalBuilder {
 
         NewtonFractal {
             a,
-            f: f.callable,
+            f,
             description,
             rng,
             style,
@@ -90,8 +89,8 @@ impl EscapeTimeFractal for NewtonFractal {
         let mut tmp;
 
         let kernel: Box<Fn(Cplx) -> Cplx> = match self.a {
-            Coef::Complex(z) => Box::new(move |state| state - z * (self.f)(state) / derivative(&self.f, &state)),
-            Coef::Real(x) => Box::new(move |state| state - x * (self.f)(state) / derivative(&self.f, &state))
+            Coef::Complex(z) => Box::new(move |state| state - z * self.f.eval(state) / self.f.derivative(&state)),
+            Coef::Real(x) => Box::new(move |state| state - x * self.f.eval(state) / self.f.derivative(&state))
         };
         // this is a do while loop, mind that the "body" is actually the
         // condition and the body is empty, thus omitted
