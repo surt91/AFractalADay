@@ -3,7 +3,7 @@ use rand::Rng;
 use std::f64::consts::PI;
 use std::cmp::max;
 
-use super::{EscapeTimeFractal, Convergence};
+use super::{EscapeTimeFractal, Convergence, EscapeTypes};
 use numbers::{Real, Cplx};
 use fractal::{FractalBuilder, RngType, default_rng};
 
@@ -112,7 +112,7 @@ impl EscapeTimeFractal for MandelbrotFractal {
         &mut self.rng
     }
 
-    fn get_serializable(&self) -> Option<MandelbrotFractal> {
-        Some(self.clone())
+    fn get_serializable(&self) -> EscapeTypes {
+        EscapeTypes::Mandelbrot(self.clone())
     }
 }

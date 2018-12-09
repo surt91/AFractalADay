@@ -1,17 +1,20 @@
 use rand::Rng;
 
-use super::{EscapeTimeFractal, Convergence};
-use fractal::{FractalBuilder, RngType};
+use super::{EscapeTimeFractal, Convergence, EscapeTypes};
+use fractal::{FractalBuilder, RngType, default_rng};
 use numbers::{Coef, Cplx, ComplexFunction};
-
-use super::style::{Style, Stylable};
+use super::style::{Style, Stylable, style_serialize, style_deserialize};
 use color;
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct NewtonFractal {
     a: Coef,
     f: ComplexFunction,
+    #[serde(skip)]
+    #[serde(default = "default_rng")]
     rng: RngType,
     pub description: String,
+    #[serde(serialize_with = "style_serialize", deserialize_with = "style_deserialize")]
     style: Style,
     random_color: f64,
     random_count: f64
@@ -66,6 +69,10 @@ impl FractalBuilder {
             random_count
         }
     }
+
+    pub fn newton_from_json(json: &str) -> Result<NewtonFractal, serde_json::Error> {
+        serde_json::from_str(json)
+    }
 }
 
 impl Stylable for NewtonFractal {
@@ -110,5 +117,9 @@ impl EscapeTimeFractal for NewtonFractal {
 
     fn get_rng(&mut self) -> &mut RngType {
         &mut self.rng
+    }
+
+    fn get_serializable(&self) -> EscapeTypes {
+        EscapeTypes::Newton(self.clone())
     }
 }

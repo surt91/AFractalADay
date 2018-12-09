@@ -143,7 +143,7 @@ fn parse_cplx(s: &str) -> Result<Cplx, ParseFloatError> {
     )
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum ComplexFunction {
     RPN(Vec<Op>),
     Polynom(Vec<Cplx>)
@@ -267,7 +267,7 @@ impl fmt::Display for ComplexFunction {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Coef {
     Real(Real),
     Complex(Cplx)

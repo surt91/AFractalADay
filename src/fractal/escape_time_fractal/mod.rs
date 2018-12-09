@@ -12,12 +12,21 @@ use self::style::Stylable;
 use super::estimate_quality_after;
 
 use self::mandelbrot::MandelbrotFractal;
+use self::newton::NewtonFractal;
 
 use super::RngType;
 
 pub struct Convergence {
     pub count: f64,
     pub value: Cplx
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum EscapeTypes {
+    Newton(NewtonFractal),
+    Mandelbrot(MandelbrotFractal),
+    // Julia(JuliaFractal),
+    None
 }
 
 
@@ -30,8 +39,8 @@ pub trait EscapeTimeFractal : Sync + Stylable {
     fn get_rng(&mut self) -> &mut RngType;
 
     // FIXME: maybe enum of all varaints?
-    fn get_serializable(&self) -> Option<MandelbrotFractal> {
-        None
+    fn get_serializable(&self) -> EscapeTypes {
+        EscapeTypes::None
     }
 
     fn raster(&self, resolution: (u32, u32), scale: (f64, f64), center: (f64, f64)) -> Vec<Convergence> {

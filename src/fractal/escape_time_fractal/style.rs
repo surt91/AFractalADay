@@ -4,7 +4,25 @@ use std::fmt;
 use color;
 use super::Convergence;
 
+use serde::ser::Serializer;
+use serde::{Deserialize, Deserializer};
+
 use fractal::RngType;
+
+pub fn style_serialize<S>(x: &Style, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_str(&x.name())
+}
+
+pub fn style_deserialize<'de, D>(deserializer: D) -> Result<Style, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+    Ok(Style::from_string(&s).unwrap_or(Style::vibrant()))
+}
 
 pub trait Stylable {
     fn style(&self, &Convergence) -> color::HSV;

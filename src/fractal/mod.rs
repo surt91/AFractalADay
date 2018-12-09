@@ -32,7 +32,6 @@ fn default_rng() -> RngType {
 
 enum FractalInstance {
     EscapeTime(Box<escape_time_fractal::EscapeTimeFractal>),
-    Mandelbrot(Box<escape_time_fractal::EscapeTimeFractal>),
     IFS(Box<iterated_function_system::IteratedFunctionSystem>),
     LSys(Box<lsystem::LSystem>),
 }
@@ -168,7 +167,7 @@ impl FractalBuilder {
         let instance = match *fractal_type {
             FractalType::Newton => FractalInstance::EscapeTime(Box::new(self.newton())),
             FractalType::Julia => FractalInstance::EscapeTime(Box::new(self.julia())),
-            FractalType::Mandelbrot => FractalInstance::Mandelbrot(Box::new(self.mandelbrot())),
+            FractalType::Mandelbrot => FractalInstance::EscapeTime(Box::new(self.mandelbrot())),
             FractalType::HeighwayDragon => FractalInstance::IFS(Box::new(self.heighway_dragon())),
             FractalType::BarnsleyFern => FractalInstance::IFS(Box::new(self.barnsley_fern())),
             FractalType::SierpinskiGasket => FractalInstance::IFS(Box::new(self.sierpinski_gasket())),
@@ -193,6 +192,7 @@ impl FractalBuilder {
                 let out: FractalInstance;
                 let ifs = FractalBuilder::ifs_from_json(&json);
                 let lsys = FractalBuilder::lsys_from_json(&json);
+                let newton = FractalBuilder::newton_from_json(&json);
                 let mandelbrot = FractalBuilder::mandelbrot_from_json(&json);
 
                 if ifs.is_ok() {
@@ -201,6 +201,8 @@ impl FractalBuilder {
                     out = FractalInstance::LSys(Box::new(lsys.unwrap()))
                 } else if mandelbrot.is_ok() {
                     out = FractalInstance::EscapeTime(Box::new(mandelbrot.unwrap()))
+                } else if newton.is_ok() {
+                    out = FractalInstance::EscapeTime(Box::new(newton.unwrap()))
                 } else {
                     panic!("invalid json");
                 }
@@ -219,7 +221,6 @@ impl Fractal {
     pub fn render(&mut self, resolution: (u32, u32), filename: &str, supersampling: bool) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
-            FractalInstance::Mandelbrot(ref mut f) => f.render(resolution, None, None),
             FractalInstance::IFS(ref mut f) => f.render(
                                                             resolution,
                                                             1000,
@@ -238,7 +239,6 @@ impl Fractal {
     pub fn render_draft(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
-            FractalInstance::Mandelbrot(ref mut f) => f.render(resolution, None, None),
             FractalInstance::IFS(ref mut f) => f.render(
                                                             resolution,
                                                             100,
@@ -256,7 +256,6 @@ impl Fractal {
     pub fn description(&self) -> &str {
         match self.fractal {
             FractalInstance::EscapeTime(ref f) => f.description(),
-            FractalInstance::Mandelbrot(ref f) => f.description(),
             FractalInstance::IFS(ref f) => f.description(),
             FractalInstance::LSys(ref f) => f.description()
         }
@@ -264,8 +263,7 @@ impl Fractal {
 
     pub fn json(&self) -> String {
         match self.fractal {
-            FractalInstance::EscapeTime(ref _f) => {println!("escape"); "todo".to_owned()},
-            FractalInstance::Mandelbrot(ref f) => {serde_json::to_string(&f.get_serializable().unwrap()).expect(&format!("Mandelbrot: {:#?}", &f.get_serializable()))},
+            FractalInstance::EscapeTime(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("Escape: {:#?}", &f.get_serializable()))},
             FractalInstance::IFS(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("IFS: {:#?}", &f.get_serializable()))},
             FractalInstance::LSys(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))},
         }
