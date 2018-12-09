@@ -1,21 +1,91 @@
-use rand::Rng;
 extern crate num;
 use self::num::complex::Complex;
+
+use rand::Rng;
+use rand::distributions::Standard;
+use rand::seq::SliceRandom;
 
 use fmt;
 use std::str::FromStr;
 use std::num::ParseFloatError;
+use itertools::Itertools;
 
 // adjust precision here
 pub type Real = f32;
 pub type Cplx = Complex<Real>;
 
-#[derive(Debug, Serialize, Deserialize)]
+fn round_cplx(x: Real, y: Real) -> Cplx {
+    Cplx::new((x*10.).round()/10., (y*10.).round()/10.)
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Op {
     Unary(char),
     Binary(char),
     Constant(Cplx),
     Variable
+}
+
+impl Op {
+    pub fn random_operand<T: Rng>(rng: &mut T) -> Op {
+        if rng.gen_bool(0.5) {
+            Op::Variable
+        } else {
+            Op::Constant(round_cplx(rng.gen(), rng.gen()))
+        }
+    }
+
+    pub fn random_operator<T: Rng>(rng: &mut T) -> Op {
+        let choices = [
+            Op::Unary('s'),
+            Op::Unary('c'),
+            Op::Unary('t'),
+            Op::Binary('+'),
+            Op::Binary('-'),
+            Op::Binary('*'),
+            Op::Binary('/'),
+            Op::Binary('^')
+        ];
+        choices.choose(rng).unwrap().clone()
+    }
+
+    pub fn random_binary_operator<T: Rng>(rng: &mut T) -> Op {
+        let choices = [
+            Op::Binary('+'),
+            Op::Binary('-'),
+            Op::Binary('*'),
+            Op::Binary('/'),
+            Op::Binary('^')
+        ];
+        choices.choose(rng).unwrap().clone()
+    }
+
+    pub fn random_unary_or_operand<T: Rng>(rng: &mut T) -> Op {
+        let choices = [
+            Op::Unary('s'),
+            Op::Unary('c'),
+            Op::Unary('t'),
+            Op::Variable,
+            Op::Constant(round_cplx(rng.gen(), rng.gen()))
+        ];
+        choices.choose(rng).unwrap().clone()
+    }
+
+    pub fn random<T: Rng>(rng: &mut T) -> Op {
+        let choices = [
+            Op::Unary('s'),
+            Op::Unary('c'),
+            Op::Unary('t'),
+            Op::Binary('+'),
+            Op::Binary('-'),
+            Op::Binary('*'),
+            Op::Binary('/'),
+            Op::Binary('^'),
+            Op::Variable,
+            Op::Constant(round_cplx(rng.gen(), rng.gen()))
+        ];
+        choices.choose(rng).unwrap().clone()
+    }
 }
 
 impl FromStr for Op {
@@ -35,6 +105,25 @@ impl FromStr for Op {
             _ => Op::Constant(parse_cplx(s)?),
         };
         Ok(op)
+    }
+}
+
+impl fmt::Display for Op {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let s = match self {
+            Op::Variable => "z".to_string(),
+            Op::Unary('s') => "sin".to_string(),
+            Op::Unary('c') => "cos".to_string(),
+            Op::Unary('t') => "tan".to_string(),
+            Op::Binary('+') => "+".to_string(),
+            Op::Binary('-') => "-".to_string(),
+            Op::Binary('*') => "*".to_string(),
+            Op::Binary('/') => "/".to_string(),
+            Op::Binary('^') => "^".to_string(),
+            Op::Constant(x) => format!("{}", x),
+            _ => "???".to_string()
+        };
+        write!(f, "{}", s)
     }
 }
 
@@ -113,8 +202,34 @@ impl ComplexFunction {
     }
 
     pub fn random<T: Rng>(rng: &mut T) -> ComplexFunction {
-        let rpn = "z cos 1. +";
-        ComplexFunction::rpn_from_string(rpn)
+        if rng.gen::<bool>() {
+            let num_terms = rng.gen_range(1, 7);
+            let coefficients = rng.sample_iter(&Standard)
+                .map(|(x, y)| round_cplx(x, y))
+                .take(num_terms)
+                .collect::<Vec<Cplx>>();
+            ComplexFunction::Polynom(coefficients)
+        } else {
+            let mut stack: Vec<Op> = Vec::new();
+            stack.push(Op::random_binary_operator(rng));
+            let mut needed = 2;
+
+            while needed > 0 {
+                let next = if stack.len() > 7 {
+                    Op::random_operand(rng)
+                } else {
+                    Op::random(rng)
+                };
+                match next {
+                    Op::Binary(_) => needed += 1,
+                    Op::Unary(_) => (),
+                    Op::Constant(_) | Op::Variable => needed -= 1
+                }
+                stack.push(next);
+            }
+
+            ComplexFunction::RPN(stack.into_iter().rev().collect())
+        }
     }
 
     /// Calculates the derivative of f at z.
@@ -136,8 +251,11 @@ impl ComplexFunction {
         (self.eval(z + H) - self.eval(z - H)) / (2. * H)
     }
 
-    pub fn human_readable(&self) -> &str {
-        " "
+    pub fn human_readable(&self) -> String {
+        match self {
+            ComplexFunction::RPN(x) => x.iter().map(|op| format!("{}", op)).join(" "),
+            ComplexFunction::Polynom(x) => x.iter().enumerate().map(|(n, c)| format!("({}) z^{}", c, n)).join(" + "),
+        }
     }
 }
 
