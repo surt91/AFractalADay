@@ -62,10 +62,6 @@ impl FractalBuilder {
             zoom: zoom as f32
         }
     }
-
-    pub fn mandelbrot_from_json(json: &str) -> Result<MandelbrotFractal, serde_json::Error> {
-        serde_json::from_str(json)
-    }
 }
 
 impl Stylable for MandelbrotFractal {

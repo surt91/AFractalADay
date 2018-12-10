@@ -5,6 +5,7 @@ mod quality;
 
 // reexport configuration types
 pub use self::escape_time_fractal::style::Style;
+pub use self::escape_time_fractal::EscapeTypes;
 pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::transformation::Transformation;
 pub use self::iterated_function_system::symmetry::Symmetry;
@@ -194,17 +195,18 @@ impl FractalBuilder {
                 let out: FractalInstance;
                 let ifs = FractalBuilder::ifs_from_json(&json);
                 let lsys = FractalBuilder::lsys_from_json(&json);
-                let newton = FractalBuilder::newton_from_json(&json);
-                let mandelbrot = FractalBuilder::mandelbrot_from_json(&json);
+                let escape_type = FractalBuilder::escape_type_from_json(&json);
 
                 if ifs.is_ok() {
                     out = FractalInstance::IFS(Box::new(ifs.unwrap()))
                 } else if lsys.is_ok() {
                     out = FractalInstance::LSys(Box::new(lsys.unwrap()))
-                } else if mandelbrot.is_ok() {
-                    out = FractalInstance::EscapeTime(Box::new(mandelbrot.unwrap()))
-                } else if newton.is_ok() {
-                    out = FractalInstance::EscapeTime(Box::new(newton.unwrap()))
+                } else if escape_type.is_ok() {
+                    out = match escape_type.unwrap() {
+                        EscapeTypes::Mandelbrot(x) => FractalInstance::EscapeTime(Box::new(x)),
+                        EscapeTypes::Newton(x) => FractalInstance::EscapeTime(Box::new(x)),
+                        EscapeTypes::None => panic!("invalid json")
+                    }
                 } else {
                     panic!("invalid json");
                 }

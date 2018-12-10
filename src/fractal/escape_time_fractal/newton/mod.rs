@@ -69,10 +69,6 @@ impl FractalBuilder {
             random_count
         }
     }
-
-    pub fn newton_from_json(json: &str) -> Result<NewtonFractal, serde_json::Error> {
-        serde_json::from_str(json)
-    }
 }
 
 impl Stylable for NewtonFractal {

@@ -11,6 +11,7 @@ use color;
 use self::style::Stylable;
 use super::estimate_quality_after;
 
+use fractal::FractalBuilder;
 use self::mandelbrot::MandelbrotFractal;
 use self::newton::NewtonFractal;
 
@@ -29,6 +30,11 @@ pub enum EscapeTypes {
     None
 }
 
+impl FractalBuilder {
+    pub fn escape_type_from_json(json: &str) -> Result<EscapeTypes, serde_json::Error> {
+        serde_json::from_str(json)
+    }
+}
 
 /// The `EscapeTimeFractal` trait applies to all ``Julia set type'' fractals, i.e., all fractals
 /// that can be visualized by assigning every pixel a color dependent on a value and an iteration
@@ -38,7 +44,6 @@ pub trait EscapeTimeFractal : Sync + Stylable {
     fn iterate(&self, state: Cplx) -> Convergence;
     fn get_rng(&mut self) -> &mut RngType;
 
-    // FIXME: maybe enum of all varaints?
     fn get_serializable(&self) -> EscapeTypes {
         EscapeTypes::None
     }
