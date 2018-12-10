@@ -241,12 +241,11 @@ impl ComplexFunction {
     /// # Examples
     ///
     /// ```
-    /// use a_fractal_a_day::functions::*;
     /// use a_fractal_a_day::numbers::{Cplx, ComplexFunction};
-    /// let f: ComplexFunction = Box::new(|x| x*x);
+    /// let f = ComplexFunction::rpn_from_string("z z *");
     ///
-    /// assert_eq!(Cplx::new(9., 0.), f(Cplx::new(3., 0.)));
-    /// assert!((Cplx::new(6., 0.) - derivative(&f, &Cplx::new(3., 0.))).norm() < 1e-2);
+    /// assert_eq!(Cplx::new(9., 0.), f.eval(Cplx::new(3., 0.)));
+    /// assert!((Cplx::new(6., 0.) - f.derivative(&Cplx::new(3., 0.))).norm() < 1e-2);
     /// ```
     pub fn derivative(&self, z: &Cplx) -> Cplx {
         const H: Real = 1e-4;
