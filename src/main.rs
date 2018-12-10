@@ -9,7 +9,7 @@ use std::fs;
 use std::io::prelude::*;
 
 extern crate rand;
-use self::rand::Rng;
+use self::rand::{Rng, thread_rng};
 
 #[macro_use] extern crate log;
 extern crate log_panics;
@@ -68,10 +68,8 @@ fn build_fractal(
     let mut ctr = 0;
     let mut fractal_type: FractalType = opt.fractal_type.clone();
 
-    let mut rng = rand::Isaac64Rng::new_from_u64(seed as u64);
-
     if let FractalType::Random = fractal_type {
-        fractal_type = match rng.gen_range(0, 3) {
+        fractal_type = match thread_rng().gen_range(0, 3) {
             0 => FractalType::Newton,
             1 => FractalType::FractalFlame,
             2 => FractalType::MobiusFlame,

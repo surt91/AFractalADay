@@ -20,7 +20,7 @@ use fractal::Symmetry;
 use super::{Transformation,NonlinearTransformation,AffineTransformation,MobiusTransformation};
 use color::RGB;
 
-use super::{RngType, SeedType, default_rng};
+use super::{RngType, default_rng};
 
 
 fn default_bounds() -> bool {
@@ -96,8 +96,7 @@ impl IteratedFunctionSystem for FractalFlame
     }
 
     fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType> {
-        // let s = self.rng.gen::<SeedType>();
-        let rng = RngType::from_seed(self.rng.gen::<SeedType>());
+        let rng = RngType::seed_from_u64(self.rng.gen::<u64>());
 
         let p = [0.05, 0.05];
         let rgb = RGB(0., 0., 0.);

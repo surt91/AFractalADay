@@ -11,6 +11,9 @@ pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::fractal_flame::FractalFlame;
 pub use self::lsystem::{Alphabet, Lrules, LSystem};
 
+extern crate rand_pcg;
+use self::rand_pcg::Pcg32;
+
 extern crate serde_json;
 
 use std;
@@ -20,14 +23,13 @@ use png;
 use FractalType;
 use numbers::{Coef, ComplexFunction};
 
-use rand::{Rng, SeedableRng, Isaac64Rng, FromEntropy};
+use rand::{Rng, SeedableRng, FromEntropy};
 use rand::rngs::SmallRng;
 
-pub type RngType = Isaac64Rng;
-pub type SeedType = [u8; 32];
+pub type RngType = Pcg32;
 
 fn default_rng() -> RngType {
-    RngType::from_seed(SmallRng::from_entropy().gen::<SeedType>())
+    RngType::seed_from_u64(SmallRng::from_entropy().gen::<u64>())
 }
 
 enum FractalInstance {
@@ -49,7 +51,7 @@ impl std::fmt::Debug for Fractal {
 
 pub struct FractalBuilder {
     // for iterated function systems
-    seed: Option<SeedType>,
+    seed: Option<u64>,
     variation: Option<Variation>,
     post_transform: Option<Transformation>,
     final_transform: Option<Variation>,
@@ -92,13 +94,13 @@ impl FractalBuilder {
     }
     pub fn seed_rng(&self) -> RngType {
         match self.seed {
-            Some(x) => RngType::from_seed(x),
-            None => RngType::from_seed(SmallRng::from_entropy().gen::<SeedType>())
+            Some(x) => RngType::seed_from_u64(x),
+            None => RngType::seed_from_u64(SmallRng::from_entropy().gen::<u64>())
         }
     }
 
     pub fn seed(mut self, seed: usize) -> FractalBuilder {
-        self.seed = Some(Isaac64Rng::new_from_u64(seed as u64).gen::<SeedType>());
+        self.seed = Some(seed as u64);
         self
     }
 

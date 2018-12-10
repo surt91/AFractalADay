@@ -1,6 +1,7 @@
 use std::fmt;
 use rand::{Rng, thread_rng};
 use rand::distributions::{Distribution, Standard};
+use rand::seq::SliceRandom;
 
 use numbers::Real;
 use std::f64::consts::PI as PI64;
@@ -249,6 +250,6 @@ impl fmt::Display for Variation {
 
 impl Distribution<Variation> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Variation {
-        Variation::from_number(*rng.choose(&VARIATION_NUMBERS).unwrap() as usize).unwrap()
+        Variation::from_number(*VARIATION_NUMBERS.choose(rng).unwrap() as usize).unwrap()
     }
 }

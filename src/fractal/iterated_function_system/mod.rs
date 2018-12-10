@@ -27,7 +27,7 @@ use std::sync::mpsc::channel;
 
 use self::fractal_flame::FractalFlame;
 
-use super::{RngType, SeedType, default_rng};
+use super::{RngType, default_rng};
 
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {

@@ -1,7 +1,7 @@
 use rand::Rng;
 use rand::distributions::Standard;
 
-use itertools;
+use std::iter;
 
 use color::{HSV, RGB};
 use super::{Transformation, MobiusTransformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
@@ -33,9 +33,9 @@ impl FractalBuilder
             colors.push(Some(hsv.to_rgb()));
         }
         let mut transformations: Vec<Transformation> =
-                itertools::repeat_call(|| Transformation::Mobius(MobiusTransformation::random(&mut rng)))
-                          .take(number_of_functions)
-                          .collect();
+            iter::repeat_with(|| Transformation::Mobius(MobiusTransformation::random(&mut rng)))
+                .take(number_of_functions)
+                .collect();
 
         let variation = match self.variation {
             Some(v) => NonlinearTransformation::new(v),

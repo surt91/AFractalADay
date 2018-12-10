@@ -1,7 +1,7 @@
 use rand::Rng;
 use rand::distributions::Standard;
 
-use itertools;
+use std::iter;
 
 use color::{HSV, RGB};
 use super::{Transformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
@@ -33,7 +33,7 @@ impl FractalBuilder
             colors.push(Some(hsv.to_rgb()));
         }
         let mut transformations: Vec<Transformation> =
-                itertools::repeat_call(|| Transformation::Affine(AffineTransformation::random(&mut rng)))
+                iter::repeat_with(|| Transformation::Affine(AffineTransformation::random(&mut rng)))
                           .take(number_of_functions)
                           .collect();
 

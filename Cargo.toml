@@ -13,6 +13,7 @@ required-features = ["binaries"]
 [dependencies]
 png = "*"
 rand = "^0.6"
+rand_pcg = "*"
 num = {version = "*", features = ["serde"]}
 itertools = "*"
 rayon = "*"

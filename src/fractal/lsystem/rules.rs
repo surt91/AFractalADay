@@ -5,11 +5,12 @@ use std::ops::Index;
 use std::iter;
 
 use rand::{Rng, FromEntropy, SeedableRng};
+use rand::seq::SliceRandom;
 
 use itertools::Itertools;
 
 use super::Alphabet;
-use fractal::{SeedType, RngType};
+use fractal::{RngType};
 
 use serde::ser::Serializer;
 use serde::{Deserialize, Deserializer};
@@ -84,21 +85,20 @@ impl Lrules {
         }
     }
 
-    pub fn random(seed: Option<SeedType>) -> Lrules {
+    pub fn random(seed: Option<u64>) -> Lrules {
         // first select a random number of symbols, the symbolset
         let mut rng = match seed {
-            Some(s) => RngType::from_seed(s),
+            Some(s) => RngType::seed_from_u64(s),
             None => RngType::from_entropy()
         };
         let num_symbols = rng.gen_range(0, 5);
         let symbolset: Vec<Alphabet> = iter::repeat(())
             .map(|()| {
                 Alphabet::new(
-                    *rng.choose(
-                        &"ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars()
-                                                     .collect::<Vec<char>>()
-                    )
-                    .unwrap()
+                    *"ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars()
+                        .collect::<Vec<char>>()
+                        .choose(&mut rng)
+                        .unwrap()
                 )
             })
             .take(num_symbols)
@@ -108,7 +108,7 @@ impl Lrules {
         // select a random start from symbols of the symbolset
         let num_start = rng.gen_range(0, 5);
         let start = iter::repeat(())
-                         .map(|()| rng.choose(&symbolset).unwrap().clone())
+                         .map(|()| symbolset.choose(&mut rng).unwrap().clone())
                          .take(num_start)
                          .collect::<Vec<Alphabet>>();
 
@@ -126,7 +126,7 @@ impl Lrules {
         for s in &symbolset {
             let num = rng.gen_range(1, 10);
             let mut tmp = iter::repeat(())
-                             .map(|()| rng.choose(&allowed_symbols).unwrap().clone())
+                             .map(|()| allowed_symbols.choose(&mut rng).unwrap().clone())
                              .take(num)
                              .collect::<Vec<Alphabet>>();
 
