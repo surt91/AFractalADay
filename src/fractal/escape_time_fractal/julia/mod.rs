@@ -1,10 +1,10 @@
 use super::{EscapeTimeFractal, Convergence};
-use fractal::{FractalBuilder, RngType};
-use numbers::Cplx;
+use crate::fractal::{FractalBuilder, RngType};
+use crate::numbers::Cplx;
 
 use super::style::Stylable;
-use color;
-use numbers::ComplexFunction;
+use crate::color;
+use crate::numbers::ComplexFunction;
 
 
 pub struct JuliaFractal {

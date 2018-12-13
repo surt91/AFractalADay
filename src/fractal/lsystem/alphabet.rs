@@ -1,4 +1,4 @@
-use fmt;
+use crate::fmt;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub enum Alphabet {

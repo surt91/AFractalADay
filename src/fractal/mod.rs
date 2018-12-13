@@ -19,10 +19,10 @@ extern crate serde_json;
 
 use std;
 use std::io;
-use png;
+use crate::png;
 
-use FractalType;
-use numbers::{Coef, ComplexFunction};
+use crate::FractalType;
+use crate::numbers::{Coef, ComplexFunction};
 
 use rand::{Rng, SeedableRng, FromEntropy};
 use rand::rngs::SmallRng;
@@ -408,7 +408,7 @@ pub fn render_draft(
     json
 }
 
-use color::{RGBA, HSV, color_variance};
+use crate::color::{RGBA, HSV, color_variance};
 
 pub fn estimate_quality_after(rgb: &[RGBA], _resolution: &(u32, u32)) -> bool {
     let hsv: Vec<HSV> = rgb.iter().map(|c| c.blend_black().to_hsv()).collect();

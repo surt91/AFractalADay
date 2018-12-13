@@ -1,6 +1,6 @@
 use std::f32;
-use numbers::Real;
-use color::{RGB, RGBA};
+use crate::numbers::Real;
+use crate::color::{RGB, RGBA};
 
 extern crate rayon;
 use self::rayon::prelude::*;

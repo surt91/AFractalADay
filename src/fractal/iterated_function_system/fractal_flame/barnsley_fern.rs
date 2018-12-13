@@ -1,6 +1,6 @@
-use color::RGB;
+use crate::color::RGB;
 use super::{Transformation, NonlinearTransformation, FractalFlame};
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 
 impl FractalBuilder
 {

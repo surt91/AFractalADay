@@ -1,7 +1,7 @@
 use serde_json;
 
 use super::FractalFlame;
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 
 impl FractalBuilder
 {

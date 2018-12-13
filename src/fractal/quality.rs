@@ -1,4 +1,4 @@
-use color::RGBA;
+use crate::color::RGBA;
 
 /// Calculates the entropy of an image.
 ///
@@ -11,7 +11,7 @@ use color::RGBA;
 /// Low entropy is a image of one color, high entropy is noise.
 /// Interesting images should be located at some range of intermediate entropies.
 pub fn entropy(pixel: &[RGBA]) -> f64 {
-    use histogram::histogram1d;
+    use crate::histogram::histogram1d;
     let hist = histogram1d(pixel.iter().map(|c| c.to_u8() as usize), (0, 255));
 
     let entropy = - hist.iter().map(|&i| {

@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use numbers::{Real,Cplx};
+use crate::numbers::{Real,Cplx};
 
 mod affine_transformation;
 mod mobius_transformation;

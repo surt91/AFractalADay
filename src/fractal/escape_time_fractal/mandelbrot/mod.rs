@@ -4,12 +4,12 @@ use std::f64::consts::PI;
 use std::cmp::max;
 
 use super::{EscapeTimeFractal, Convergence, EscapeTypes};
-use numbers::{Real, Cplx};
-use fractal::{FractalBuilder, RngType, default_rng};
+use crate::numbers::{Real, Cplx};
+use crate::fractal::{FractalBuilder, RngType, default_rng};
 
 use super::style::Stylable;
-use color;
-use colormap;
+use crate::color;
+use crate::colormap;
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

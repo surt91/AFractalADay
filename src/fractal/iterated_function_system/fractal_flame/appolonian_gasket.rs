@@ -1,8 +1,8 @@
-use color::RGB;
+use crate::color::RGB;
 use super::{Transformation, NonlinearTransformation, FractalFlame, AffineTransformation};
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 
-use numbers::{Real,Cplx};
+use crate::numbers::{Real,Cplx};
 use std::f64::consts::PI as PI_;
 const PI: Real = PI_ as Real;
 

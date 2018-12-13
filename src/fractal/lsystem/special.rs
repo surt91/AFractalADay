@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
 
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 
 use super::Generic;
 

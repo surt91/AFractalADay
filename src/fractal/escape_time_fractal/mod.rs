@@ -6,12 +6,12 @@ pub mod style;
 extern crate rayon;
 use self::rayon::prelude::*;
 
-use numbers::{Real, Cplx};
-use color;
+use crate::numbers::{Real, Cplx};
+use crate::color;
 use self::style::Stylable;
 use super::estimate_quality_after;
 
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 use self::mandelbrot::MandelbrotFractal;
 use self::newton::NewtonFractal;
 

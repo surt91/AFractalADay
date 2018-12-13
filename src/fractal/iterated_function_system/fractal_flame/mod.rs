@@ -16,9 +16,9 @@ use rand::{Rng, SeedableRng};
 
 use super::IteratedFunctionSystem;
 use super::IteratedFunctionSystemSampler;
-use fractal::Symmetry;
+use crate::fractal::Symmetry;
 use super::{Transformation,NonlinearTransformation,AffineTransformation,MobiusTransformation};
-use color::RGB;
+use crate::color::RGB;
 
 use super::{RngType, default_rng};
 

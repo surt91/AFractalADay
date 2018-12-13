@@ -1,7 +1,7 @@
 use rand::Rng;
 use rand::distributions::{Normal, Distribution};
 
-use numbers::{Real, Cplx};
+use crate::numbers::{Real, Cplx};
 
 /// A Mobius transformation has 4 complex parameters and maps a complex number z
 /// T(z) = (a*z + b) / (c*z + d)

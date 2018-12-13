@@ -1,4 +1,4 @@
-use fmt;
+use crate::fmt;
 
 use std::collections::HashMap;
 use std::ops::Index;
@@ -10,7 +10,7 @@ use rand::seq::SliceRandom;
 use itertools::Itertools;
 
 use super::Alphabet;
-use fractal::{RngType};
+use crate::fractal::{RngType};
 
 use serde::ser::Serializer;
 use serde::{Deserialize, Deserializer};

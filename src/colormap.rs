@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use color::RGB;
+use crate::color::RGB;
 
 /// take a value `x` between 0 and 1 and return a color corresponding to this value
 #[derive(Debug, Serialize, Deserialize)]

@@ -1,11 +1,11 @@
 extern crate rand;
 use self::rand::Rng;
 
-use color::{HSV, RGB};
+use crate::color::{HSV, RGB};
 use super::{Transformation, NonlinearTransformation, FractalFlame};
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 
-use numbers::Real;
+use crate::numbers::Real;
 
 use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
 const PI_QUARTER: Real = FRAC_PI_4 as Real;

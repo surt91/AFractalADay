@@ -1,10 +1,10 @@
 use rand::Rng;
 
 use super::{EscapeTimeFractal, Convergence, EscapeTypes};
-use fractal::{FractalBuilder, RngType, default_rng};
-use numbers::{Coef, Cplx, ComplexFunction};
+use crate::fractal::{FractalBuilder, RngType, default_rng};
+use crate::numbers::{Coef, Cplx, ComplexFunction};
 use super::style::{Style, Stylable, style_serialize, style_deserialize};
-use color;
+use crate::color;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct NewtonFractal {

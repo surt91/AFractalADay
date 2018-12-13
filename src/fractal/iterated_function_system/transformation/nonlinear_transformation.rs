@@ -1,8 +1,8 @@
 use rand::Rng;
 use rand::distributions::Standard;
 
-use fractal::Variation;
-use numbers::Real;
+use crate::fractal::Variation;
+use crate::numbers::Real;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NonlinearTransformation {

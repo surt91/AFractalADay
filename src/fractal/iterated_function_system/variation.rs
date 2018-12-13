@@ -3,7 +3,7 @@ use rand::{Rng, thread_rng};
 use rand::distributions::{Distribution, Standard};
 use rand::seq::SliceRandom;
 
-use numbers::Real;
+use crate::numbers::Real;
 use std::f64::consts::PI as PI64;
 
 const PI: Real = PI64 as Real;

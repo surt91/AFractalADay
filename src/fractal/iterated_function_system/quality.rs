@@ -1,4 +1,4 @@
-use numbers::Real;
+use crate::numbers::Real;
 
 use rand::rngs::SmallRng;
 use rand::{Rng, FromEntropy};

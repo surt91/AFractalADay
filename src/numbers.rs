@@ -5,7 +5,7 @@ use rand::Rng;
 use rand::distributions::Standard;
 use rand::seq::SliceRandom;
 
-use fmt;
+use crate::fmt;
 use std::str::FromStr;
 use std::num::ParseFloatError;
 use itertools::Itertools;

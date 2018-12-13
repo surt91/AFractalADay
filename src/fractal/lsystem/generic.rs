@@ -4,7 +4,7 @@ use std::f64::consts::PI;
 
 use itertools::Itertools;
 
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 
 use super::LSystem;
 use super::turtle::{Turtle, Canvas};

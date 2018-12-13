@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use numbers::Real;
+use crate::numbers::Real;
 use std::ops::Mul;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

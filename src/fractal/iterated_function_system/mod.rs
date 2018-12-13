@@ -13,9 +13,9 @@ use std::f64;
 extern crate rayon;
 use self::rayon::prelude::*;
 
-use numbers::Real;
-use color::{RGB, RGBA};
-use histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
+use crate::numbers::Real;
+use crate::color::{RGB, RGBA};
+use crate::histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::quality::probably_good;
 
 use super::estimate_quality_after;

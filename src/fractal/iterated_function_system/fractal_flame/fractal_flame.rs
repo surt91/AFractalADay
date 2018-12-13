@@ -3,11 +3,11 @@ use rand::distributions::Standard;
 
 use std::iter;
 
-use color::{HSV, RGB};
+use crate::color::{HSV, RGB};
 use super::{Transformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
-use fractal::FractalBuilder;
+use crate::fractal::FractalBuilder;
 
-use numbers::Real;
+use crate::numbers::Real;
 use std::f64::consts::PI as PI_;
 const PI: Real = PI_ as Real;
 

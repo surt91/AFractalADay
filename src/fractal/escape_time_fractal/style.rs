@@ -1,13 +1,13 @@
 use rand::Rng;
 use std::fmt;
 
-use color;
+use crate::color;
 use super::Convergence;
 
 use serde::ser::Serializer;
 use serde::{Deserialize, Deserializer};
 
-use fractal::RngType;
+use crate::fractal::RngType;
 
 pub fn style_serialize<S>(x: &Style, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -25,7 +25,7 @@ where
 }
 
 pub trait Stylable {
-    fn style(&self, &Convergence) -> color::HSV;
+    fn style(&self, _: &Convergence) -> color::HSV;
     fn style_name(&self) -> &str;
 }
 
