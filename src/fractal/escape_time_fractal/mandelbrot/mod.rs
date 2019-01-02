@@ -11,6 +11,9 @@ use super::style::Stylable;
 use crate::color;
 use crate::colormap::Colormap;
 
+fn default_colormap() -> Colormap {
+    Colormap::viridis()
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MandelbrotFractal {
@@ -21,6 +24,7 @@ pub struct MandelbrotFractal {
     max_count: u64,
     shift: Cplx,
     zoom: Real,
+    #[serde(default = "default_colormap")]
     colormap: Colormap,
 }
 
