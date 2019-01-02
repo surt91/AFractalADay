@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 use rand::Rng;
 use rand::seq::SliceRandom;
 
-use crate::color::{RGB,HSV};
+use crate::color::RGB;
 mod cividis_dat;
 use self::cividis_dat::CIVIDIS;
 mod viridis_dat;
@@ -39,6 +39,15 @@ impl Colormap {
         &self.name
     }
 
+    pub fn set_zero_black(&self) -> Colormap {
+        let mut map = self.map.clone();
+        map[0].1 = RGB(0., 0., 0.);
+        Colormap {
+            map,
+            name: self.name.clone()
+        }
+    }
+
     fn vec_to_map(val: &Vec<RGB>, name: &str) -> Colormap {
         let num = val.len();
         let idx = (0..num).map(|i| i as f64/num as f64).collect::<Vec<f64>>();
@@ -55,7 +64,9 @@ impl Colormap {
             Colormap::cividis,
             Colormap::inferno,
             Colormap::twilight,
-            Colormap::hsv,
+            Colormap::rainbow,
+            Colormap::bw,
+            Colormap::wb,
         ];
         choices.choose(rng).unwrap()()
     }
@@ -75,16 +86,32 @@ impl Colormap {
         Colormap::vec_to_map(&TWILIGHT, "twilight")
     }
 
-    pub fn hsv() -> Colormap {
+    pub fn rainbow() -> Colormap {
+        // https://simple.wikipedia.org/wiki/Rainbow
+        let map = vec![
+            (0., RGB(1., 0., 0.)),
+            (1./5., RGB(1., 0.5, 0.)),
+            (2./5., RGB(1., 1., 0.)),
+            (3./5., RGB(0., 1., 0.)),
+            (4./5., RGB(0., 0., 1.)),
+            (5./5., RGB(139./255., 0., 1.)),
+        ];
         Colormap {
-            map: (0..256).map(|i|
-                (i as f64/256.,
-                    if i==255 {
-                        RGB(0., 0., 0.)
-                    } else {
-                        HSV(i as f64/256., 1., 1.).to_rgb()
-                    }
-                )).collect::<Vec<(f64, RGB)>>(),
+            map,
+            name: "rainbow".to_string()
+        }
+    }
+
+    pub fn bw() -> Colormap {
+        Colormap {
+            map: vec![(0., RGB(0., 0., 0.)), (1., RGB(1., 1., 1.))],
+            name: "hsv".to_string()
+        }
+    }
+
+    pub fn wb() -> Colormap {
+        Colormap {
+            map: vec![(0., RGB(1., 1., 1.)), (1., RGB(0., 0., 0.))],
             name: "hsv".to_string()
         }
     }
