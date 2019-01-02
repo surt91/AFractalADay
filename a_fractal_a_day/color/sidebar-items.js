@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["color_variance","`color_variance` is an ad-hoc measure for the interestingness of an image"],["count_same","count the number of `pixels` with the same color"]],"struct":[["HSV","data structure representing a HSV color value"],["RGB","data structure representing a RGB color value"],["RGBA","data structure representing a RGBA color value"]]});

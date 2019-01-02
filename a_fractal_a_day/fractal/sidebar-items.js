@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Alphabet",""],["EscapeTypes",""],["Symmetry",""],["Transformation",""],["Variation",""]],"fn":[["estimate_quality_after",""],["render_draft",""],["render_wrapper",""]],"struct":[["Fractal",""],["FractalBuilder",""],["FractalFlame",""],["Lrules",""],["Style",""]],"trait":[["LSystem",""]],"type":[["RngType",""]]});
