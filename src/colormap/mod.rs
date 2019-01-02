@@ -77,7 +77,14 @@ impl Colormap {
 
     pub fn hsv() -> Colormap {
         Colormap {
-            map: (0..255).map(|i| (i as f64/256., HSV(i as f64/256., 1., 1.).to_rgb())).collect::<Vec<(f64, RGB)>>(),
+            map: (0..256).map(|i|
+                (i as f64/256.,
+                    if i==255 {
+                        RGB(0., 0., 0.)
+                    } else {
+                        HSV(i as f64/256., 1., 1.).to_rgb()
+                    }
+                )).collect::<Vec<(f64, RGB)>>(),
             name: "hsv".to_string()
         }
     }
