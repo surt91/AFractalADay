@@ -14,9 +14,10 @@ mod twilight_dat;
 use self::twilight_dat::TWILIGHT;
 
 /// take a value `x` between 0 and 1 and return a color corresponding to this value
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Colormap {
-    map: Vec<(f64, RGB)>
+    map: Vec<(f64, RGB)>,
+    name: String,
 }
 
 impl Colormap {
@@ -34,12 +35,17 @@ impl Colormap {
         RGB::interpolate_weight(&self.map[idx-1].1, &self.map[idx].1, p)
     }
 
-    fn vec_to_map(val: &Vec<RGB>) -> Colormap {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn vec_to_map(val: &Vec<RGB>, name: &str) -> Colormap {
         let num = val.len();
         let idx = (0..num).map(|i| i as f64/num as f64).collect::<Vec<f64>>();
 
         Colormap {
-            map: (0..num).map(|i| (idx[i], val[i].clone())).collect::<Vec<(f64, RGB)>>()
+            map: (0..num).map(|i| (idx[i], val[i].clone())).collect::<Vec<(f64, RGB)>>(),
+            name: name.to_string()
         }
     }
 
@@ -57,21 +63,22 @@ impl Colormap {
     // colormaps of matplotlib
     // (https://github.com/matplotlib/matplotlib/blob/d4f1f8d0b1b71c97c3f750dfa9c16c1e9ab3261b/lib/matplotlib/_cm_listed.py)
     pub fn viridis() -> Colormap {
-        Colormap::vec_to_map(&VIRIDIS)
+        Colormap::vec_to_map(&VIRIDIS, "viridis")
     }
     pub fn cividis() -> Colormap {
-        Colormap::vec_to_map(&CIVIDIS)
+        Colormap::vec_to_map(&CIVIDIS, "cividis")
     }
     pub fn inferno() -> Colormap {
-        Colormap::vec_to_map(&INFERNO)
+        Colormap::vec_to_map(&INFERNO, "inferno")
     }
     pub fn twilight() -> Colormap {
-        Colormap::vec_to_map(&TWILIGHT)
+        Colormap::vec_to_map(&TWILIGHT, "twilight")
     }
 
     pub fn hsv() -> Colormap {
         Colormap {
-            map: (0..255).map(|i| (i as f64/256., HSV(i as f64/256., 1., 1.).to_rgb())).collect::<Vec<(f64, RGB)>>()
+            map: (0..255).map(|i| (i as f64/256., HSV(i as f64/256., 1., 1.).to_rgb())).collect::<Vec<(f64, RGB)>>(),
+            name: "hsv".to_string()
         }
     }
 }

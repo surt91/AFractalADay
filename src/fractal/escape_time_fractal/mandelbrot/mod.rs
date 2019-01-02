@@ -9,7 +9,7 @@ use crate::fractal::{FractalBuilder, RngType, default_rng};
 
 use super::style::Stylable;
 use crate::color;
-use crate::colormap;
+use crate::colormap::Colormap;
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -20,7 +20,8 @@ pub struct MandelbrotFractal {
     pub description: String,
     max_count: u64,
     shift: Cplx,
-    zoom: Real
+    zoom: Real,
+    colormap: Colormap,
 }
 
 impl FractalBuilder {
@@ -49,6 +50,8 @@ impl FractalBuilder {
 
         let zoom = 2u64.pow(rng.gen_range(0, 14));
 
+        let colormap = Colormap::random(&mut rng);
+
         let description = format!("Mandelbrot Fractal at ~({:.2}), zoom {}x", shift, zoom);
 
         info!("Will render {}", description);
@@ -59,7 +62,8 @@ impl FractalBuilder {
             rng,
             max_count: max(1000, 4*zoom),
             shift,
-            zoom: zoom as f32
+            zoom: zoom as f32,
+            colormap,
         }
     }
 }
@@ -70,15 +74,11 @@ impl Stylable for MandelbrotFractal {
         let c = conv.count;
         let h = c / (self.max_count - 1) as f64;
 
-        let cm = colormap::Colormap::viridis();
-
-        // println!("{:?}", h);
-
-        cm.value(&h).to_hsv()
+        self.colormap.value(&h).to_hsv()
     }
 
     fn style_name(&self) -> &str {
-        "vibrant"
+        self.colormap.name()
     }
 }
 
