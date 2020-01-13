@@ -94,7 +94,7 @@ pub fn postprocess_image(filename: &str) {
     };
 }
 
-/// add a transparent border to a png
+/// reduce the size to something twitter allows
 ///
 /// # Arguments
 ///
@@ -103,11 +103,7 @@ pub fn postprocess_image(filename: &str) {
 ///
 /// # Remarks
 ///
-/// Since twitter will convert uploaded png pictures to jpg with artifacts,
-/// we add a transparent border to suppress the conversion
-/// using imagemagick's convert.
-///
-/// Also, we need to ensure that the filesize is <= 3 MiB <https://dev.twitter.com/rest/media/uploading-media#imagerecs>.
+/// We need to ensure that the filesize is <= 3 MiB <https://dev.twitter.com/rest/media/uploading-media#imagerecs>.
 /// therefore, we will shrink by 10%, measure the size and repeat, until we reach the limit.
 ///
 /// *Note*: If imagemagick's `convert` is not in the path, this function
@@ -116,38 +112,16 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
     let mut size: u64;
     let mut resize: f64 = 1.;
 
-    let output = Command::new("convert")
-                         .arg("-alpha").arg("on")
-                         .arg("-channel").arg("RGBA")
-                         .arg("-bordercolor").arg("rgba(0,0,0,0)")
-                         .arg("-border").arg("1x1")
-                         .arg(input)
-                         .arg(outfile)
-                         .output();
     postprocess_image(outfile);
 
     size = fs::metadata(outfile).map(|x| x.len()).unwrap_or(0);
-
-    match output {
-        Ok(x) => if !x.status.success() {
-                        error!("convert failed")
-                    } else {
-                        info!("convert successful ({} KB)", size as f32 / 1000.)
-                    },
-        Err(x) => error!("convert failed with {:?}", x)
-    };
-
-    // it is too big, shrink it and try again
+    // if it is too big, shrink it and try again
     // the threshold is empiric (and somewhere between 2.8 and 2.3MB)
     while size > 2.8e6f64 as u64 {
         resize *= 0.9;
         info!("rescale to {:.0}%", resize*100.);
 
         let output = Command::new("convert")
-                             .arg("-alpha").arg("on")
-                             .arg("-channel").arg("RGBA")
-                             .arg("-bordercolor").arg("rgba(0,0,0,0)")
-                             .arg("-border").arg("1x1")
                              .arg("-scale").arg(format!("{:.0}%", resize*100.))
                              .arg(input)
                              .arg(outfile)
