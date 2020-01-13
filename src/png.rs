@@ -3,8 +3,8 @@ use std::path::Path;
 use std::fs::File;
 
 extern crate png;
-use self::png::HasParameters;
 
+use png::png::HasParameters;
 
 pub fn save_png(filename: &str, width: u32, height: u32, buffer: &[u8]) -> io::Result<()> {
     let tmp = filename;

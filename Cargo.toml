@@ -11,14 +11,14 @@ doc = false
 required-features = ["binaries"]
 
 [dependencies]
-png = "*"
+png = "0.10"
 rand = "^0.6"
-rand_pcg = "*"
+rand_pcg = "^0.1"
 num = {version = "*", features = ["serde"]}
 itertools = "*"
 rayon = "*"
 num_cpus = "*"
-time = "*"
+time = "0.1"
 clap = "*"
 
 log = "*"

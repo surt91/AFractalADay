@@ -35,7 +35,7 @@ impl Alphabet {
             ']' => Alphabet::BR,
             '+' => Alphabet::P,
             '-' => Alphabet::M,
-            'A' ... 'Z'  => Alphabet::Marker(c),
+            'A' ..= 'Z'  => Alphabet::Marker(c),
             _ => Alphabet::Invalid
         }
     }

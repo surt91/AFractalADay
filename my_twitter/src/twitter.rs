@@ -36,7 +36,7 @@ fn read_token() -> io::Result<Token> {
     Ok(token)
 }
 
-pub fn tweet_image(text: &str, image_filename: &str) -> Result<(), Box<Error>> {
+pub fn tweet_image(text: &str, image_filename: &str) -> Result<(), Box<dyn Error>> {
     let mut image_file = fs::File::open(image_filename.trim())?;
     let mut buffer = Vec::new();
     image_file.read_to_end(&mut buffer)?;

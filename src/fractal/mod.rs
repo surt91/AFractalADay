@@ -34,9 +34,9 @@ fn default_rng() -> RngType {
 }
 
 enum FractalInstance {
-    EscapeTime(Box<escape_time_fractal::EscapeTimeFractal>),
-    IFS(Box<iterated_function_system::IteratedFunctionSystem>),
-    LSys(Box<lsystem::LSystem>),
+    EscapeTime(Box<dyn escape_time_fractal::EscapeTimeFractal>),
+    IFS(Box<dyn iterated_function_system::IteratedFunctionSystem>),
+    LSys(Box<dyn lsystem::LSystem>),
 }
 
 pub struct Fractal {
