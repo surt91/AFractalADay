@@ -112,6 +112,7 @@ pub fn postprocess_image_for_twitter(input: &str, outfile: &str) {
     let mut size: u64;
     let mut resize: f64 = 1.;
 
+    fs::copy(input, outfile).expect("input image does not exist!");
     postprocess_image(outfile);
 
     size = fs::metadata(outfile).map(|x| x.len()).unwrap_or(0);
