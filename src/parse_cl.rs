@@ -411,7 +411,7 @@ pub fn parse_cl() -> Options {
     };
 
     let variation = matches.value_of("variation")
-                           .and_then(|s| Variation::from_string(s));
+                           .and_then(|s| Variation::from_string_and_seed(s, seed));
 
     let symmetry = if matches.is_present("mirror") {
         Some(Symmetry::Vertical)

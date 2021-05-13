@@ -24,11 +24,11 @@ impl NonlinearTransformation {
         NonlinearTransformation::new(Variation::Linear)
     }
 
-    pub fn random<T>(rng: &mut T) -> NonlinearTransformation
+    pub fn random<T>(mut rng: &mut T) -> NonlinearTransformation
         where T: Rng
     {
         let normal = Normal::new(0.0, 2.0);
-        let v = normal.sample(&mut rand::thread_rng()).abs();
+        let v = normal.sample(&mut rng).abs();
         let num = v.floor() as usize;
         if num < 1 {
             return NonlinearTransformation::identity()

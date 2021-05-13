@@ -27,7 +27,7 @@ pub enum Variation {
     Hyperbolic,
     Diamond,
     Ex,
-    Julia,
+    Julia(Real),
     Bent,
     // Waves,
     Fisheye,
@@ -48,11 +48,22 @@ pub enum Variation {
 }
 
 impl Variation {
-    pub fn from_number(num: usize) -> Option<Variation> {
-        Variation::from_string(&format!("{}", num))
+    pub fn from_number(num: usize, mut rng: &mut impl Rng) -> Option<Variation> {
+        Variation::from_string(&format!("{}", num), &mut rng)
     }
 
-    pub fn from_string(name: &str) -> Option<Variation> {
+    pub fn from_string_and_seed(name: &str, seed: Option<usize>) -> Option<Variation> {
+        use rand::SeedableRng;
+        use super::RngType;
+        let s = match seed {
+            Some(x) => x,
+            None => thread_rng().gen(),
+        } as u64;
+        let mut rng = RngType::seed_from_u64(s);
+        Variation::from_string(name, &mut rng)
+    }
+
+    pub fn from_string(name: &str, rng: &mut impl Rng) -> Option<Variation> {
         match name {
             "Linear" | "0" => Some(Variation::Linear),
             "Sinusoidal" | "1" => Some(Variation::Sinusoidal),
@@ -67,28 +78,28 @@ impl Variation {
             "Hyperbolic" | "10" => Some(Variation::Hyperbolic),
             "Diamond" | "11" => Some(Variation::Diamond),
             "Ex" | "12" => Some(Variation::Ex),
-            "Julia" | "13" => Some(Variation::Julia),
+            "Julia" | "13" => Some(Variation::Julia(rng.gen_range(0.,1.))),
             "Bent" | "14" => Some(Variation::Bent),
             "Fisheye" | "16" => Some(Variation::Fisheye),
             "Exponential" | "18" => Some(Variation::Exponential),
             "Power" | "19" => Some(Variation::Power),
             "Cosine" | "20" => Some(Variation::Cosine),
             "Blob" | "23" => Some(Variation::Blob(
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
+                rng.gen_range(0.,1.),
+                rng.gen_range(0.,1.),
+                rng.gen_range(0.,1.),
             )),
             "Pdj" | "24" => Some(Variation::Pdj(
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
+                rng.gen_range(0.,1.),
+                rng.gen_range(0.,1.),
+                rng.gen_range(0.,1.),
+                rng.gen_range(0.,1.),
             )),
             "Fan2" | "25" => Some(Variation::Fan2(
-                thread_rng().gen_range(0.,1.),
-                thread_rng().gen_range(0.,1.),
+                rng.gen_range(0.,1.),
+                rng.gen_range(0.,1.),
             )),
-            s => s.parse::<usize>().ok().and_then(Variation::from_number)
+            _ => None
         }
     }
 
@@ -107,7 +118,7 @@ impl Variation {
             Variation::Hyperbolic => "Hyperbolic",
             Variation::Diamond => "Diamond",
             Variation::Ex => "Ex",
-            Variation::Julia => "Julia",
+            Variation::Julia(_) => "Julia",
             Variation::Bent => "Bent",
             Variation::Fisheye => "Fisheye",
             Variation::Exponential => "Exponential",
@@ -121,7 +132,7 @@ impl Variation {
 
     pub fn list() -> Vec<String> {
         VARIATION_NUMBERS.iter()
-                   .map(|&i| Variation::from_number(i as usize)
+                   .map(|&i| Variation::from_number(i as usize, &mut thread_rng())
                                       .map_or("n/a".to_owned(), |x| x.name()))
                    .collect()
     }
@@ -189,11 +200,10 @@ impl Variation {
                 let p13 = p1.powi(3);
                 [r * (p03 + p13), r * (p03 - p13)]
             }
-            Variation::Julia => {
+            Variation::Julia(omega) => {
                 let r = (x*x + y*y).sqrt();
                 let theta = (x/y).atan();
                 let sqrt_r = r.sqrt();
-                let omega = thread_rng().gen_range(0, 1) as Real * PI;
                 let arg = theta/2. + omega;
                 [sqrt_r * arg.cos(), sqrt_r * arg.sin()]
             }
@@ -256,7 +266,7 @@ impl fmt::Display for Variation {
 }
 
 impl Distribution<Variation> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Variation {
-        Variation::from_number(*VARIATION_NUMBERS.choose(rng).unwrap() as usize).unwrap()
+    fn sample<R: Rng + ?Sized>(&self, mut rng: &mut R) -> Variation {
+        Variation::from_number(*VARIATION_NUMBERS.choose(rng).unwrap() as usize, &mut rng).unwrap()
     }
 }

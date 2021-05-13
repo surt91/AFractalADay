@@ -204,10 +204,10 @@ impl ComplexFunction {
         (0..poly.len()).map(|i| poly[i] * z.powf(i as Real)).sum()
     }
 
-    pub fn random<T: Rng>(rng: &mut T) -> ComplexFunction {
+    pub fn random(mut rng: &mut impl Rng) -> ComplexFunction {
         if rng.gen::<bool>() {
             let normal = Normal::new(0.0, 3.0);
-            let v = normal.sample(&mut rand::thread_rng()).abs();
+            let v = normal.sample(&mut rng).abs();
             let num_terms = v.ceil() as usize;
             let coefficients = rng.sample_iter(&Standard)
                 .map(|(x, y)| round_cplx(x, y))
