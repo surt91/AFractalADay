@@ -32,9 +32,6 @@ serde_json = "1.0"
 
 lazy_static = "1.2.0"
 
-[dev-dependencies]
-assert_approx_eq = "*"
-
 [dependencies.turtle]
 version = "0.1"
 git = "https://github.com/surt91/turtle"
@@ -45,3 +42,14 @@ optional = true
 
 [features]
 binaries = ["my_twitter"]
+
+[dev-dependencies]
+assert_approx_eq = "*"
+criterion = "0.3"
+
+[[bench]]
+name = "benchmark"
+harness = false
+
+[profile.release]
+lto = true
