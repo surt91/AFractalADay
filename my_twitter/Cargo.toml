@@ -2,6 +2,7 @@
 name = "my_twitter"
 version = "0.2.0"
 authors = ["Hendrik Schawe <surt91@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 json = "*"

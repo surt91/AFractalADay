@@ -3,16 +3,14 @@ use egg_mode;
 use tokio;
 
 use std::error::Error;
-use std::fs;
-use std::io;
+use std::{fs, io};
 use std::io::prelude::*;
-// use self::e::*;
 
-use self::tokio::runtime::current_thread::block_on_all;
+use tokio::runtime::current_thread::block_on_all;
 
-use self::egg_mode::media::{UploadBuilder, media_types};
-use self::egg_mode::tweet::DraftTweet;
-use self::egg_mode::{Token, KeyPair};
+use egg_mode::media::{UploadBuilder, media_types};
+use egg_mode::tweet::DraftTweet;
+use egg_mode::{Token, KeyPair};
 
 fn read_token() -> io::Result<Token> {
     let mut file = fs::File::open("keys_and_secrets.json")?;
