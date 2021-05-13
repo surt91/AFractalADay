@@ -36,6 +36,14 @@ impl Transformation {
         }
     }
 
+    pub fn random_or_identity(mut rng: &mut impl Rng) -> Transformation {
+        if rng.gen::<Real>() > 0.5 {
+            Transformation::identity()
+        } else {
+            Transformation::random(&mut rng)
+        }
+    }
+
     pub fn identity() -> Transformation {
         Transformation::Affine(AffineTransformation::identity())
     }

@@ -1,6 +1,6 @@
 [package]
 name = "a_fractal_a_day"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Hendrik Schawe <surt91@gmail.com>"]
 description = "This is a Twitter bot, which can tweet pictures of random fractals."
 homepage = "https://twitter.com/AFractalADay"

@@ -1,5 +1,5 @@
 use rand::Rng;
-use rand::distributions::Standard;
+use rand::distributions::{Standard, Normal, Distribution};
 
 use serde::{self, Serialize, Deserialize};
 
@@ -27,7 +27,13 @@ impl NonlinearTransformation {
     pub fn random<T>(rng: &mut T) -> NonlinearTransformation
         where T: Rng
     {
-        let num = rng.gen_range(1, 10);
+        let normal = Normal::new(0.0, 2.0);
+        let v = normal.sample(&mut rand::thread_rng()).abs();
+        let num = v.floor() as usize;
+        if num < 1 {
+            return NonlinearTransformation::identity()
+        }
+
         let variations: Vec<Variation> = rng.sample_iter(&Standard).take(num).collect();
         let probabilities: Vec<Real> = rng.sample_iter(&Standard).take(num).collect();
         let sum = probabilities.iter().sum::<Real>();

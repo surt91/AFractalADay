@@ -3,7 +3,7 @@ use num::complex::Complex;
 use serde::{Serialize, Deserialize};
 
 use rand::Rng;
-use rand::distributions::Standard;
+use rand::distributions::{Standard, Normal, Distribution};
 use rand::seq::SliceRandom;
 
 use crate::fmt;
@@ -206,7 +206,9 @@ impl ComplexFunction {
 
     pub fn random<T: Rng>(rng: &mut T) -> ComplexFunction {
         if rng.gen::<bool>() {
-            let num_terms = rng.gen_range(1, 7);
+            let normal = Normal::new(0.0, 3.0);
+            let v = normal.sample(&mut rand::thread_rng()).abs();
+            let num_terms = v.ceil() as usize;
             let coefficients = rng.sample_iter(&Standard)
                 .map(|(x, y)| round_cplx(x, y))
                 .take(num_terms)

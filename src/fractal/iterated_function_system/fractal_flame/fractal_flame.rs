@@ -46,7 +46,7 @@ impl FractalBuilder
 
         let post_transform = match self.post_transform {
             Some(v) => v,
-            None => Transformation::random(&mut rng)
+            None => Transformation::random_or_identity(&mut rng)
         };
 
         let final_transform = match self.final_transform {
