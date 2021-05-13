@@ -1,24 +1,20 @@
 //! Generate random fractals.
 
-extern crate a_fractal_a_day;
-
 use a_fractal_a_day::*;
 use fractal::{FractalBuilder,render_wrapper};
 
 use std::fs;
 use std::io::prelude::*;
 
-extern crate rand;
-use self::rand::{Rng, thread_rng};
+use rand::{Rng, thread_rng};
 
-#[macro_use] extern crate log;
-extern crate log_panics;
-extern crate simplelog;
-use simplelog::{ CombinedLogger, SimpleLogger, WriteLogger, LevelFilter, Config};
+use log::{info, warn};
+use log_panics;
+use simplelog::{CombinedLogger, SimpleLogger, WriteLogger, LevelFilter, Config};
 
-extern crate time;
+use time;
 
-extern crate my_twitter;
+#[cfg(feature = "my_twitter")]
 use my_twitter::twitter as twitter;
 
 mod parse_cl;

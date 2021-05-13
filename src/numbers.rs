@@ -1,5 +1,6 @@
-extern crate num;
-use self::num::complex::Complex;
+use num::complex::Complex;
+
+use serde::{Serialize, Deserialize};
 
 use rand::Rng;
 use rand::distributions::Standard;
@@ -174,7 +175,7 @@ impl ComplexFunction {
                         's' => arg.sin(),
                         'c' => arg.cos(),
                         't' => arg.tan(),
-                        _ => panic!(format!("unexpected unary operator: '{}'", c))
+                        _ => panic!("unexpected unary operator: '{}'", c)
                     }
                 }
                 Op::Binary(c) => {
@@ -186,7 +187,7 @@ impl ComplexFunction {
                         '*' => x * y,
                         '/' => x / y,
                         '^' => x.powc(y),
-                        _ => panic!(format!("unexpected binary operator: '{}'", c))
+                        _ => panic!("unexpected binary operator: '{}'", c)
                     }
                 }
                 Op::Variable => z,

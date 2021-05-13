@@ -1,25 +1,26 @@
 mod escape_time_fractal;
 mod iterated_function_system;
 mod lsystem;
+// mod lattice;
 mod quality;
 
 // reexport configuration types
 pub use self::escape_time_fractal::style::Style;
 pub use self::escape_time_fractal::EscapeTypes;
 pub use self::iterated_function_system::variation::Variation;
-pub use self::iterated_function_system::transformation::Transformation;
+pub use self::iterated_function_system::transformation::{Transformation, AffineTransformation};
 pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::fractal_flame::FractalFlame;
 pub use self::lsystem::{Alphabet, Lrules, LSystem};
 
-extern crate rand_pcg;
-use self::rand_pcg::Pcg32;
+use rand_pcg::Pcg32;
 
-extern crate serde_json;
+use serde_json;
 
-use std;
+use log::info;
+
 use std::io;
-use crate::png;
+use crate::png_helper::save_png;
 
 use crate::FractalType;
 use crate::numbers::{Coef, ComplexFunction};
@@ -37,6 +38,7 @@ enum FractalInstance {
     EscapeTime(Box<dyn escape_time_fractal::EscapeTimeFractal>),
     IFS(Box<dyn iterated_function_system::IteratedFunctionSystem>),
     LSys(Box<dyn lsystem::LSystem>),
+    // Lattice(Box<lattice::Lattice>)
 }
 
 pub struct Fractal {
@@ -234,7 +236,7 @@ impl Fractal {
         };
 
         let (x, y) = resolution;
-        png::save_png(filename, x, y, &buffer)?;
+        save_png(filename, x, y, &buffer)?;
 
         Ok(good)
     }
@@ -252,7 +254,7 @@ impl Fractal {
         };
 
         let (x, y) = resolution;
-        png::save_png(filename, x, y, &buffer)?;
+        save_png(filename, x, y, &buffer)?;
 
         Ok(good)
     }
@@ -294,9 +296,6 @@ impl Fractal {
 
         let f1_config = f1.get_serializable();
         let f2_config = f2.get_serializable();
-
-        use self::iterated_function_system::AffineTransformation;
-        use self::iterated_function_system::Transformation;
 
         fn count_trafo(c: &FractalFlame) -> usize {
             c.transformations.iter().filter(
@@ -416,4 +415,15 @@ pub fn estimate_quality_after(rgb: &[RGBA], _resolution: &(u32, u32)) -> bool {
     info!("variance: {:.3}", var);
 
     var > 0.01
+}
+
+#[test]
+fn test_json() {
+    let f = FractalBuilder::new().build(&FractalType::RandomLSystem);
+    println!("Lsystem: {:?}", f);
+    let json = f.json();
+    println!("json: {:?}", json);
+    let g: lsystem::Generic = serde_json::from_str(&json).unwrap();
+    println!("Lsystem: {:?}", g);
+    println!("Lsystem: {:?}", g.description());
 }

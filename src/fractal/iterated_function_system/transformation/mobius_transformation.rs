@@ -1,6 +1,8 @@
 use rand::Rng;
 use rand::distributions::{Normal, Distribution};
 
+use serde::{self, Serialize, Deserialize};
+
 use crate::numbers::{Real, Cplx};
 
 /// A Mobius transformation has 4 complex parameters and maps a complex number z

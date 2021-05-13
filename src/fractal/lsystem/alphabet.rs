@@ -1,5 +1,5 @@
 use crate::fmt;
-
+use serde::{self, Serialize, Deserialize};
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Serialize, Deserialize)]
 pub enum Alphabet {
     F,

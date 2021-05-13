@@ -1,3 +1,5 @@
+use log::info;
+
 use super::{EscapeTimeFractal, Convergence};
 use crate::fractal::{FractalBuilder, RngType};
 use crate::numbers::Cplx;

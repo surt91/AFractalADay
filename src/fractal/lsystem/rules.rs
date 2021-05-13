@@ -12,8 +12,10 @@ use itertools::Itertools;
 use super::Alphabet;
 use crate::fractal::{RngType};
 
+use serde::{self, Serialize, Deserialize};
 use serde::ser::Serializer;
-use serde::{Deserialize, Deserializer};
+use serde::Deserializer;
+use log::error;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Lrules {
@@ -125,7 +127,7 @@ impl Lrules {
 
         for s in &symbolset {
             let num = rng.gen_range(1, 10);
-            let mut tmp = iter::repeat(())
+            let tmp = iter::repeat(())
                              .map(|()| allowed_symbols.choose(&mut rng).unwrap().clone())
                              .take(num)
                              .collect::<Vec<Alphabet>>();

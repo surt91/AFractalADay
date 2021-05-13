@@ -1,13 +1,12 @@
-extern crate clap;
-use self::clap::{App, Arg, ArgGroup};
+use clap::{App, Arg, ArgGroup};
 
 use std::f64::consts::PI;
 use std::fmt;
 use std::fs;
 use std::io::prelude::*;
 
-use FractalType;
-use fractal::{Style, Variation, Symmetry, Lrules};
+use crate::FractalType;
+use crate::fractal::{Style, Variation, Symmetry, Lrules};
 
 #[derive(Debug)]
 pub struct Options {
@@ -276,7 +275,7 @@ pub fn parse_cl() -> Options {
               .arg(Arg::with_name("rpn")
                   .long("rpn")
                   .long("reverse-polish-notation")
-                  .help("give a formula to visualize as a newton fractal in reverse polish 
+                  .help("give a formula to visualize as a newton fractal in reverse polish
                         notation, must be enclosed in quotations")
                   .takes_value(true)
                   .requires("escape_time")

@@ -7,7 +7,7 @@ pub use self::generic::Generic;
 pub use self::alphabet::Alphabet;
 pub use self::rules::Lrules;
 
-extern crate turtle;
+use turtle;
 
 pub trait LSystem : Sync {
     fn description(&self) -> &str;

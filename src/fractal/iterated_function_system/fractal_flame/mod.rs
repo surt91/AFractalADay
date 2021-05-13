@@ -9,9 +9,7 @@ mod fractal_flame;
 
 mod from_json;
 
-extern crate std;
-extern crate num;
-
+use serde::{self, Serialize, Deserialize};
 use rand::{Rng, SeedableRng};
 
 use super::IteratedFunctionSystem;

@@ -1,5 +1,9 @@
 use rand::Rng;
 
+use serde::{self, Serialize, Deserialize};
+
+use log::info;
+
 use super::{EscapeTimeFractal, Convergence, EscapeTypes};
 use crate::fractal::{FractalBuilder, RngType, default_rng};
 use crate::numbers::{Coef, Cplx, ComplexFunction};

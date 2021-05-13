@@ -1,3 +1,5 @@
+use log::{debug, info};
+
 use crate::color::RGB;
 use super::{Transformation, NonlinearTransformation, FractalFlame};
 use crate::fractal::FractalBuilder;

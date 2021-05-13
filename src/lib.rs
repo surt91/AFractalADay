@@ -1,20 +1,13 @@
-#[macro_use] extern crate itertools;
-#[macro_use] extern crate log;
+use log::{info, error};
 
-extern crate serde;
-extern crate serde_json;
-#[macro_use] extern crate serde_derive;
-
-#[macro_use] extern crate lazy_static;
-
-extern crate rand;
+use serde::{Serialize, Deserialize};
 
 pub mod fractal;
 pub mod color;
 pub mod colormap;
 pub mod numbers;
 pub mod histogram;
-pub mod png;
+pub mod png_helper;
 
 use std::process::Command;
 

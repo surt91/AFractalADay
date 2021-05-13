@@ -1,5 +1,7 @@
 use rand::Rng;
 
+use serde::{self, Serialize, Deserialize};
+
 use crate::numbers::{Real,Cplx};
 
 mod affine_transformation;

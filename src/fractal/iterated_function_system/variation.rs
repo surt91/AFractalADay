@@ -3,6 +3,8 @@ use rand::{Rng, thread_rng};
 use rand::distributions::{Distribution, Standard};
 use rand::seq::SliceRandom;
 
+use serde::{self, Serialize, Deserialize};
+
 use crate::numbers::Real;
 use std::f64::consts::PI as PI64;
 
@@ -38,6 +40,11 @@ pub enum Variation {
     Blob(Real, Real, Real),
     Pdj(Real, Real, Real, Real),
     Fan2(Real, Real),
+    // Rings2(Real),
+    // Eyefish,
+    // Bubble,
+    // Cylinder,
+    // Perspective(Real, Real),
 }
 
 impl Variation {

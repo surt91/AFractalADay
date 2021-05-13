@@ -3,8 +3,10 @@ mod julia;
 pub mod mandelbrot;
 pub mod style;
 
-extern crate rayon;
-use self::rayon::prelude::*;
+use serde::{self, Serialize, Deserialize};
+use log::info;
+use rayon::prelude::*;
+use itertools::iproduct;
 
 use crate::numbers::{Real, Cplx};
 use crate::color;

@@ -2,8 +2,7 @@ use std::f32;
 use crate::numbers::Real;
 use crate::color::{RGB, RGBA};
 
-extern crate rayon;
-use self::rayon::prelude::*;
+use rayon::prelude::*;
 
 use std::cmp::Ordering;
 

@@ -10,8 +10,7 @@ use rand::Rng;
 
 use std::f64;
 
-extern crate rayon;
-use self::rayon::prelude::*;
+use rayon::prelude::*;
 
 use crate::numbers::Real;
 use crate::color::{RGB, RGBA};
@@ -21,7 +20,7 @@ use self::quality::probably_good;
 use super::estimate_quality_after;
 use super::quality::downscale;
 
-extern crate num_cpus;
+use num_cpus;
 use std::thread;
 use std::sync::mpsc::channel;
 

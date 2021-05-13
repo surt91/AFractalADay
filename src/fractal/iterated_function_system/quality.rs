@@ -1,5 +1,7 @@
 use crate::numbers::Real;
 
+use log::info;
+
 use rand::rngs::SmallRng;
 use rand::{Rng, FromEntropy};
 

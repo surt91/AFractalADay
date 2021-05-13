@@ -1,6 +1,8 @@
 use rand::Rng;
 use rand::distributions::Standard;
 
+use serde::{self, Serialize, Deserialize};
+
 use crate::fractal::Variation;
 use crate::numbers::Real;
 

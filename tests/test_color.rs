@@ -1,6 +1,4 @@
-#[macro_use] extern crate assert_approx_eq;
-
-extern crate a_fractal_a_day;
+use assert_approx_eq::assert_approx_eq;
 
 use a_fractal_a_day::color::{HSV, RGB};
 

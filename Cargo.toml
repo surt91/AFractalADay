@@ -4,6 +4,7 @@ version = "0.1.1"
 authors = ["Hendrik Schawe <surt91@gmail.com>"]
 description = "This is a Twitter bot, which can tweet pictures of random fractals."
 homepage = "https://twitter.com/AFractalADay"
+edition = "2018"
 
 [[bin]]
 name = "a_fractal_a_day"
@@ -25,9 +26,9 @@ log = "*"
 simplelog = "*"
 log-panics = "*"
 
-serde = "*"
-serde_derive = "*"
-serde_json = "*"
+serde = { version = "1.0", features = ["derive"] }
+serde_derive = "1.0"
+serde_json = "1.0"
 
 lazy_static = "1.2.0"
 

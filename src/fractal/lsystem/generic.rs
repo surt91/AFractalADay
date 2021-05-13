@@ -1,8 +1,11 @@
-extern crate serde_json;
+use serde_json;
+
+use log::info;
 
 use std::f64::consts::PI;
 
 use itertools::Itertools;
+use serde::{self, Serialize, Deserialize};
 
 use crate::fractal::FractalBuilder;
 
@@ -12,8 +15,7 @@ use super::Alphabet;
 use super::Lrules;
 use super::rules::{lrule_serialize,lrule_deserialize};
 
-extern crate rayon;
-use self::rayon::prelude::*;
+use rayon::prelude::*;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Generic {

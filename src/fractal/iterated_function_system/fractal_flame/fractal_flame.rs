@@ -1,3 +1,5 @@
+use log::{debug, info};
+
 use rand::Rng;
 use rand::distributions::Standard;
 

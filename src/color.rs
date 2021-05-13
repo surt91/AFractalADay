@@ -1,3 +1,6 @@
+use serde::{Serialize, Deserialize};
+use log::info;
+
 // TODO: longterm change this to (u8, u8, u8)
 
 /// data structure representing a HSV color value

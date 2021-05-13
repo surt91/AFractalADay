@@ -1,6 +1,6 @@
-extern crate json;
-extern crate egg_mode;
-extern crate tokio;
+use json;
+use egg_mode;
+use tokio;
 
 use std::error::Error;
 use std::fs;

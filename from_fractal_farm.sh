@@ -5,4 +5,4 @@ JSON="json/tmp.json"
 mkdir -p json
 
 curl $SERVER/consume > "$JSON"
-target/release/a_fractal_a_day --json $JSON -t
+target/release/a_fractal_a_day --json $JSON -t || target/release/a_fractal_a_day -t

@@ -1,4 +1,5 @@
-use color::RGB;
+use lazy_static::lazy_static;
+use crate::color::RGB;
 
 lazy_static! {
 pub static ref CIVIDIS: Vec<RGB> = vec![

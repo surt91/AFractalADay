@@ -1,3 +1,4 @@
+use log::{debug, info};
 use rand::Rng;
 
 use crate::color::{HSV, RGB};

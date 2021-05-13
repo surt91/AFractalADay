@@ -1,5 +1,7 @@
 use rand::Rng;
 
+use serde::{self, Serialize, Deserialize};
+
 use crate::numbers::Real;
 use std::ops::Mul;
 
