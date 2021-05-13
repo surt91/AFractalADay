@@ -72,6 +72,8 @@ impl FractalBuilder
             None => rng.gen()
         };
 
+        let strict_bounds = rng.gen();
+
         let number_of_symmetries: usize = match symmetry {
             Symmetry::None => 1,
             Symmetry::Vertical => {
@@ -138,7 +140,7 @@ impl FractalBuilder
             post_transform,
             final_transform,
             final_color,
-            strict_bounds: false,
+            strict_bounds,
             gamma,
             vibrancy,
         }

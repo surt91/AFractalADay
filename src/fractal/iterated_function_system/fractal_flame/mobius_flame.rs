@@ -65,6 +65,8 @@ impl FractalBuilder
             None => rng.gen()
         };
 
+        let strict_bounds = rng.gen();
+
         // handle symmetries
         let symmetry = match self.symmetry {
             Some(s) => s,
@@ -136,7 +138,7 @@ impl FractalBuilder
             post_transform,
             final_transform,
             final_color,
-            strict_bounds: false,
+            strict_bounds,
             gamma,
             vibrancy,
         }
