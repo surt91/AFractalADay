@@ -86,6 +86,8 @@ fn build_fractal(
                                          .rules(&opt.rules)
                                          .angle(&opt.angle)
                                          .rpn(&opt.rpn)
+                                         .zoom(&opt.zoom)
+                                         .center(&opt.center)
                                          .build(&fractal_type);
 
         let (finished, tmp_description, tmp_json)

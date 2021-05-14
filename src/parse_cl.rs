@@ -27,7 +27,9 @@ pub struct Options {
     pub iterations: Option<u32>,
     pub rules: Option<Lrules>,
     pub angle: Option<f64>,
-    pub rpn: Option<String>
+    pub rpn: Option<String>,
+    pub zoom: Option<u64>,
+    pub center: Option<(f64, f64)>,
 }
 
 impl fmt::Display for Options {
@@ -280,6 +282,19 @@ pub fn parse_cl() -> Options {
                   .takes_value(true)
                   .requires("escape_time")
               )
+              .arg(Arg::with_name("zoom")
+                  .long("zoom")
+                  .help("how deep to zoom into the complex plane for Mandelbrot. The visible square will have a side length of 1/zoom")
+                  .takes_value(true)
+                  .requires("mandelbrot")
+              )
+              .arg(Arg::with_name("center")
+                  .long("center")
+                  .help("where to look at on the complex plane for Mandelbrot. Format: `x,y`")
+                  .takes_value(true)
+                  .allow_hyphen_values(true)
+                  .requires("mandelbrot")
+              )
               .arg(Arg::with_name("iterations")
                     .short("N")
                     .long("iterations")
@@ -343,6 +358,19 @@ pub fn parse_cl() -> Options {
 
     let rpn = matches.value_of("rpn")
                      .and_then(|f| Some(f.to_string()))
+                     .or_else(|| None);
+
+    let zoom = matches.value_of("zoom")
+                     .and_then(|s| Some(s.parse::<u64>().expect("zoom needs to be a number")))
+                     .or_else(|| None);
+    let center = matches.value_of("center")
+                     .and_then(|s| {
+                         let c: Vec<&str> = s.split(",").collect();
+                         if c.len() != 2 {panic!("center needs the format `x,y`")}
+                         let x = c[0].parse::<f64>().expect("center needs the format `x,y`");
+                         let y = c[1].parse::<f64>().expect("center needs the format `x,y`");
+                         Some((x, y))
+                     })
                      .or_else(|| None);
 
     let iterations = matches.value_of("iterations")
@@ -448,5 +476,7 @@ pub fn parse_cl() -> Options {
         rules,
         angle,
         rpn,
+        zoom,
+        center,
     }
 }

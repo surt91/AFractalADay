@@ -81,7 +81,7 @@ pub trait IteratedFunctionSystem : Sync {
         let b = if self.needs_strict_bounds() {
             bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000)
         } else {
-            bounds_zoom(values.iter().map(|&(ref z, _)| z), x as f32/y as f32)
+            bounds_zoom(values.iter().map(|&(ref z, _)| z), x as Real/y as Real)
         };
 
         // use N-1 additional threads (where N is the number of logical CPU)

@@ -67,6 +67,10 @@ pub struct FractalBuilder {
     f: Option<ComplexFunction>,
     style: Option<Style>,
 
+    // for mandelbrot
+    zoom: Option<u64>,
+    center: Option<(f64, f64)>,
+
     // for L systems
     iterations: Option<u32>,
     start: Option<Vec<Alphabet>>,
@@ -88,6 +92,9 @@ impl FractalBuilder {
             a: None,
             f: None,
             style: None,
+
+            zoom: None,
+            center: None,
 
             iterations: None,
             start: None,
@@ -144,6 +151,16 @@ impl FractalBuilder {
 
     pub fn rpn(mut self, rpn: &Option<String>) -> FractalBuilder {
         self.f = rpn.clone().and_then(|x| Some(ComplexFunction::rpn_from_string(&x)));
+        self
+    }
+
+    pub fn zoom(mut self, zoom: &Option<u64>) -> FractalBuilder {
+        self.zoom = zoom.clone();
+        self
+    }
+
+    pub fn center(mut self, center: &Option<(f64, f64)>) -> FractalBuilder {
+        self.center = center.clone();
         self
     }
 

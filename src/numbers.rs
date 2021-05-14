@@ -12,7 +12,7 @@ use std::num::ParseFloatError;
 use itertools::Itertools;
 
 // adjust precision here
-pub type Real = f32;
+pub type Real = f64;
 pub type Cplx = Complex<Real>;
 
 fn round_cplx(x: Real, y: Real) -> Cplx {

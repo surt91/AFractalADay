@@ -5,7 +5,6 @@ use serde::{self, Serialize, Deserialize};
 use log::info;
 
 use std::f64::consts::PI;
-use std::cmp::max;
 
 use super::{EscapeTimeFractal, Convergence, EscapeTypes};
 use crate::numbers::{Real, Cplx};
@@ -36,31 +35,40 @@ impl FractalBuilder {
     pub fn mandelbrot(self) -> MandelbrotFractal {
         let mut rng = self.seed_rng();
 
-        // guess a random point on the complex plane which could be interesting
-        let extra_r = 1. + rng.gen_range(0.0, 0.1);
-        let shift = if rng.gen::<f32>() < 0.5 {
-            // either near the cardiod
-            let phi = rng.gen_range(0., 2.*PI as Real);
-            let r = (1. - phi.cos()) / 2.;
-            let r = r * extra_r;  // go a bit outside
-            let x = r * phi.cos() + 0.25;
-            let y = r * phi.sin();
-            Cplx::new(x, y)
+        let zoom = if let Some(z) = self.zoom {
+            z
         } else {
-            // or near the circle
-            let phi = rng.gen_range(0., 2.*PI as Real);
-            let r = 0.25;
-            let r = r * extra_r;  // go a bit outside
-            let x = r * phi.cos() - 1.;
-            let y = r * phi.sin();
-            Cplx::new(x, y)
+            2u64.pow(rng.gen_range(0, 14))
         };
 
-        let zoom = 2u64.pow(rng.gen_range(0, 14));
+        // guess a random point on the complex plane which could be interesting
+        let extra_r = 1. + rng.gen_range(0.0, 0.1);
+        let shift = if let Some(c) = self.center {
+            Cplx::new(c.0 as Real, c.1 as Real)
+        } else {
+            if rng.gen::<f32>() < 0.5 {
+                // either near the cardiod
+                let phi = rng.gen_range(0., 2.*PI as Real);
+                let r = (1. - phi.cos()) / 2.;
+                let r = r * extra_r;  // go a bit outside
+                let x = r * phi.cos() + 0.25;
+                let y = r * phi.sin();
+                Cplx::new(x, y)
+            } else {
+                // or near the circle
+                let phi = rng.gen_range(0., 2.*PI as Real);
+                let r = 0.25;
+                let r = r * extra_r;  // go a bit outside
+                let x = r * phi.cos() - 1.;
+                let y = r * phi.sin();
+                Cplx::new(x, y)
+            }
+        };
+
 
         let colormap = Colormap::random(&mut rng);
 
-        let description = format!("Mandelbrot Fractal at ~({:.2}), zoom {}x", shift, zoom);
+        let description = format!("Mandelbrot Fractal at ~({:.3}), zoom {}x", shift, zoom);
 
         info!("Will render {}", description);
         // FIXME: For Mandelbrot fractals the colors need to be normalized somehow
@@ -68,9 +76,9 @@ impl FractalBuilder {
         MandelbrotFractal {
             description,
             rng,
-            max_count: max(1000, 4*zoom),
+            max_count: 1000,
             shift,
-            zoom: zoom as f32,
+            zoom: zoom as Real,
             colormap,
         }
     }

@@ -1,4 +1,3 @@
-use std::f32;
 use crate::numbers::Real;
 use crate::color::{RGB, RGBA};
 
@@ -10,7 +9,7 @@ use std::cmp::Ordering;
 #[derive(Clone)]
 pub struct ColoredHistogram {
     resolution: (u32, u32),
-    bounds: (f32, f32, f32, f32),
+    bounds: (Real, Real, Real, Real),
     bins: Vec<(f64, f64, f64, u64)>,
     gamma: f64,
     vibrancy: f64,
@@ -25,7 +24,7 @@ impl ColoredHistogram {
     /// * `bounds` - minimum and maximum values, i.e., range of the histogram
     pub fn new(
         resolution: (u32, u32),
-        bounds: (f32, f32, f32, f32),
+        bounds: (Real, Real, Real, Real),
         vibrancy: f64,
         gamma: f64
     )
@@ -100,7 +99,7 @@ impl ColoredHistogram {
     {
         let (min_x, max_x, min_y, max_y) = self.bounds;
         let (x_res, y_res) = self.resolution;
-        let aspect = x_res as f32 / y_res as f32;
+        let aspect = x_res as Real / y_res as Real;
 
         // keep aspect ratio and center the fractal
         let x_w = max_x - min_x;
@@ -129,8 +128,8 @@ impl ColoredHistogram {
                 continue
             }
 
-            let x = ((z[0] - min_x + x_offset) / x_scale * (x_res-1) as f32) as usize;
-            let y = ((z[1] - min_y + y_offset) / y_scale * (y_res-1) as f32) as usize;
+            let x = ((z[0] - min_x + x_offset) / x_scale * (x_res-1) as Real) as usize;
+            let y = ((z[1] - min_y + y_offset) / y_scale * (y_res-1) as Real) as usize;
 
             let idx = y*x_res as usize + x;
             let RGB(r, g, b) = c;
@@ -147,22 +146,22 @@ impl ColoredHistogram {
 /// # Arguments
 ///
 /// * `vals` - Iterator yielding coordinates
-pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
+pub fn bounds<'a, I>(vals: I) -> (Real, Real, Real, Real)
     where I: Iterator<Item=&'a [Real; 2]>
 {
-    let mut bounds = vals.fold((f32::INFINITY, -f32::INFINITY, f32::INFINITY, -f32::INFINITY),
+    let mut bounds = vals.fold((Real::INFINITY, -Real::INFINITY, Real::INFINITY, -Real::INFINITY),
         |mut extrema, z| {
-            if extrema.0 > z[0] as f32 {
-                extrema.0 = z[0] as f32
+            if extrema.0 > z[0] as Real {
+                extrema.0 = z[0] as Real
             }
-            if extrema.1 < z[0] as f32 {
-                extrema.1 = z[0] as f32
+            if extrema.1 < z[0] as Real {
+                extrema.1 = z[0] as Real
             }
-            if extrema.2 > z[1] as f32 {
-                extrema.2 = z[1] as f32
+            if extrema.2 > z[1] as Real {
+                extrema.2 = z[1] as Real
             }
-            if extrema.3 < z[1] as f32 {
-                extrema.3 = z[1] as f32
+            if extrema.3 < z[1] as Real {
+                extrema.3 = z[1] as Real
             }
             extrema
         }
@@ -182,7 +181,7 @@ pub fn bounds<'a, I>(vals: I) -> (f32, f32, f32, f32)
 ///
 /// * `vals` - Iterator yielding coordinates
 /// * `outliers` - Number of outliers to discard in each direction
-pub fn bounds_without_outliers<'a, I>(vals: I, outliers: usize) -> (f32, f32, f32, f32)
+pub fn bounds_without_outliers<'a, I>(vals: I, outliers: usize) -> (Real, Real, Real, Real)
     where I: Iterator<Item=&'a [Real; 2]>
 {
     let mut rs: Vec<&[Real;2]> = vals.collect();
@@ -221,12 +220,12 @@ pub fn bounds_without_outliers<'a, I>(vals: I, outliers: usize) -> (f32, f32, f3
 ///
 /// * `vals` - Iterator yielding coordinates
 /// * `aspect` - width/height
-pub fn bounds_zoom<'a, I>(vals: I, aspect: f32) -> (f32, f32, f32, f32)
+pub fn bounds_zoom<'a, I>(vals: I, aspect: Real) -> (Real, Real, Real, Real)
     where I: Iterator<Item=&'a [Real; 2]>
 {
     let mut rs: Vec<&[Real;2]> = vals.collect();
     let n = rs.len();
-    let n5 = (n as f32 * 0.05) as usize;
+    let n5 = (n as Real * 0.05) as usize;
 
     // FIXME ignore NaN... this might lead to unexpected results
     rs.sort_by(|r1, r2| r1[0].partial_cmp(&r2[0]).unwrap_or(Ordering::Equal));
@@ -276,13 +275,13 @@ pub fn bounds_zoom<'a, I>(vals: I, aspect: f32) -> (f32, f32, f32, f32)
 /// * `vals` - Iterator yielding coordinates
 /// * `resolution` - number of bins in x and y direction
 /// * `bounds` - minimum and maximum values, i.e., range of the histogram
-pub fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32)) -> Vec<usize>
+pub fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (Real, Real, Real, Real)) -> Vec<usize>
     where I: Iterator<Item=[Real; 2]>
 {
     let (min_x, max_x, min_y, max_y) = bounds;
     let x_res = resolution.0;
     let y_res = resolution.1;
-    let aspect = x_res as f32 / y_res as f32;
+    let aspect = x_res as Real / y_res as Real;
 
     // keep aspect ratio and center the fractal
     let x_w = max_x - min_x;
@@ -297,8 +296,8 @@ pub fn histogram<I>(vals: I, resolution: (u32, u32), bounds: (f32, f32, f32, f32
             continue
         }
 
-        let x = ((z[0] - min_x + x_offset) / x_w * (x_res-1) as f32) as usize;
-        let y = ((z[1] - min_y + y_offset) / (x_w / aspect) * (y_res-1) as f32) as usize;
+        let x = ((z[0] - min_x + x_offset) / x_w * (x_res-1) as Real) as usize;
+        let y = ((z[1] - min_y + y_offset) / (x_w / aspect) * (y_res-1) as Real) as usize;
 
         if y*x_res as usize + x < out.len() {
             out[y*x_res as usize + x] += 1;

@@ -16,7 +16,7 @@ use rand::{Rng, FromEntropy};
 ///
 /// Uses the techniques from <http://sprott.physics.wisc.edu/pubs/paper210.pdf>
 /// and some ad hoc heuristics.
-pub fn probably_good(vals: &[[Real; 2]], bounds: (f32, f32, f32, f32)) -> bool {
+pub fn probably_good(vals: &[[Real; 2]], bounds: (Real, Real, Real, Real)) -> bool {
     let width = bounds.1 - bounds.0;
     let height = bounds.3 - bounds.2;
 
