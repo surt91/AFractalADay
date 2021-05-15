@@ -63,10 +63,11 @@ fn build_fractal(
     let mut fractal_type: FractalType = opt.fractal_type.clone();
 
     if let FractalType::Random = fractal_type {
-        fractal_type = match seed % 3 {
+        fractal_type = match seed % 4 {
             0 => FractalType::Newton,
             1 => FractalType::FractalFlame,
             2 => FractalType::MobiusFlame,
+            3 => FractalType::QuadraticMap,
             _ => unreachable!()
         }
     };
