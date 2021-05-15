@@ -88,6 +88,7 @@ fn build_fractal(
                                          .rpn(&opt.rpn)
                                          .zoom(&opt.zoom)
                                          .center(&opt.center)
+                                         .dimensions(&Some(dim))
                                          .build(&fractal_type);
 
         let (finished, tmp_description, tmp_json)

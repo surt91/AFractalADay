@@ -212,20 +212,35 @@ pub fn parse_cl() -> Options {
                     .help("render a random lsystem")
                     .group("lsystem")
               )
+              .arg(Arg::with_name("ising")
+                    .long("ising")
+                    .help("render a critical Ising system")
+                    .group("lattice")
+              )
               .group(ArgGroup::with_name("iterated_function_system")
                   .conflicts_with("escape_time")
                   .conflicts_with("lsystem")
+                  .conflicts_with("lattice")
               )
               .group(ArgGroup::with_name("escape_time")
                   .conflicts_with("iterated_function_system")
                   .conflicts_with("lsystem")
+                  .conflicts_with("lattice")
               )
               .group(ArgGroup::with_name("lsystem")
                   .conflicts_with("iterated_function_system")
                   .conflicts_with("escape_time")
+                  .conflicts_with("lattice")
+              )
+              .group(ArgGroup::with_name("lattice")
+                  .conflicts_with("iterated_function_system")
+                  .conflicts_with("escape_time")
+                  .conflicts_with("lsystem")
               )
               .group(ArgGroup::with_name("symmetry")
                   .conflicts_with("escape_time")
+                  .conflicts_with("lsystem")
+                  .conflicts_with("lattice")
               )
               .arg(Arg::with_name("mirror")
                     .long("mirror")
@@ -434,6 +449,8 @@ pub fn parse_cl() -> Options {
         FractalType::LDragon
     } else if matches.is_present("random_lsystem") {
         FractalType::RandomLSystem
+    } else if matches.is_present("ising") {
+        FractalType::Ising
     } else {
         FractalType::Random
     };

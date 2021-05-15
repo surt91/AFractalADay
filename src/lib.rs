@@ -40,6 +40,7 @@ pub enum FractalType {
     Tritile,
     LDragon,
     RandomLSystem,
+    Ising,
 }
 
 impl fmt::Display for FractalType {

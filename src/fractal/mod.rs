@@ -1,7 +1,7 @@
 mod escape_time_fractal;
 mod iterated_function_system;
 mod lsystem;
-// mod lattice;
+mod lattice;
 mod quality;
 
 // reexport configuration types
@@ -12,6 +12,7 @@ pub use self::iterated_function_system::transformation::{Transformation, AffineT
 pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::fractal_flame::FractalFlame;
 pub use self::lsystem::{Alphabet, Lrules, LSystem};
+pub use self::lattice::{LatticeFractal, Ising};
 
 use rand_pcg::Pcg32;
 
@@ -38,7 +39,7 @@ enum FractalInstance {
     EscapeTime(Box<dyn escape_time_fractal::EscapeTimeFractal>),
     IFS(Box<dyn iterated_function_system::IteratedFunctionSystem>),
     LSys(Box<dyn lsystem::LSystem>),
-    // Lattice(Box<lattice::Lattice>)
+    Lattice(Box<dyn lattice::LatticeFractal>),
 }
 
 pub struct Fractal {
@@ -76,6 +77,9 @@ pub struct FractalBuilder {
     start: Option<Vec<Alphabet>>,
     rules: Option<Lrules>,
     angle: Option<f64>,
+
+    // for lattices
+    dimensions: Option<(u32, u32)>,
 }
 
 impl FractalBuilder {
@@ -99,7 +103,9 @@ impl FractalBuilder {
             iterations: None,
             start: None,
             rules: None,
-            angle:None,
+            angle: None,
+
+            dimensions: None,
         }
     }
     pub fn seed_rng(&self) -> RngType {
@@ -184,6 +190,11 @@ impl FractalBuilder {
         self
     }
 
+    pub fn dimensions(mut self, dimensions: &Option<(u32, u32)>) -> FractalBuilder {
+        self.dimensions = dimensions.clone();
+        self
+    }
+
     pub fn build(self, fractal_type: &FractalType) -> Fractal {
 
         let instance = match *fractal_type {
@@ -208,6 +219,7 @@ impl FractalBuilder {
             FractalType::Tritile => FractalInstance::LSys(Box::new(self.tritile())),
             FractalType::LDragon => FractalInstance::LSys(Box::new(self.ldragon())),
             FractalType::RandomLSystem => FractalInstance::LSys(Box::new(self.generic())),
+            FractalType::Ising => FractalInstance::Lattice(Box::new(self.ising())),
             FractalType::Random => unreachable!(),
             // FIXME This has to be replaced by a better approach
             FractalType::LoadJson(ref json) => {
@@ -250,6 +262,7 @@ impl Fractal {
                                                             supersampling
                                                         ),
             FractalInstance::LSys(ref mut f) => f.render(resolution, None, None),
+            FractalInstance::Lattice(ref mut f) => f.render(resolution, None, None),
         };
 
         let (x, y) = resolution;
@@ -268,6 +281,7 @@ impl Fractal {
                                                             false
                                                         ),
             FractalInstance::LSys(ref mut f) => f.render(resolution, None, None),
+            FractalInstance::Lattice(ref mut f) => f.render(resolution, None, None),
         };
 
         let (x, y) = resolution;
@@ -280,15 +294,25 @@ impl Fractal {
         match self.fractal {
             FractalInstance::EscapeTime(ref f) => f.description(),
             FractalInstance::IFS(ref f) => f.description(),
-            FractalInstance::LSys(ref f) => f.description()
+            FractalInstance::LSys(ref f) => f.description(),
+            FractalInstance::Lattice(ref f) => f.description(),
         }
     }
 
     pub fn json(&self) -> String {
         match self.fractal {
-            FractalInstance::EscapeTime(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("Escape: {:#?}", &f.get_serializable()))},
-            FractalInstance::IFS(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("IFS: {:#?}", &f.get_serializable()))},
-            FractalInstance::LSys(ref f) => {serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))},
+            FractalInstance::EscapeTime(ref f) => {
+                serde_json::to_string(&f.get_serializable()).expect(&format!("Escape: {:#?}", &f.get_serializable()))
+            },
+            FractalInstance::IFS(ref f) => {
+                serde_json::to_string(&f.get_serializable()).expect(&format!("IFS: {:#?}", &f.get_serializable()))
+            },
+            FractalInstance::LSys(ref f) => {
+                serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))
+            },
+            FractalInstance::Lattice(ref f) => {
+                serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))
+            },
         }
     }
 
