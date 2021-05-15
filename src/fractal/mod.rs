@@ -11,6 +11,7 @@ pub use self::iterated_function_system::variation::Variation;
 pub use self::iterated_function_system::transformation::{Transformation, AffineTransformation};
 pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::fractal_flame::FractalFlame;
+pub use self::iterated_function_system::IterationFractalType;
 pub use self::lsystem::{Alphabet, Lrules, LSystem};
 pub use self::lattice::{LatticeFractal, Ising};
 
@@ -220,6 +221,7 @@ impl FractalBuilder {
             FractalType::LDragon => FractalInstance::LSys(Box::new(self.ldragon())),
             FractalType::RandomLSystem => FractalInstance::LSys(Box::new(self.generic())),
             FractalType::Ising => FractalInstance::Lattice(Box::new(self.ising())),
+            FractalType::QuadraticMap => FractalInstance::IFS(Box::new(self.quadratic_map())),
             FractalType::Random => unreachable!(),
             // FIXME This has to be replaced by a better approach
             FractalType::LoadJson(ref json) => {
@@ -318,7 +320,7 @@ impl Fractal {
 
     pub fn estimate_quality_before(&mut self) -> bool {
         match self.fractal_type {
-            FractalType::FractalFlame => {
+            FractalType::FractalFlame | FractalType::QuadraticMap => {
                 match self.fractal {
                     FractalInstance::IFS(ref mut f) => f.estimate_quality_before(),
                     _ => unreachable!(),
@@ -335,8 +337,14 @@ impl Fractal {
             _ => return Err(()),
         };
 
-        let f1_config = f1.get_serializable();
-        let f2_config = f2.get_serializable();
+        let f1_config = match f1.get_serializable() {
+            IterationFractalType::IFS(x) => x,
+            _ => return Err(())
+        };
+        let f2_config = match f2.get_serializable() {
+            IterationFractalType::IFS(x) => x,
+            _ => return Err(())
+        };
 
         fn count_trafo(c: &FractalFlame) -> usize {
             c.transformations.iter().filter(

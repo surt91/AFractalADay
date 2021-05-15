@@ -2,6 +2,7 @@ pub mod fractal_flame;
 mod quality;
 pub mod variation;
 pub mod symmetry;
+pub mod quadratic_map;
 
 pub mod transformation;
 pub use self::transformation::{Transformation,AffineTransformation,MobiusTransformation,NonlinearTransformation};
@@ -24,9 +25,19 @@ use num_cpus;
 use std::thread;
 use std::sync::mpsc::channel;
 
-use self::fractal_flame::FractalFlame;
+use serde::{self, Serialize, Deserialize};
+
+use fractal_flame::FractalFlame;
+use quadratic_map::QuadraticMap;
 
 use super::{RngType, default_rng};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum IterationFractalType {
+    IFS(FractalFlame),
+    QuadraticMap(QuadraticMap),
+    None,
+}
 
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {
@@ -35,8 +46,8 @@ pub trait IteratedFunctionSystem : Sync {
     fn gamma(&self) -> f64;
     fn vibrancy(&self) -> f64;
     fn get_rng(&mut self) -> &mut RngType;
-    fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType>;
-    fn get_serializable(&self) -> FractalFlame;
+    fn get_sampler(&mut self) -> Box<dyn Samplable + Send>;
+    fn get_serializable(&self) -> IterationFractalType;
 
     fn estimate_quality_before(&mut self) -> bool {
         let sampler = self.get_sampler();
@@ -94,7 +105,8 @@ pub trait IteratedFunctionSystem : Sync {
         let (tx, rx) = channel();
         for _ in 0..cpus {
             let tx = tx.clone();
-            let sampler = self.get_sampler();
+            let mut sampler = self.get_sampler();
+            sampler.perturb();
             let mut hist = hist.clone();
             thread::spawn(move || {
                 hist.feed(sampler.take((iterations_per_task) * (x * y) as usize));
@@ -160,7 +172,7 @@ pub struct IteratedFunctionSystemSampler<T>
     rgb: RGB
 }
 
-impl <T> Iterator for IteratedFunctionSystemSampler<T>
+impl<T> Iterator for IteratedFunctionSystemSampler<T>
     where T: Rng
 {
     type Item = ([Real; 2], RGB);
@@ -222,3 +234,21 @@ impl <T> Iterator for IteratedFunctionSystemSampler<T>
         Some((p, rgb))
     }
 }
+
+
+pub trait Perturbable {
+    fn perturb(&mut self);
+}
+
+pub trait Samplable : Iterator<Item=([Real; 2], RGB)> + Perturbable {}
+
+impl<T> Perturbable for IteratedFunctionSystemSampler<T>
+    where T: Rng
+{
+    fn perturb(&mut self) {
+        self.p[0] += self.rng.gen_range(-0.01, 0.01)
+    }
+}
+
+impl<T> Samplable for IteratedFunctionSystemSampler<T>
+    where T: Rng {}

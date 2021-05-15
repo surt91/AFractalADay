@@ -18,7 +18,8 @@ use crate::fractal::Symmetry;
 use super::{Transformation,NonlinearTransformation,AffineTransformation,MobiusTransformation};
 use crate::color::RGB;
 
-use super::{RngType, default_rng};
+use super::{Samplable};
+use super::{IterationFractalType, RngType, default_rng};
 
 
 fn default_bounds() -> bool {
@@ -93,13 +94,13 @@ impl IteratedFunctionSystem for FractalFlame
         &mut self.rng
     }
 
-    fn get_sampler(&mut self) -> IteratedFunctionSystemSampler<RngType> {
+    fn get_sampler(&mut self) -> Box<dyn Samplable + Send> {
         let rng = RngType::seed_from_u64(self.rng.gen::<u64>());
 
         let p = [0.05, 0.05];
         let rgb = RGB(0., 0., 0.);
 
-        IteratedFunctionSystemSampler {
+        Box::new(IteratedFunctionSystemSampler {
             rng,
             number_of_functions: self.probabilities.len(),
             probabilities: self.probabilities.clone(),
@@ -111,10 +112,10 @@ impl IteratedFunctionSystem for FractalFlame
             final_color: self.final_color.clone(),
             p,
             rgb
-        }
+        })
     }
 
-    fn get_serializable(&self) -> FractalFlame {
-        self.clone()
+    fn get_serializable(&self) -> IterationFractalType {
+        IterationFractalType::IFS(self.clone())
     }
 }

@@ -41,6 +41,7 @@ pub enum FractalType {
     LDragon,
     RandomLSystem,
     Ising,
+    QuadraticMap,
 }
 
 impl fmt::Display for FractalType {
