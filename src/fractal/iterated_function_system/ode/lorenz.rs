@@ -110,6 +110,7 @@ impl FractalBuilder
             normal,
             timestep: 0.0001,
             total_time: 100.,
+            replica: 1,
             strict_bounds,
             gamma,
             vibrancy,

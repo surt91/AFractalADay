@@ -44,6 +44,11 @@ pub enum SuggestedIterations {
     PerPixel(usize),
 }
 
+pub enum SuggestedParallelism {
+    Limited(usize),
+    Unlimited,
+}
+
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {
     fn description(&self) -> &str;
@@ -60,6 +65,10 @@ pub trait IteratedFunctionSystem : Sync {
 
     fn suggested_iterations_draft(&self) -> SuggestedIterations {
         SuggestedIterations::PerPixel(100)
+    }
+
+    fn suggested_parallelism(&self) -> SuggestedParallelism {
+        SuggestedParallelism::Unlimited
     }
 
     fn estimate_quality_before(&mut self) -> bool {
@@ -82,6 +91,7 @@ pub trait IteratedFunctionSystem : Sync {
 
     fn render(&mut self, resolution: (u32, u32),
                          samples: SuggestedIterations,
+                         parallelism: SuggestedParallelism,
                          supersampling: bool
         )
         -> (Vec<u8>, bool)
@@ -96,19 +106,22 @@ pub trait IteratedFunctionSystem : Sync {
 
         // use N-1 additional threads (where N is the number of logical CPU)
         // this way one thread is idle and can calculate the remainder and merge the results
-        let cpus = num_cpus::get();
 
-        let (total_samples, parallelism, warmup) = match samples {
+
+        let (total_samples, warmup) = match samples {
             SuggestedIterations::Absolute(samples) => (
                 samples,
-                1,
-                samples
+                (0.1 * samples as f64) as usize,
             ),
             SuggestedIterations::PerPixel(samples) => (
                 samples * (x * y) as usize,
-                cpus,
-                (0.01 * samples as f64 * (x * y) as f64) as usize
+                (0.01 * samples as f64 * (x * y) as f64) as usize,
             ),
+        };
+
+        let parallelism = match parallelism {
+            SuggestedParallelism::Unlimited => num_cpus::get(),
+            SuggestedParallelism::Limited(n) => n,
         };
 
         let sampler = self.get_sampler();
