@@ -21,6 +21,7 @@ rayon = "*"
 num_cpus = "*"
 time = "0.1"
 clap = "*"
+quaternion = "0.4"
 
 log = "*"
 simplelog = "*"

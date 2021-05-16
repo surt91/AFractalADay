@@ -259,11 +259,7 @@ impl Fractal {
     pub fn render(&mut self, resolution: (u32, u32), filename: &str, supersampling: bool) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
-            FractalInstance::IFS(ref mut f) => f.render(
-                                                            resolution,
-                                                            1000,
-                                                            supersampling
-                                                        ),
+            FractalInstance::IFS(ref mut f) => f.render(resolution, f.suggested_iterations(), supersampling),
             FractalInstance::LSys(ref mut f) => f.render(resolution, None, None),
             FractalInstance::Lattice(ref mut f) => f.render(resolution, None, None),
         };
@@ -278,11 +274,7 @@ impl Fractal {
     pub fn render_draft(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
-            FractalInstance::IFS(ref mut f) => f.render(
-                                                            resolution,
-                                                            100,
-                                                            false
-                                                        ),
+            FractalInstance::IFS(ref mut f) => f.render(resolution, 100, false),
             FractalInstance::LSys(ref mut f) => f.render(resolution, None, None),
             FractalInstance::Lattice(ref mut f) => f.render(resolution, None, None),
         };

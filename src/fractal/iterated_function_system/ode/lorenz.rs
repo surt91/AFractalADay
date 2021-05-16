@@ -4,11 +4,13 @@ use rand::Rng;
 
 use crate::color::HSV;
 use crate::fractal::FractalBuilder;
-use super::{OdeFractal, OdeSystem, OdeTypes};
+use super::{OdeFractal, OdeSystem, OdeTypes, random_normal};
 
 use crate::numbers::Real;
 
 use serde::{self, Serialize, Deserialize};
+
+use quaternion;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LorenzOde {
@@ -33,7 +35,7 @@ impl LorenzOde {
             r: r.unwrap_or(28.),
             b: b.unwrap_or(8./3.),
 
-            tau: 0.01,
+            tau: 0.00001,
         }
     }
 }
@@ -42,18 +44,23 @@ impl OdeSystem for LorenzOde {
     fn get_dimension(&self) -> usize {
         3
     }
+
     fn get_tau(&self) -> Real {
         self.tau
     }
+
     fn set_tau(&mut self, tau: Real) {
         self.tau = tau;
     }
+
     fn get_state(&self) -> &Vec<Real>{
         &self.state
     }
+
     fn set_state(&mut self, state: Vec<Real>) {
         self.state = state;
     }
+
     fn derivative(&self, state: &[Real]) -> Vec<Real> {
         if let [x, y, z] = state {
             let mut out = vec![0.; 3];
@@ -67,6 +74,16 @@ impl OdeSystem for LorenzOde {
             unreachable!()
         }
     }
+
+    fn project(&self, n: [Real; 3]) -> [Real; 2]
+    {
+        let point = [self.state[0], self.state[1], self.state[2]];
+
+        let quat = quaternion::rotation_from_to([0., 0., 1.], n);
+        let p = quaternion::rotate_vector(quat, point);
+
+        [p[0], p[1]]
+    }
 }
 
 impl FractalBuilder
@@ -78,6 +95,8 @@ impl FractalBuilder
         let ode = OdeTypes::Lorenz(ode);
 
         let color = HSV(rng.gen(), 1., 1.).to_rgb();
+
+        let normal = random_normal(&mut rng);
 
         let gamma = match self.gamma {
             Some(s) => s,
@@ -100,6 +119,7 @@ impl FractalBuilder
             description,
             ode,
             color,
+            normal,
             strict_bounds,
             gamma,
             vibrancy,

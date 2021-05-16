@@ -1,6 +1,6 @@
 use std::fmt;
-use crate::numbers::Real;
 
+use crate::numbers::Real;
 
 pub trait OdeSystem : Sync + Send + fmt::Debug {
     fn get_dimension(&self) -> usize;
@@ -9,10 +9,11 @@ pub trait OdeSystem : Sync + Send + fmt::Debug {
     fn get_state(&self) -> &Vec<Real>;
     fn set_state(&mut self, state: Vec<Real>);
     fn derivative(&self, state: &[Real]) -> Vec<Real>;
+    fn project(&self, normal: [Real; 3]) -> [Real; 2];
 
     fn update(&mut self) {
-        let tau = self.adaptive_tau();
-        let next = self.rk4_step(self.get_state(), tau);
+        // let tau = self.adaptive_tau();
+        let next = self.rk4_step(self.get_state(), self.get_tau());
         self.set_state(next)
     }
 

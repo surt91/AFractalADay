@@ -9,6 +9,7 @@ pub struct OdeFractalSampler<T>
     pub rng: T,
     pub ode: Box<dyn OdeSystem>,
     pub color: RGB,
+    pub normal: [Real; 3]
 }
 
 impl<T> Iterator for OdeFractalSampler<T>
@@ -19,10 +20,8 @@ impl<T> Iterator for OdeFractalSampler<T>
     fn next(&mut self) -> Option<([Real; 2], RGB)> {
 
         self.ode.update();
-        let state = self.ode.get_state();
 
-        // TODO: turn according to some axis
-        let p = [state[0], state[1]];
+        let p = self.ode.project(self.normal);
 
         Some((p, self.color.clone()))
     }

@@ -51,6 +51,10 @@ pub trait IteratedFunctionSystem : Sync {
     fn get_sampler(&mut self) -> Box<dyn Samplable + Send>;
     fn get_serializable(&self) -> IterationFractalType;
 
+    fn suggested_iterations(&self) -> usize {
+        1000
+    }
+
     fn estimate_quality_before(&mut self) -> bool {
         let sampler = self.get_sampler();
 
