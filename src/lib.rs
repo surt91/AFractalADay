@@ -42,6 +42,7 @@ pub enum FractalType {
     RandomLSystem,
     Ising,
     QuadraticMap,
+    Lorenz,
 }
 
 impl fmt::Display for FractalType {

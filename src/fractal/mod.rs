@@ -222,6 +222,7 @@ impl FractalBuilder {
             FractalType::RandomLSystem => FractalInstance::LSys(Box::new(self.generic())),
             FractalType::Ising => FractalInstance::Lattice(Box::new(self.ising())),
             FractalType::QuadraticMap => FractalInstance::IFS(Box::new(self.quadratic_map())),
+            FractalType::Lorenz => FractalInstance::IFS(Box::new(self.lorenz())),
             FractalType::Random => unreachable!(),
             // FIXME This has to be replaced by a better approach
             FractalType::LoadJson(ref json) => {

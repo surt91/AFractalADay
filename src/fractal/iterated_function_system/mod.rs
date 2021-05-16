@@ -3,6 +3,7 @@ mod quality;
 pub mod variation;
 pub mod symmetry;
 pub mod quadratic_map;
+pub mod ode;
 
 pub mod transformation;
 pub use self::transformation::{Transformation,AffineTransformation,MobiusTransformation,NonlinearTransformation};
@@ -16,7 +17,7 @@ use rayon::prelude::*;
 use crate::numbers::Real;
 use crate::color::{RGB, RGBA};
 use crate::histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
-use self::quality::probably_good;
+use self::{ode::OdeFractal, quality::probably_good};
 
 use super::estimate_quality_after;
 use super::quality::downscale;
@@ -36,6 +37,7 @@ use super::{RngType, default_rng};
 pub enum IterationFractalType {
     IFS(FractalFlame),
     QuadraticMap(QuadraticMap),
+    OdeFractal(OdeFractal),
     None,
 }
 
