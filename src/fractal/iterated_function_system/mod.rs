@@ -111,7 +111,7 @@ pub trait IteratedFunctionSystem : Sync {
         let (total_samples, warmup) = match samples {
             SuggestedIterations::Absolute(samples) => (
                 samples,
-                (0.1 * samples as f64) as usize,
+                std::cmp::max(1000, (0.1 * samples as f64) as usize),
             ),
             SuggestedIterations::PerPixel(samples) => (
                 samples * (x * y) as usize,
@@ -162,7 +162,7 @@ pub trait IteratedFunctionSystem : Sync {
         }
 
         let hist = if supersampling {
-
+            // hist.gaussian_blur().downscale()
             hist.downscale()
         } else {
             hist

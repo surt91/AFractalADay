@@ -1,6 +1,7 @@
 mod ode_system;
 mod sampler;
 mod lorenz;
+mod double_pendulum;
 
 use serde::{self, Serialize, Deserialize};
 use rand::{Rng, SeedableRng};
@@ -10,6 +11,7 @@ use super::{IteratedFunctionSystem, SuggestedIterations, SuggestedParallelism};
 use sampler::OdeFractalSampler;
 use ode_system::OdeSystem;
 use lorenz::LorenzOde;
+use double_pendulum::DoublePendulumOde;
 use crate::{color::RGB, histogram::BoundsTypes, numbers::Real};
 
 use super::{Perturbable, Samplable};
@@ -27,6 +29,7 @@ fn default_vibrancy() -> f64 {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum OdeTypes {
     Lorenz(LorenzOde),
+    DoublePendulum(DoublePendulumOde),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -89,6 +92,7 @@ impl IteratedFunctionSystem for OdeFractal
 
         let ode: Box<dyn OdeSystem> = match &self.ode {
             OdeTypes::Lorenz(x) => Box::new(x.clone()),
+            OdeTypes::DoublePendulum(x) => Box::new(x.clone()),
         };
 
         Box::new(OdeFractalSampler {
