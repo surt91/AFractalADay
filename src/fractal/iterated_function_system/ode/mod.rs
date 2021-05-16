@@ -10,7 +10,6 @@ use sampler::OdeFractalSampler;
 use ode_system::OdeSystem;
 use lorenz::LorenzOde;
 use crate::color::RGB;
-use crate::numbers::Real;
 
 use super::{Perturbable, Samplable};
 
@@ -49,19 +48,6 @@ pub struct OdeFractal
     pub gamma: f64,
     #[serde(default = "default_vibrancy")]
     pub vibrancy: f64
-}
-
-impl OdeFractal {
-    fn from_string(s: &str) -> Vec<f64> {
-        assert!(s.len() == 12);
-        let mut a: Vec<f64> = Vec::new();
-        for c in s.chars() {
-            assert!(c.is_ascii_alphabetic());
-            let tmp = (c.to_ascii_lowercase() as u8 - 'a' as u8) as f64;
-            a.push(0.1*tmp-1.2);
-        }
-        a
-    }
 }
 
 impl IteratedFunctionSystem for OdeFractal
