@@ -4,16 +4,14 @@ use crate::numbers::Real;
 
 pub trait OdeSystem : Sync + Send + fmt::Debug {
     fn get_dimension(&self) -> usize;
-    fn get_tau(&self) -> Real;
-    fn set_tau(&mut self, tau: Real);
     fn get_state(&self) -> &Vec<Real>;
     fn set_state(&mut self, state: Vec<Real>);
     fn derivative(&self, state: &[Real]) -> Vec<Real>;
     fn project(&self, normal: [Real; 3]) -> [Real; 2];
 
-    fn update(&mut self) {
+    fn update(&mut self, tau: Real) {
         // let tau = self.adaptive_tau();
-        let next = self.rk4_step(self.get_state(), self.get_tau());
+        let next = self.rk4_step(self.get_state(), tau);
         self.set_state(next)
     }
 
@@ -46,7 +44,7 @@ pub trait OdeSystem : Sync + Send + fmt::Debug {
         tmp
     }
 
-    fn adaptive_tau(&self) -> Real {
+    fn adaptive_tau(&self, tau: Real) -> Real {
         // target precision
         let desired = 1e-6;
         // safety
@@ -56,7 +54,6 @@ pub trait OdeSystem : Sync + Send + fmt::Debug {
 
         let state1 = self.get_state();
         let state2 = self.get_state();
-        let tau = self.get_tau();
 
         let state1 = self.rk4_step(state1, tau);
         let state2 = self.rk4_step(state2, tau/2.);

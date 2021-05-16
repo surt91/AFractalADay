@@ -16,11 +16,10 @@ use rayon::prelude::*;
 
 use crate::numbers::Real;
 use crate::color::{RGB, RGBA};
-use crate::histogram::{BoundsTypes, bounds, bounds_without_outliers, bounds_zoom, ColoredHistogram};
+use crate::histogram::{BoundsTypes, bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::{ode::OdeFractal, quality::probably_good};
 
 use super::estimate_quality_after;
-use super::quality::downscale;
 
 use num_cpus;
 use std::thread;
@@ -40,6 +39,10 @@ pub enum IterationFractalType {
     OdeFractal(OdeFractal),
     None,
 }
+pub enum SuggestedIterations {
+    Absolute(usize),
+    PerPixel(usize),
+}
 
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {
@@ -51,8 +54,12 @@ pub trait IteratedFunctionSystem : Sync {
     fn get_sampler(&mut self) -> Box<dyn Samplable + Send>;
     fn get_serializable(&self) -> IterationFractalType;
 
-    fn suggested_iterations(&self) -> usize {
-        1000
+    fn suggested_iterations(&self) -> SuggestedIterations {
+        SuggestedIterations::PerPixel(1000)
+    }
+
+    fn suggested_iterations_draft(&self) -> SuggestedIterations {
+        SuggestedIterations::PerPixel(100)
     }
 
     fn estimate_quality_before(&mut self) -> bool {
@@ -74,7 +81,7 @@ pub trait IteratedFunctionSystem : Sync {
     }
 
     fn render(&mut self, resolution: (u32, u32),
-                         samples_per_pixel: usize,
+                         samples: SuggestedIterations,
                          supersampling: bool
         )
         -> (Vec<u8>, bool)
@@ -87,61 +94,68 @@ pub trait IteratedFunctionSystem : Sync {
             (x, y)
         };
 
+        // use N-1 additional threads (where N is the number of logical CPU)
+        // this way one thread is idle and can calculate the remainder and merge the results
+        let cpus = num_cpus::get();
+
+        let (total_samples, parallelism, warmup) = match samples {
+            SuggestedIterations::Absolute(samples) => (
+                samples,
+                1,
+                samples
+            ),
+            SuggestedIterations::PerPixel(samples) => (
+                samples * (x * y) as usize,
+                cpus,
+                (0.01 * samples as f64 * (x * y) as f64) as usize
+            ),
+        };
+
         let sampler = self.get_sampler();
 
         // warm up and get sample to derive bounds
-        let values: Vec<([Real; 2], RGB)> = sampler.skip(1000)
-                                                   .take((x * y) as usize)
+        // these samples will be discarded
+        let values: Vec<([Real; 2], RGB)> = sampler.skip(warmup)
+                                                   .take(warmup)
                                                    .collect();
 
         // read bounds from sample
         let b = match self.needs_strict_bounds() {
-            BoundsTypes::StrictBounds => bounds(values.iter().map(|&(ref z, _)| z)),
+            BoundsTypes::StrictBounds => bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 0),
             BoundsTypes::BoundsWithoutOutliers => bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000),
             BoundsTypes::ZoomedBounds => bounds_zoom(values.iter().map(|&(ref z, _)| z), x as Real/y as Real),
         };
 
-        // use N-1 additional threads (where N is the number of logical CPU)
-        // this way one thread is idle and can calculate the remainder and merge the results
-        let cpus = num_cpus::get();
-        let iterations_per_task = (samples_per_pixel - 1) / cpus;
+        // we might miss up to parallelism - 1 samples, but we do not care about this
+        let iterations_per_task = total_samples / parallelism;
 
         let mut hist = ColoredHistogram::new((x, y), b, self.vibrancy(), self.gamma());
 
         let (tx, rx) = channel();
-        for _ in 0..cpus {
+        for _ in 0..parallelism {
             let tx = tx.clone();
             let mut sampler = self.get_sampler();
             sampler.perturb();
             let mut hist = hist.clone();
             thread::spawn(move || {
-                hist.feed(sampler.take((iterations_per_task) * (x * y) as usize));
+                hist.feed(sampler.take(iterations_per_task));
                 tx.send(hist).unwrap();
             });
         }
 
-        // and do the remainder in the main thread
-        let remainder = (samples_per_pixel - 1) - iterations_per_task*cpus;
-        let sampler = self.get_sampler();
-
-
-        // feed the remainder into the main histogram
-        hist.feed(sampler.take(remainder * (x * y) as usize));
-        // feed the values from the bounds estimation into the histogram
-        hist.feed(values.into_iter());
-
-        for _ in 0..cpus {
+        for _ in 0..parallelism {
             let h = rx.recv().unwrap();
             hist.merge(&h);
         }
 
-        let rgb = hist.normalize();
+        let hist = if supersampling {
 
-        let rgb = if supersampling {
-            downscale(&rgb, &(x, y))
+            hist.downscale()
         } else {
-            rgb
+            hist
         };
+
+        let rgb = hist.normalize();
 
         let buffer: Vec<u8> = rgb.par_iter()
                                  .map(|rgba| {

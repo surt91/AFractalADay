@@ -9,7 +9,9 @@ pub struct OdeFractalSampler<T>
     pub rng: T,
     pub ode: Box<dyn OdeSystem>,
     pub color: RGB,
-    pub normal: [Real; 3]
+    pub normal: [Real; 3],
+
+    pub tau: Real,
 }
 
 impl<T> Iterator for OdeFractalSampler<T>
@@ -18,8 +20,7 @@ impl<T> Iterator for OdeFractalSampler<T>
     type Item = ([Real; 2], RGB);
 
     fn next(&mut self) -> Option<([Real; 2], RGB)> {
-
-        self.ode.update();
+        self.ode.update(self.tau);
 
         let p = self.ode.project(self.normal);
 

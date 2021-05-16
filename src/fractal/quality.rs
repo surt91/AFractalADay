@@ -10,7 +10,7 @@ use crate::color::RGBA;
 ///
 /// Low entropy is a image of one color, high entropy is noise.
 /// Interesting images should be located at some range of intermediate entropies.
-pub fn entropy(pixel: &[RGBA]) -> f64 {
+pub fn _entropy(pixel: &[RGBA]) -> f64 {
     use crate::histogram::histogram1d;
     let hist = histogram1d(pixel.iter().map(|c| c.to_u8() as usize), (0, 255));
 
@@ -22,7 +22,7 @@ pub fn entropy(pixel: &[RGBA]) -> f64 {
     entropy
 }
 
-pub fn downscale(pixel: &[RGBA], resolution: &(u32, u32)) -> Vec<RGBA> {
+pub fn _downscale(pixel: &[RGBA], resolution: &(u32, u32)) -> Vec<RGBA> {
     let &(x, y) = resolution;
     let x: usize = x as usize / 2;
     let y: usize = y as usize / 2;
@@ -31,11 +31,11 @@ pub fn downscale(pixel: &[RGBA], resolution: &(u32, u32)) -> Vec<RGBA> {
 
     for i in 0..x {
         for j in 0..y {
-            out[i*y + j] = RGBA::blend(&[
-                                            &pixel[ 2*i    * 2*y +  2*j],
-                                            &pixel[(2*i+1) * 2*y +  2*j],
-                                            &pixel[ 2*i    * 2*y + (2*j+1)],
-                                            &pixel[(2*i+1) * 2*y + (2*j+1)]
+            out[j*x + i] = RGBA::blend(&[
+                                            &pixel[ 2*j    * 2*x +  2*i],
+                                            &pixel[(2*j+1) * 2*x +  2*i],
+                                            &pixel[ 2*j    * 2*x + (2*i+1)],
+                                            &pixel[(2*j+1) * 2*x + (2*i+1)]
                                         ]);
         }
     }

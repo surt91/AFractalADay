@@ -18,8 +18,6 @@ pub struct LorenzOde {
     sigma: Real,
     b: Real,
     r: Real,
-
-    tau: Real,
 }
 
 impl LorenzOde {
@@ -34,8 +32,6 @@ impl LorenzOde {
             sigma: sigma.unwrap_or(10.),
             r: r.unwrap_or(28.),
             b: b.unwrap_or(8./3.),
-
-            tau: 0.000001,
         }
     }
 }
@@ -43,14 +39,6 @@ impl LorenzOde {
 impl OdeSystem for LorenzOde {
     fn get_dimension(&self) -> usize {
         3
-    }
-
-    fn get_tau(&self) -> Real {
-        self.tau
-    }
-
-    fn set_tau(&mut self, tau: Real) {
-        self.tau = tau;
     }
 
     fn get_state(&self) -> &Vec<Real>{
@@ -120,6 +108,8 @@ impl FractalBuilder
             ode,
             color,
             normal,
+            timestep: 0.0001,
+            total_time: 100.,
             strict_bounds,
             gamma,
             vibrancy,

@@ -6,7 +6,7 @@ use serde::{self, Serialize, Deserialize};
 use rand::{Rng, SeedableRng};
 use rand::distributions::{Distribution, Normal};
 
-use super::IteratedFunctionSystem;
+use super::{IteratedFunctionSystem, SuggestedIterations};
 use sampler::OdeFractalSampler;
 use ode_system::OdeSystem;
 use lorenz::LorenzOde;
@@ -39,6 +39,8 @@ pub struct OdeFractal
     pub color: RGB,
     pub ode: OdeTypes,
     pub normal: [Real; 3],
+    pub timestep: f64,
+    pub total_time: f64,
     pub strict_bounds: BoundsTypes,
     #[serde(default = "default_gamma")]
     pub gamma: f64,
@@ -52,8 +54,12 @@ impl IteratedFunctionSystem for OdeFractal
         self.strict_bounds
     }
 
-    fn suggested_iterations(&self) -> usize {
-        10
+    fn suggested_iterations(&self) -> SuggestedIterations {
+        SuggestedIterations::Absolute((self.total_time as f64 / self.timestep) as usize)
+    }
+
+    fn suggested_iterations_draft(&self) -> SuggestedIterations {
+        SuggestedIterations::Absolute((self.total_time as f64 / self.timestep) as usize)
     }
 
     fn gamma(&self) -> f64 {
@@ -85,6 +91,7 @@ impl IteratedFunctionSystem for OdeFractal
             ode,
             color: self.color.clone(),
             normal: self.normal,
+            tau: self.timestep,
         })
     }
 

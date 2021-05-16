@@ -73,6 +73,34 @@ impl ColoredHistogram {
         ).collect()
     }
 
+    /// add 4 neighboring bins into one for supersampling
+    pub fn downscale(&self) -> ColoredHistogram {
+        let &(x, y) = &self.resolution;
+        let x: usize = x as usize / 2;
+        let y: usize = y as usize / 2;
+
+        let mut shrunk = ColoredHistogram::new(
+            (x as u32, y as u32),
+            self.bounds,
+            self.vibrancy,
+            self.gamma,
+        );
+
+        for i in 0..x {
+            for j in 0..y {
+                for (dx, dy) in [(0, 0), (0, 1), (1, 1), (1, 0)] {
+                    let tmp = self.bins[(2*j + dy) * 2*x + 2*i + dx];
+                    shrunk.bins[j*x + i].0 += tmp.0;
+                    shrunk.bins[j*x + i].1 += tmp.1;
+                    shrunk.bins[j*x + i].2 += tmp.2;
+                    shrunk.bins[j*x + i].3 += tmp.3;
+                }
+            }
+        };
+
+        shrunk
+    }
+
     /// merge another histogram into this histogram
     ///
     /// # Arguments
