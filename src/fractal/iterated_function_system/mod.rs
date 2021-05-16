@@ -16,7 +16,7 @@ use rayon::prelude::*;
 
 use crate::numbers::Real;
 use crate::color::{RGB, RGBA};
-use crate::histogram::{bounds_without_outliers, bounds_zoom, ColoredHistogram};
+use crate::histogram::{BoundsTypes, bounds, bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::{ode::OdeFractal, quality::probably_good};
 
 use super::estimate_quality_after;
@@ -44,7 +44,7 @@ pub enum IterationFractalType {
 /// The `IteratedFunctionSystem` trait applies to all ``Chaos Game type'' fractals.
 pub trait IteratedFunctionSystem : Sync {
     fn description(&self) -> &str;
-    fn needs_strict_bounds(&self) -> bool;
+    fn needs_strict_bounds(&self) -> BoundsTypes;
     fn gamma(&self) -> f64;
     fn vibrancy(&self) -> f64;
     fn get_rng(&mut self) -> &mut RngType;
@@ -95,10 +95,10 @@ pub trait IteratedFunctionSystem : Sync {
                                                    .collect();
 
         // read bounds from sample
-        let b = if self.needs_strict_bounds() {
-            bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000)
-        } else {
-            bounds_zoom(values.iter().map(|&(ref z, _)| z), x as Real/y as Real)
+        let b = match self.needs_strict_bounds() {
+            BoundsTypes::StrictBounds => bounds(values.iter().map(|&(ref z, _)| z)),
+            BoundsTypes::BoundsWithoutOutliers => bounds_without_outliers(values.iter().map(|&(ref z, _)| z), 1000),
+            BoundsTypes::ZoomedBounds => bounds_zoom(values.iter().map(|&(ref z, _)| z), x as Real/y as Real),
         };
 
         // use N-1 additional threads (where N is the number of logical CPU)

@@ -2,7 +2,7 @@ use log::info;
 
 use rand::Rng;
 
-use crate::color::HSV;
+use crate::{color::HSV, histogram::BoundsTypes};
 use crate::fractal::FractalBuilder;
 use super::{OdeFractal, OdeSystem, OdeTypes, random_normal};
 
@@ -35,7 +35,7 @@ impl LorenzOde {
             r: r.unwrap_or(28.),
             b: b.unwrap_or(8./3.),
 
-            tau: 0.00001,
+            tau: 0.000001,
         }
     }
 }
@@ -108,7 +108,7 @@ impl FractalBuilder
             None => rng.gen()
         };
 
-        let strict_bounds = true;
+        let strict_bounds = BoundsTypes::StrictBounds;
 
         let description = format!("Lorenz attractor");
 

@@ -10,16 +10,11 @@ use super::IteratedFunctionSystem;
 use sampler::OdeFractalSampler;
 use ode_system::OdeSystem;
 use lorenz::LorenzOde;
-use crate::{color::RGB, numbers::Real};
+use crate::{color::RGB, histogram::BoundsTypes, numbers::Real};
 
 use super::{Perturbable, Samplable};
 
 use super::{IterationFractalType, RngType, default_rng};
-
-
-fn default_bounds() -> bool {
-    false
-}
 
 fn default_gamma() -> f64 {
     4.0
@@ -44,8 +39,7 @@ pub struct OdeFractal
     pub color: RGB,
     pub ode: OdeTypes,
     pub normal: [Real; 3],
-    #[serde(default = "default_bounds")]
-    pub strict_bounds: bool,
+    pub strict_bounds: BoundsTypes,
     #[serde(default = "default_gamma")]
     pub gamma: f64,
     #[serde(default = "default_vibrancy")]
@@ -54,7 +48,7 @@ pub struct OdeFractal
 
 impl IteratedFunctionSystem for OdeFractal
 {
-    fn needs_strict_bounds(&self) -> bool {
+    fn needs_strict_bounds(&self) -> BoundsTypes {
         self.strict_bounds
     }
 

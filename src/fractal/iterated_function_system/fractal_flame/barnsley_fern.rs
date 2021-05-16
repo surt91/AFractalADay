@@ -1,6 +1,6 @@
 use log::{debug, info};
 
-use crate::color::RGB;
+use crate::{color::RGB, histogram::BoundsTypes};
 use super::{Transformation, NonlinearTransformation, FractalFlame};
 use crate::fractal::FractalBuilder;
 
@@ -72,7 +72,7 @@ impl FractalBuilder
             post_transform,
             final_transform,
             final_color,
-            strict_bounds: true,
+            strict_bounds: BoundsTypes::StrictBounds,
             gamma,
             vibrancy,
         }

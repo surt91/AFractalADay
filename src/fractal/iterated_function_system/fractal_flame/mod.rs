@@ -14,17 +14,13 @@ use rand::{Rng, SeedableRng};
 
 use super::IteratedFunctionSystem;
 use super::IteratedFunctionSystemSampler;
-use crate::fractal::Symmetry;
+use crate::{fractal::Symmetry, histogram::BoundsTypes};
 use super::{Transformation,NonlinearTransformation,AffineTransformation,MobiusTransformation};
 use crate::color::RGB;
 
 use super::{Samplable};
 use super::{IterationFractalType, RngType, default_rng};
 
-
-fn default_bounds() -> bool {
-    false
-}
 
 fn default_gamma() -> f64 {
     4.0
@@ -63,8 +59,7 @@ pub struct FractalFlame
     pub final_transform: NonlinearTransformation,
     #[serde(default = "default_final_color")]
     pub final_color: Option<RGB>,
-    #[serde(default = "default_bounds")]
-    pub strict_bounds: bool,
+    pub strict_bounds: BoundsTypes,
     #[serde(default = "default_gamma")]
     pub gamma: f64,
     #[serde(default = "default_vibrancy")]
@@ -73,7 +68,7 @@ pub struct FractalFlame
 
 impl IteratedFunctionSystem for FractalFlame
 {
-    fn needs_strict_bounds(&self) -> bool {
+    fn needs_strict_bounds(&self) -> BoundsTypes {
         self.strict_bounds
     }
 

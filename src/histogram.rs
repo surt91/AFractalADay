@@ -326,3 +326,25 @@ pub fn histogram1d<I>(vals: I, bounds: (usize, usize)) -> Vec<f64>
           .map(|&x| x as f64 / ctr as f64)
           .collect()
 }
+
+
+use rand::Rng;
+use rand::distributions::{Standard, Distribution};
+use serde::{self, Serialize, Deserialize};
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+pub enum BoundsTypes {
+    StrictBounds,
+    BoundsWithoutOutliers,
+    ZoomedBounds,
+}
+
+impl Distribution<BoundsTypes> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> BoundsTypes {
+        if rng.gen::<bool>() {
+            BoundsTypes::BoundsWithoutOutliers
+        } else {
+            BoundsTypes::ZoomedBounds
+        }
+    }
+}
