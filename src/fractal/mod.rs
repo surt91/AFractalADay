@@ -13,7 +13,7 @@ pub use self::iterated_function_system::symmetry::Symmetry;
 pub use self::iterated_function_system::fractal_flame::FractalFlame;
 pub use self::iterated_function_system::IterationFractalType;
 pub use self::lsystem::{Alphabet, Lrules, LSystem};
-pub use self::lattice::{LatticeFractal, Ising};
+pub use self::lattice::{LatticeFractal, Ising, Boundary};
 
 use rand_pcg::Pcg32;
 

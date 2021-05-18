@@ -1,9 +1,8 @@
 use std::collections::BTreeSet;
 
-use super::SquareLattice;
-use super::LatticeFractal;
-
 use crate::numbers::Real;
+use super::{SquareLattice, Boundary};
+use super::LatticeFractal;
 
 use log::info;
 use serde::{self, Serialize, Deserialize};
@@ -14,7 +13,7 @@ use crate::fractal::{FractalBuilder, RngType, default_rng};
 impl FractalBuilder {
     pub fn ising(self) -> Ising {
         let (w, h) = self.dimensions.unwrap_or((128, 128));
-        Ising::new(w, h, self.seed.unwrap_or(42))
+        Ising::new(w, h, Boundary::Helical, self.seed.unwrap_or(42))
     }
 }
 
@@ -24,6 +23,7 @@ pub struct Ising {
     lattice: SquareLattice,
     spins: Vec<i8>,
     t: Real,
+    exp_lookup: [Real; 9],
     #[serde(skip)]
     #[serde(default = "default_rng")]
     rng: RngType,
@@ -31,24 +31,43 @@ pub struct Ising {
 }
 
 impl Ising {
-    fn new(w: u32, h: u32, seed: u64) -> Ising {
+    pub fn new(w: u32, h: u32, boundary: Boundary, seed: u64) -> Ising {
         let mut rng = RngType::seed_from_u64(seed);
         let n = (w*h) as usize;
+        // start random
         let spins: Vec<i8> = (0..n).map(|_| if rng.gen_bool(0.5) {1} else {-1}).collect();
+        // start ordered
+        // let spins: Vec<i8> = (0..n).map(|_| 1).collect();
         let t = 2.269;
         let description = format!("Ising model on a {}x{} square lattice at T = {}", w, h, t);
 
+        // lookup table for exponential functions: (-de as Real / self.t).exp()
+        // for de/2 values of -4, -2, 0, 2, 4
+        // array is sparse to use de/2 + 4 directly as an index
+        let exp_lookup = [
+            (-8 as Real / t).exp(),
+            0.,
+            (-4 as Real / t).exp(),
+            0.,
+            1.,
+            0.,
+            1.,
+            0.,
+            1.,
+        ];
+
         Ising {
             n,
-            lattice: SquareLattice::new(w, h),
+            lattice: SquareLattice::new(w, h, boundary),
             spins,
             t,
+            exp_lookup,
             rng,
             description,
         }
     }
 
-    fn sweep(&mut self) -> (i32, usize) {
+    pub fn sweep(&mut self) -> (i32, usize) {
         let num_flip = self.wolff();
         let de = self.single_spinflip();
         (de, num_flip)
@@ -62,11 +81,18 @@ impl Ising {
                 .iter()
                 .map(|&k| self.spins[k] as i32)
                 .sum();
-            de *= 2*self.spins[i] as i32;
 
-            if (-de as Real / self.t).exp() > self.rng.gen::<Real>() {
+            // calculate exp always
+            // de *= 2*self.spins[i] as i32;
+            // let p = (-de as Real / self.t).exp()
+
+            // use exp lookup table
+            de *= self.spins[i] as i32;
+            let p = self.exp_lookup[(-de + 4) as usize];
+
+            if p > self.rng.gen::<Real>() {
                 self.spins[i] *= -1;
-                energy_change += de;
+                energy_change += 2*de;
             }
         }
         energy_change
@@ -138,8 +164,8 @@ impl LatticeFractal for Ising {
     }
 
     fn render(&mut self, resolution: (u32, u32),
-                         _scale: Option<Real>,
-                         _center: Option<(Real, Real)>)
+                         _scale: Option<f64>,
+                         _center: Option<(f64, f64)>)
         -> (Vec<u8>, bool)
     {
         assert_eq!(self.lattice.dimensions(), resolution);

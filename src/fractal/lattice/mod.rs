@@ -1,7 +1,7 @@
 mod lattice;
 mod ising;
 
-pub use self::lattice::SquareLattice;
+pub use self::lattice::{SquareLattice, Boundary};
 pub use self::ising::Ising;
 
 pub trait LatticeFractal : Sync {
