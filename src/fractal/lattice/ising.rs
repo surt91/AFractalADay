@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::HashSet;
 
 use crate::numbers::Real;
 use super::{SquareLattice, Boundary};
@@ -100,7 +100,7 @@ impl Ising {
 
     fn wolff(&mut self) -> usize {
         let mut stack: Vec<usize> = Vec::new();
-        let mut cluster: BTreeSet<usize> = BTreeSet::new();
+        let mut cluster: HashSet<usize> = HashSet::new();
         let p = 1. - (-2./self.t).exp();
         let seed = self.rng.gen_range(0, self.n-1);
 
