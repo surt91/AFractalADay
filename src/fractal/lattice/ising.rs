@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::numbers::Real;
 use super::{SquareLattice, Boundary};
 use super::LatticeFractal;
@@ -24,6 +22,13 @@ pub struct Ising {
     spins: Vec<i8>,
     t: Real,
     exp_lookup: [Real; 9],
+
+    // cache for Wolff algorithm, reduces number of allocations
+    #[serde(skip)]
+    cluster_scratch: Vec<u8>,
+    #[serde(skip)]
+    sweep_id: u8,
+
     #[serde(skip)]
     #[serde(default = "default_rng")]
     rng: RngType,
@@ -40,6 +45,9 @@ impl Ising {
         // let spins: Vec<i8> = (0..n).map(|_| 1).collect();
         let t = 2.269;
         let description = format!("Ising model on a {}x{} square lattice at T = {}", w, h, t);
+
+        let cluster_scratch = vec![0; n];
+        let sweep_id = 1;
 
         // lookup table for exponential functions: (-de as Real / self.t).exp()
         // for de/2 values of -4, -2, 0, 2, 4
@@ -62,6 +70,8 @@ impl Ising {
             spins,
             t,
             exp_lookup,
+            cluster_scratch,
+            sweep_id,
             rng,
             description,
         }
@@ -73,7 +83,7 @@ impl Ising {
         (de, num_flip)
     }
 
-    fn single_spinflip(&mut self) -> i32 {
+    pub fn single_spinflip(&mut self) -> i32 {
         let mut energy_change = 0;
         for _ in 0..self.n {
             let i = self.rng.gen_range(0, self.n-1);
@@ -98,31 +108,36 @@ impl Ising {
         energy_change
     }
 
-    fn wolff(&mut self) -> usize {
+    pub fn wolff(&mut self) -> usize {
         let mut stack: Vec<usize> = Vec::new();
-        let mut cluster: HashSet<usize> = HashSet::new();
         let p = 1. - (-2./self.t).exp();
         let seed = self.rng.gen_range(0, self.n-1);
 
+        // use a bitmap to remember which spins are already part of the cluster
+        // and reset the bitmap before we run out of range
+        self.sweep_id += 1;
+        if self.sweep_id == 255 {
+            self.cluster_scratch.fill(0);
+            self.sweep_id = 1;
+        }
+
         stack.push(seed);
-        cluster.insert(seed);
+        self.cluster_scratch[seed] = self.sweep_id;
+        let mut num_flips = 0;
 
         while !stack.is_empty() {
             let i = stack.pop().unwrap();
             for j in self.lattice.neighbors(i) {
-                if self.spins[j] == self.spins[i] && !cluster.contains(&j) {
+                if self.spins[j] == self.spins[i] && self.cluster_scratch[j] != self.sweep_id {
                     if p > self.rng.gen::<Real>() {
-                        cluster.insert(j);
+                        self.cluster_scratch[j] = self.sweep_id;
                         stack.push(j);
                     }
                 }
             }
-        }
-
-        let num_flips = cluster.len();
-
-        for i in cluster {
+            // we can flip the spins always
             self.spins[i] *= -1;
+            num_flips += 1;
         }
 
         num_flips
