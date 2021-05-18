@@ -72,17 +72,16 @@ fn mandelbrot_vec_complex3(zs: &[Complex<f64>], n: usize) -> Vec<Complex<f64>> {
 fn ising_helical(l: usize, sweeps: usize) {
     let mut ising = Ising::new(l as u32, l as u32, Boundary::Helical, 42);
     for _ in 0..sweeps {
-        ising.sweep();
+        ising.single_spinflip();
     }
 }
 
 fn ising_periodic(l: usize, sweeps: usize) {
     let mut ising = Ising::new(l as u32, l as u32, Boundary::Periodic, 42);
     for _ in 0..sweeps {
-        ising.sweep();
+        ising.single_spinflip();
     }
 }
-
 
 fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("ising helical",
