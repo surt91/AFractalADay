@@ -148,11 +148,15 @@ impl Ising {
     }
 
     fn equilibrate(&mut self) {
-        let t_eq_estimate = (self.n as Real).sqrt() as u32;
-        info!("estimated eqilibration time: {}", t_eq_estimate);
-        for i in 0..t_eq_estimate {
-            let (de, num_flip) = self.sweep();
-            info!("{}: de = {}, # {}", i, de, num_flip);
+        let mut largest_cluster = 0;
+        let mut t_eq_try = 100;
+        while largest_cluster < self.n / 2 {
+            for i in 0..t_eq_try {
+                let (de, num_flip) = self.sweep();
+                largest_cluster = std::cmp::max(num_flip, largest_cluster);
+                info!("{}: de = {}, # {}", i, de, num_flip);
+            }
+            t_eq_try *= 2;
         }
         self.description = format!("{} (m = {:.2}, E = {:.2})", self.description(), self.magnetization(), self.energy())
     }
