@@ -1,3 +1,4 @@
+use a_fractal_a_day::histogram::BoundsTypes;
 use clap::{App, Arg, ArgGroup};
 
 use std::f64::consts::PI;
@@ -19,6 +20,7 @@ pub struct Options {
     pub quiet: bool,
     pub optipng: bool,
     pub supersampling: bool,
+    pub bounds: Option<BoundsTypes>,
     pub fractal_type: FractalType,
     pub variation: Option<Variation>,
     pub symmetry: Option<Symmetry>,
@@ -30,6 +32,7 @@ pub struct Options {
     pub rpn: Option<String>,
     pub zoom: Option<u64>,
     pub center: Option<(f64, f64)>,
+    pub qmaprule: Option<String>,
 }
 
 impl fmt::Display for Options {
@@ -280,6 +283,11 @@ pub fn parse_cl() -> Options {
                   .conflicts_with("lattice")
                   .conflicts_with("qmap")
               )
+              .group(ArgGroup::with_name("iterated_fractals")
+                  .conflicts_with("escape_time")
+                  .conflicts_with("lsystem")
+                  .conflicts_with("lattice")
+              )
               .arg(Arg::with_name("mirror")
                     .long("mirror")
                     .help("creates a vertical mirror symmetry in the resulting fractal")
@@ -375,6 +383,19 @@ pub fn parse_cl() -> Options {
                     .help("sets the angle for the L-system")
                     .requires("lsystem")
               )
+              .arg(Arg::with_name("qmaprule")
+                    .long("qmaprule")
+                    .takes_value(true)
+                    .help("draw the quaratic map of this 12 letter rule")
+                    .requires("qmap")
+              )
+              .arg(Arg::with_name("bound")
+                    .long("bound")
+                    .possible_values(&["strict", "loose", "zoom"])
+                    .takes_value(true)
+                    .help("specify how the image is cropped")
+
+              )
               .get_matches();
 
     let tweet = matches.is_present("tweet");
@@ -389,6 +410,14 @@ pub fn parse_cl() -> Options {
     {
         Some(x) => Some(Style::from_string(x).expect(&format!("Invalid Style {}", x))),
         None => None
+    };
+
+    let bounds = match matches.value_of("bound") {
+        Some("strict") => Some(BoundsTypes::StrictBounds),
+        Some("loose") => Some(BoundsTypes::BoundsWithoutOutliers),
+        Some("zoom") => Some(BoundsTypes::ZoomedBounds),
+        None => None,
+        _ => unreachable!()
     };
 
     let seed = matches.value_of("seed")
@@ -438,6 +467,8 @@ pub fn parse_cl() -> Options {
         (Some(s), Some(r)) => Some(Lrules::from_string(s, r)),
         _ => None
     };
+
+    let qmaprule = matches.value_of("qmaprule").map(|x| x.to_owned());
 
     let fractal_type = if matches.is_present("newton") {
         FractalType::Newton
@@ -527,6 +558,7 @@ pub fn parse_cl() -> Options {
         fractal_type,
         height,
         width,
+        bounds,
         supersampling,
         optipng,
         variation,
@@ -539,5 +571,6 @@ pub fn parse_cl() -> Options {
         rpn,
         zoom,
         center,
+        qmaprule,
     }
 }

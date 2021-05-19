@@ -103,17 +103,9 @@ impl FractalBuilder
 
         let normal = [0., 0., 1.];
 
-        let gamma = match self.gamma {
-            Some(s) => s,
-            None => 4.
-        };
-
-        let vibrancy = match self.vibrancy {
-            Some(s) => s,
-            None => rng.gen()
-        };
-
-        let strict_bounds = BoundsTypes::StrictBounds;
+        let gamma = self.gamma.unwrap_or(4.);
+        let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
+        let strict_bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
 
         let description = format!("DoublePendulum attractor");
 

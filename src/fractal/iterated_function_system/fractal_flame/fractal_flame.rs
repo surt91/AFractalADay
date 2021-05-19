@@ -62,17 +62,9 @@ impl FractalBuilder
             None => Symmetry::random(&mut rng)
         };
 
-        let gamma = match self.gamma {
-            Some(s) => s,
-            None => 4.
-        };
-
-        let vibrancy = match self.vibrancy {
-            Some(s) => s,
-            None => rng.gen()
-        };
-
-        let strict_bounds = rng.gen();
+        let gamma = self.gamma.unwrap_or(4.);
+        let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
+        let strict_bounds = self.bounds.unwrap_or_else(|| rng.gen());
 
         let number_of_symmetries: usize = match symmetry {
             Symmetry::None => 1,

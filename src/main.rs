@@ -78,6 +78,7 @@ fn build_fractal(
     while {
         let mut fractal = FractalBuilder::new()
                                          .seed(seed+ctr)
+                                         .bounds(&opt.bounds)
                                          .style(&opt.style)
                                          .variation(&opt.variation)
                                          .symmetry(&opt.symmetry)
@@ -89,6 +90,7 @@ fn build_fractal(
                                          .rpn(&opt.rpn)
                                          .zoom(&opt.zoom)
                                          .center(&opt.center)
+                                         .qmaprule(&opt.qmaprule)
                                          .dimensions(&Some(dim))
                                          .build(&fractal_type);
 

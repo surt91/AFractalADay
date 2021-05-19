@@ -59,15 +59,9 @@ impl FractalBuilder
 
         let final_color = None;
 
-        let gamma = match self.gamma {
-            Some(s) => s,
-            None => 4.
-        };
-
-        let vibrancy = match self.vibrancy {
-            Some(s) => s,
-            None => 0.4
-        };
+        let gamma = self.gamma.unwrap_or(4.);
+        let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
+        let strict_bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
 
         info!("Will render {}", description);
 
@@ -87,7 +81,7 @@ impl FractalBuilder
             post_transform,
             final_transform,
             final_color,
-            strict_bounds: BoundsTypes::StrictBounds,
+            strict_bounds,
             gamma,
             vibrancy,
         }

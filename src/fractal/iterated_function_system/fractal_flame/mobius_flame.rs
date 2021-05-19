@@ -4,7 +4,7 @@ use rand::distributions::Standard;
 
 use std::iter;
 
-use crate::color::{HSV, RGB};
+use crate::{color::{HSV, RGB}, histogram::BoundsTypes};
 use super::{Transformation, MobiusTransformation, AffineTransformation, NonlinearTransformation, FractalFlame, Symmetry};
 use crate::fractal::FractalBuilder;
 
@@ -55,17 +55,9 @@ impl FractalBuilder
 
         let final_color = None;
 
-        let gamma = match self.gamma {
-            Some(s) => s,
-            None => 4.
-        };
-
-        let vibrancy = match self.vibrancy {
-            Some(s) => s,
-            None => rng.gen()
-        };
-
-        let strict_bounds = rng.gen();
+        let gamma = self.gamma.unwrap_or(4.);
+        let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
+        let strict_bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
 
         // handle symmetries
         let symmetry = match self.symmetry {

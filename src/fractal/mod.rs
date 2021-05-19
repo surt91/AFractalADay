@@ -22,7 +22,7 @@ use serde_json;
 use log::info;
 
 use std::io;
-use crate::png_helper::save_png;
+use crate::{histogram::BoundsTypes, png_helper::save_png};
 
 use crate::FractalType;
 use crate::numbers::{Coef, ComplexFunction};
@@ -63,6 +63,7 @@ pub struct FractalBuilder {
     symmetry: Option<Symmetry>,
     vibrancy: Option<f64>,
     gamma: Option<f64>,
+    bounds: Option<BoundsTypes>,
 
     // for escape time
     a: Option<Coef>,
@@ -79,6 +80,9 @@ pub struct FractalBuilder {
     rules: Option<Lrules>,
     angle: Option<f64>,
 
+    // for quadratic maps
+    qmaprule: Option<String>,
+
     // for lattices
     dimensions: Option<(u32, u32)>,
 }
@@ -93,6 +97,7 @@ impl FractalBuilder {
             symmetry: None,
             vibrancy: None,
             gamma: None,
+            bounds: None,
 
             a: None,
             f: None,
@@ -105,6 +110,8 @@ impl FractalBuilder {
             start: None,
             rules: None,
             angle: None,
+
+            qmaprule: None,
 
             dimensions: None,
         }
@@ -141,6 +148,11 @@ impl FractalBuilder {
         self
     }
 
+    pub fn bounds(mut self, bounds: &Option<BoundsTypes>) -> FractalBuilder {
+        self.bounds = bounds.clone();
+        self
+    }
+
     pub fn iterations(mut self, iterations: &Option<u32>) -> FractalBuilder {
         self.iterations = iterations.clone();
         self
@@ -168,6 +180,11 @@ impl FractalBuilder {
 
     pub fn center(mut self, center: &Option<(f64, f64)>) -> FractalBuilder {
         self.center = center.clone();
+        self
+    }
+
+    pub fn qmaprule(mut self, qmaprule: &Option<String>) -> FractalBuilder {
+        self.qmaprule = qmaprule.clone();
         self
     }
 
