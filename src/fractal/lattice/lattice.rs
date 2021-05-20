@@ -64,7 +64,7 @@ impl SquareLattice {
     fn neighbors_helical(&self, n: usize) -> [usize; 4] {
         let h = self.height as usize;
         let w = self.width as usize;
-        let begin_last_line = h * (w - 1);
+        let begin_last_line = (h-1) * w;
 
         let u = if n < w {
             n + begin_last_line
