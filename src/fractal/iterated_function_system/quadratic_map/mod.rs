@@ -22,6 +22,10 @@ fn default_vibrancy() -> f64 {
     0.5
 }
 
+fn default_bounds() -> BoundsTypes {
+    BoundsTypes::StrictBounds
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct QuadraticMap
 {
@@ -31,7 +35,8 @@ pub struct QuadraticMap
     pub description: String,
     pub color: RGB,
     pub a: Vec<Real>,
-    pub strict_bounds: BoundsTypes,
+    #[serde(default = "default_bounds")]
+    pub bounds: BoundsTypes,
     #[serde(default = "default_gamma")]
     pub gamma: f64,
     #[serde(default = "default_vibrancy")]
@@ -54,7 +59,7 @@ impl QuadraticMap {
 impl IteratedFunctionSystem for QuadraticMap
 {
     fn needs_strict_bounds(&self) -> BoundsTypes {
-        self.strict_bounds
+        self.bounds
     }
 
     fn gamma(&self) -> f64 {

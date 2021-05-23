@@ -42,6 +42,10 @@ fn default_final_color() -> Option<RGB> {
     None
 }
 
+fn default_bounds() -> BoundsTypes {
+    BoundsTypes::ZoomedBounds
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FractalFlame
 {
@@ -59,7 +63,8 @@ pub struct FractalFlame
     pub final_transform: NonlinearTransformation,
     #[serde(default = "default_final_color")]
     pub final_color: Option<RGB>,
-    pub strict_bounds: BoundsTypes,
+    #[serde(default = "default_bounds")]
+    pub bounds: BoundsTypes,
     #[serde(default = "default_gamma")]
     pub gamma: f64,
     #[serde(default = "default_vibrancy")]
@@ -69,7 +74,7 @@ pub struct FractalFlame
 impl IteratedFunctionSystem for FractalFlame
 {
     fn needs_strict_bounds(&self) -> BoundsTypes {
-        self.strict_bounds
+        self.bounds
     }
 
     fn gamma(&self) -> f64 {

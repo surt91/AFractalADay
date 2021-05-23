@@ -88,7 +88,7 @@ impl FractalBuilder
 
         let gamma = self.gamma.unwrap_or(4.);
         let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
-        let strict_bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
+        let bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
 
         let description = format!("Lorenz attractor");
 
@@ -103,7 +103,7 @@ impl FractalBuilder
             timestep: 0.0001,
             total_time: 100.,
             replica: 1,
-            strict_bounds,
+            bounds,
             gamma,
             vibrancy,
         }

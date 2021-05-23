@@ -64,7 +64,7 @@ impl FractalBuilder
 
         let gamma = self.gamma.unwrap_or(4.);
         let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
-        let strict_bounds = self.bounds.unwrap_or_else(|| rng.gen());
+        let bounds = self.bounds.unwrap_or_else(|| rng.gen());
 
         let number_of_symmetries: usize = match symmetry {
             Symmetry::None => 1,
@@ -132,7 +132,7 @@ impl FractalBuilder
             post_transform,
             final_transform,
             final_color,
-            strict_bounds,
+            bounds,
             gamma,
             vibrancy,
         }

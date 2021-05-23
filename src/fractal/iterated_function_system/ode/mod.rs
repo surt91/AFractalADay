@@ -26,6 +26,10 @@ fn default_vibrancy() -> f64 {
     0.5
 }
 
+fn default_bounds() -> BoundsTypes {
+    BoundsTypes::StrictBounds
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum OdeTypes {
     Lorenz(LorenzOde),
@@ -45,7 +49,8 @@ pub struct OdeFractal
     pub timestep: f64,
     pub total_time: f64,
     pub replica: usize,
-    pub strict_bounds: BoundsTypes,
+    #[serde(default = "default_bounds")]
+    pub bounds: BoundsTypes,
     #[serde(default = "default_gamma")]
     pub gamma: f64,
     #[serde(default = "default_vibrancy")]
@@ -55,7 +60,7 @@ pub struct OdeFractal
 impl IteratedFunctionSystem for OdeFractal
 {
     fn needs_strict_bounds(&self) -> BoundsTypes {
-        self.strict_bounds
+        self.bounds
     }
 
     fn suggested_iterations(&self) -> SuggestedIterations {
