@@ -242,56 +242,7 @@ impl FractalBuilder {
             FractalType::Lorenz => FractalInstance::IFS(Box::new(self.lorenz())),
             FractalType::DoublePendulum => FractalInstance::IFS(Box::new(self.double_pendulum())),
             FractalType::Random => unreachable!(),
-            // FIXME This has to be replaced by a better approach
-            FractalType::LoadJson(ref json) => {
-                let out: FractalInstance;
-                let ifs = FractalBuilder::ifs_from_json(&json);
-                let lsys = FractalBuilder::lsys_from_json(&json);
-                let escape_type = FractalBuilder::escape_type_from_json(&json);
-
-                if ifs.is_ok() {
-                    out = FractalInstance::IFS(Box::new(ifs.unwrap()))
-                } else if lsys.is_ok() {
-                    out = FractalInstance::LSys(Box::new(lsys.unwrap()))
-                } else if escape_type.is_ok() {
-                    out = match escape_type.unwrap() {
-                        EscapeTypes::Mandelbrot(x) => FractalInstance::EscapeTime(Box::new(x)),
-                        EscapeTypes::Newton(x) => FractalInstance::EscapeTime(Box::new(x)),
-                        EscapeTypes::None => panic!("invalid json")
-                    }
-                } else {
-                    warn!("offending json: {}", json);
-                    let jd = &mut serde_json::Deserializer::from_str(json);
-                    let ifs: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
-                    match ifs {
-                        Ok(_) => panic!("expected an error: invalid json"),
-                        Err(err) => {
-                            let path = err.path().to_string();
-                            warn!("Not a IFS: {}", path)
-                        }
-                    }
-                    let jd = &mut serde_json::Deserializer::from_str(json);
-                    let lsys: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
-                    match lsys {
-                        Ok(_) => panic!("expected an error: invalid json"),
-                        Err(err) => {
-                            let path = err.path().to_string();
-                            warn!("Not an LSystem: {}", path)
-                        }
-                    }
-                    let jd = &mut serde_json::Deserializer::from_str(json);
-                    let escape: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
-                    match escape {
-                        Ok(_) => panic!("expected an error: invalid json"),
-                        Err(err) => {
-                            let path = err.path().to_string();
-                            warn!("Not an escape: {}", path)
-                        }
-                    }
-                    panic!("invalid json");
-                }
-                out
-            },
+            FractalType::LoadJson(ref json) => FractalInstance::guess_fractal_from_json(json),
         };
 
         Fractal {
@@ -443,6 +394,59 @@ impl Fractal {
         // FIXME ugly detour over json string
         let json = serde_json::to_string(&f_config).unwrap();
         Ok(FractalBuilder::new().build(&FractalType::LoadJson(json)))
+    }
+}
+
+impl FractalInstance {
+    // FIXME This has to be replaced by a better approach
+    fn guess_fractal_from_json(json: &str) -> FractalInstance {
+        let out: FractalInstance;
+        let ifs = FractalBuilder::ifs_from_json(&json);
+        let lsys = FractalBuilder::lsys_from_json(&json);
+        let escape_type = FractalBuilder::escape_type_from_json(&json);
+
+        if ifs.is_ok() {
+            out = FractalInstance::IFS(Box::new(ifs.unwrap()))
+        } else if lsys.is_ok() {
+            out = FractalInstance::LSys(Box::new(lsys.unwrap()))
+        } else if escape_type.is_ok() {
+            out = match escape_type.unwrap() {
+                EscapeTypes::Mandelbrot(x) => FractalInstance::EscapeTime(Box::new(x)),
+                EscapeTypes::Newton(x) => FractalInstance::EscapeTime(Box::new(x)),
+                EscapeTypes::None => panic!("invalid json")
+            }
+        } else {
+            warn!("offending json: {}", json);
+            let jd = &mut serde_json::Deserializer::from_str(json);
+            let ifs: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
+            match ifs {
+                Ok(_) => panic!("expected an error: invalid json"),
+                Err(err) => {
+                    let path = err.path().to_string();
+                    warn!("Not a IFS: {}", path)
+                }
+            }
+            let jd = &mut serde_json::Deserializer::from_str(json);
+            let lsys: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
+            match lsys {
+                Ok(_) => panic!("expected an error: invalid json"),
+                Err(err) => {
+                    let path = err.path().to_string();
+                    warn!("Not an LSystem: {}", path)
+                }
+            }
+            let jd = &mut serde_json::Deserializer::from_str(json);
+            let escape: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
+            match escape {
+                Ok(_) => panic!("expected an error: invalid json"),
+                Err(err) => {
+                    let path = err.path().to_string();
+                    warn!("Not an escape: {}", path)
+                }
+            }
+            panic!("invalid json");
+        }
+        out
     }
 }
 
