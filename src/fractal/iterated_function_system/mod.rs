@@ -19,7 +19,7 @@ use crate::color::{RGB, RGBA};
 use crate::histogram::{BoundsTypes, bounds_without_outliers, bounds_zoom, ColoredHistogram};
 use self::{ode::OdeFractal, quality::probably_good};
 
-use super::estimate_quality_after;
+use super::{FractalBuilder, estimate_quality_after};
 
 use num_cpus;
 use std::thread;
@@ -39,6 +39,14 @@ pub enum IterationFractalType {
     OdeFractal(OdeFractal),
     None,
 }
+
+impl FractalBuilder
+{
+    pub fn ifs_from_json(json: &str) -> Result<IterationFractalType, serde_json::Error> {
+        serde_json::from_str(json)
+    }
+}
+
 pub enum SuggestedIterations {
     Absolute(usize),
     PerPixel(usize),

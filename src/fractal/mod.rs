@@ -406,7 +406,12 @@ impl FractalInstance {
         let escape_type = FractalBuilder::escape_type_from_json(&json);
 
         if ifs.is_ok() {
-            out = FractalInstance::IFS(Box::new(ifs.unwrap()))
+            out = match ifs.unwrap() {
+                IterationFractalType::IFS(x) => FractalInstance::IFS(Box::new(x)),
+                IterationFractalType::QuadraticMap(x) => FractalInstance::IFS(Box::new(x)),
+                IterationFractalType::OdeFractal(x) => FractalInstance::IFS(Box::new(x)),
+                IterationFractalType::None => panic!("invalid json")
+            }
         } else if lsys.is_ok() {
             out = FractalInstance::LSys(Box::new(lsys.unwrap()))
         } else if escape_type.is_ok() {

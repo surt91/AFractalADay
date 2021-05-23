@@ -7,8 +7,6 @@ mod appolonian_gasket;
 mod mobius_flame;
 mod fractal_flame;
 
-mod from_json;
-
 use serde::{self, Serialize, Deserialize};
 use rand::{Rng, SeedableRng};
 
