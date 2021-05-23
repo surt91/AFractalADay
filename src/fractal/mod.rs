@@ -19,7 +19,7 @@ use rand_pcg::Pcg32;
 
 use serde_json;
 
-use log::info;
+use log::{info, warn};
 
 use std::io;
 use crate::{histogram::BoundsTypes, png_helper::save_png};
@@ -260,6 +260,34 @@ impl FractalBuilder {
                         EscapeTypes::None => panic!("invalid json")
                     }
                 } else {
+                    warn!("offending json: {}", json);
+                    let jd = &mut serde_json::Deserializer::from_str(json);
+                    let ifs: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
+                    match ifs {
+                        Ok(_) => panic!("expected an error: invalid json"),
+                        Err(err) => {
+                            let path = err.path().to_string();
+                            warn!("Not a IFS: {}", path)
+                        }
+                    }
+                    let jd = &mut serde_json::Deserializer::from_str(json);
+                    let lsys: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
+                    match lsys {
+                        Ok(_) => panic!("expected an error: invalid json"),
+                        Err(err) => {
+                            let path = err.path().to_string();
+                            warn!("Not an LSystem: {}", path)
+                        }
+                    }
+                    let jd = &mut serde_json::Deserializer::from_str(json);
+                    let escape: Result<FractalFlame, _> = serde_path_to_error::deserialize(jd);
+                    match escape {
+                        Ok(_) => panic!("expected an error: invalid json"),
+                        Err(err) => {
+                            let path = err.path().to_string();
+                            warn!("Not an escape: {}", path)
+                        }
+                    }
                     panic!("invalid json");
                 }
                 out
