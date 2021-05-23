@@ -1,0 +1,1041 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/colormap/twilight_dat.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>twilight_dat.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../a_fractal_a_day/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button">?</button>
+                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+</pre><pre class="rust">
+<span class="kw">use</span> <span class="ident">lazy_static::lazy_static</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::color::RGB</span>;
+
+<span class="macro">lazy_static!</span> {
+<span class="kw">pub</span> <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">TWILIGHT</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RGB</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[
+    <span class="ident">RGB</span>(<span class="number">0.88575015840754434</span>, <span class="number">0.85000924943067835</span>, <span class="number">0.8879736506427196</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88378520195539056</span>, <span class="number">0.85072940540310626</span>, <span class="number">0.88723222096949894</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88172231059285788</span>, <span class="number">0.85127594077653468</span>, <span class="number">0.88638056925514819</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8795410528270573</span>,  <span class="number">0.85165675407495722</span>, <span class="number">0.8854143767924102</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87724880858965482</span>, <span class="number">0.85187028338870274</span>, <span class="number">0.88434120381311432</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87485347508575972</span>, <span class="number">0.85191526123023187</span>, <span class="number">0.88316926967613829</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87233134085124076</span>, <span class="number">0.85180165478080894</span>, <span class="number">0.88189704355001619</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86970474853509816</span>, <span class="number">0.85152403004797894</span>, <span class="number">0.88053883390003362</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86696015505333579</span>, <span class="number">0.8510896085314068</span>,  <span class="number">0.87909766977173343</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86408985081463996</span>, <span class="number">0.85050391167507788</span>, <span class="number">0.87757925784892632</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86110245436899846</span>, <span class="number">0.84976754857001258</span>, <span class="number">0.87599242923439569</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85798259245670372</span>, <span class="number">0.84888934810281835</span>, <span class="number">0.87434038553446281</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85472593189256985</span>, <span class="number">0.84787488124672816</span>, <span class="number">0.8726282980930582</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85133714570857189</span>, <span class="number">0.84672735796116472</span>, <span class="number">0.87086081657350445</span>),
+    <span class="ident">RGB</span>(<span class="number">0.84780710702577922</span>, <span class="number">0.8454546229209523</span>,  <span class="number">0.86904036783694438</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8441261828674842</span>,  <span class="number">0.84406482711037389</span>, <span class="number">0.86716973322690072</span>),
+    <span class="ident">RGB</span>(<span class="number">0.84030420805957784</span>, <span class="number">0.8425605950855084</span>,  <span class="number">0.865250882410458</span>),
+    <span class="ident">RGB</span>(<span class="number">0.83634031809191178</span>, <span class="number">0.84094796518951942</span>, <span class="number">0.86328528001070159</span>),
+    <span class="ident">RGB</span>(<span class="number">0.83222705712934408</span>, <span class="number">0.83923490627754482</span>, <span class="number">0.86127563500427884</span>),
+    <span class="ident">RGB</span>(<span class="number">0.82796894316013536</span>, <span class="number">0.83742600751395202</span>, <span class="number">0.85922399451306786</span>),
+    <span class="ident">RGB</span>(<span class="number">0.82357429680252847</span>, <span class="number">0.83552487764795436</span>, <span class="number">0.85713191328514948</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81904654677937527</span>, <span class="number">0.8335364929949034</span>,  <span class="number">0.85500206287010105</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81438982121143089</span>, <span class="number">0.83146558694197847</span>, <span class="number">0.85283759062147024</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8095999819094809</span>,  <span class="number">0.82931896673505456</span>, <span class="number">0.85064441601050367</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80469164429814577</span>, <span class="number">0.82709838780560663</span>, <span class="number">0.84842449296974021</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79967075421267997</span>, <span class="number">0.82480781812080928</span>, <span class="number">0.84618210029578533</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79454305089231114</span>, <span class="number">0.82245116226304615</span>, <span class="number">0.84392184786827984</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78931445564608915</span>, <span class="number">0.82003213188702007</span>, <span class="number">0.8416486380471222</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78399101042764918</span>, <span class="number">0.81755426400533426</span>, <span class="number">0.83936747464036732</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77857892008227592</span>, <span class="number">0.81502089378742548</span>, <span class="number">0.8370834463093898</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77308416590170936</span>, <span class="number">0.81243524735466011</span>, <span class="number">0.83480172950579679</span>),
+    <span class="ident">RGB</span>(<span class="number">0.76751108504417864</span>, <span class="number">0.8098007598713145</span>,  <span class="number">0.83252816638059668</span>),
+    <span class="ident">RGB</span>(<span class="number">0.76186907937980286</span>, <span class="number">0.80711949387647486</span>, <span class="number">0.830266486168872</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75616443584381976</span>, <span class="number">0.80439408733477935</span>, <span class="number">0.82802138994719998</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75040346765406696</span>, <span class="number">0.80162699008965321</span>, <span class="number">0.82579737851082424</span>),
+    <span class="ident">RGB</span>(<span class="number">0.74459247771890169</span>, <span class="number">0.79882047719583249</span>, <span class="number">0.82359867586156521</span>),
+    <span class="ident">RGB</span>(<span class="number">0.73873771700494939</span>, <span class="number">0.79597665735031009</span>, <span class="number">0.82142922780433014</span>),
+    <span class="ident">RGB</span>(<span class="number">0.73284543645523459</span>, <span class="number">0.79309746468844067</span>, <span class="number">0.81929263384230377</span>),
+    <span class="ident">RGB</span>(<span class="number">0.72692177512829703</span>, <span class="number">0.7901846863592763</span>,  <span class="number">0.81719217466726379</span>),
+    <span class="ident">RGB</span>(<span class="number">0.72097280665536778</span>, <span class="number">0.78723995923452639</span>, <span class="number">0.81513073920879264</span>),
+    <span class="ident">RGB</span>(<span class="number">0.71500403076252128</span>, <span class="number">0.78426487091581187</span>, <span class="number">0.81311116559949914</span>),
+    <span class="ident">RGB</span>(<span class="number">0.70902078134539304</span>, <span class="number">0.78126088716070907</span>, <span class="number">0.81113591855117928</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7030297722540817</span>,  <span class="number">0.77822904973358131</span>, <span class="number">0.80920618848056969</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6970365443886174</span>,  <span class="number">0.77517050008066057</span>, <span class="number">0.80732335380063447</span>),
+    <span class="ident">RGB</span>(<span class="number">0.69104641009309098</span>, <span class="number">0.77208629460678091</span>, <span class="number">0.80548841690679074</span>),
+    <span class="ident">RGB</span>(<span class="number">0.68506446154395928</span>, <span class="number">0.7689774029354699</span>,  <span class="number">0.80370206267176914</span>),
+    <span class="ident">RGB</span>(<span class="number">0.67909554499882152</span>, <span class="number">0.76584472131395898</span>, <span class="number">0.8019646617300199</span>),
+    <span class="ident">RGB</span>(<span class="number">0.67314422559426212</span>, <span class="number">0.76268908733890484</span>, <span class="number">0.80027628545809526</span>),
+    <span class="ident">RGB</span>(<span class="number">0.66721479803752815</span>, <span class="number">0.7595112803730375</span>,  <span class="number">0.79863674654537764</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6613112930078745</span>,  <span class="number">0.75631202708719025</span>, <span class="number">0.7970456043491897</span>),
+    <span class="ident">RGB</span>(<span class="number">0.65543692326454717</span>, <span class="number">0.75309208756768431</span>, <span class="number">0.79550271129031047</span>),
+    <span class="ident">RGB</span>(<span class="number">0.64959573004253479</span>, <span class="number">0.74985201221941766</span>, <span class="number">0.79400674021499107</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6437910831099849</span>,  <span class="number">0.7465923800833657</span>,  <span class="number">0.79255653201306053</span>),
+    <span class="ident">RGB</span>(<span class="number">0.63802586828545982</span>, <span class="number">0.74331376714033193</span>, <span class="number">0.79115100459573173</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6323027138710603</span>,  <span class="number">0.74001672160131404</span>, <span class="number">0.78978892762640429</span>),
+    <span class="ident">RGB</span>(<span class="number">0.62662402022604591</span>, <span class="number">0.73670175403699445</span>, <span class="number">0.78846901316334561</span>),
+    <span class="ident">RGB</span>(<span class="number">0.62099193064817548</span>, <span class="number">0.73336934798923203</span>, <span class="number">0.78718994624696581</span>),
+    <span class="ident">RGB</span>(<span class="number">0.61540846411770478</span>, <span class="number">0.73001995232739691</span>, <span class="number">0.78595022706750484</span>),
+    <span class="ident">RGB</span>(<span class="number">0.60987543176093062</span>, <span class="number">0.72665398759758293</span>, <span class="number">0.78474835732694714</span>),
+    <span class="ident">RGB</span>(<span class="number">0.60439434200274855</span>, <span class="number">0.7232718614323369</span>,  <span class="number">0.78358295593535587</span>),
+    <span class="ident">RGB</span>(<span class="number">0.5989665814482068</span>,  <span class="number">0.71987394892246725</span>, <span class="number">0.78245259899346642</span>),
+    <span class="ident">RGB</span>(<span class="number">0.59359335696837223</span>, <span class="number">0.7164606049658685</span>,  <span class="number">0.78135588237640097</span>),
+    <span class="ident">RGB</span>(<span class="number">0.58827579780555495</span>, <span class="number">0.71303214646458135</span>, <span class="number">0.78029141405636515</span>),
+    <span class="ident">RGB</span>(<span class="number">0.58301487036932409</span>, <span class="number">0.70958887676997473</span>, <span class="number">0.77925781820476592</span>),
+    <span class="ident">RGB</span>(<span class="number">0.5778116438998202</span>,  <span class="number">0.70613106157153982</span>, <span class="number">0.77825345121025524</span>),
+    <span class="ident">RGB</span>(<span class="number">0.5726668948158774</span>,  <span class="number">0.7026589535425779</span>,  <span class="number">0.77727702680911992</span>),
+    <span class="ident">RGB</span>(<span class="number">0.56758117853861967</span>, <span class="number">0.69917279302646274</span>, <span class="number">0.77632748534275298</span>),
+    <span class="ident">RGB</span>(<span class="number">0.56255515357219343</span>, <span class="number">0.69567278381629649</span>, <span class="number">0.77540359142309845</span>),
+    <span class="ident">RGB</span>(<span class="number">0.55758940419605174</span>, <span class="number">0.69215911458254054</span>, <span class="number">0.7745041337932782</span>),
+    <span class="ident">RGB</span>(<span class="number">0.55268450589347129</span>, <span class="number">0.68863194515166382</span>, <span class="number">0.7736279426902245</span>),
+    <span class="ident">RGB</span>(<span class="number">0.54784098153018634</span>, <span class="number">0.68509142218509878</span>, <span class="number">0.77277386473440868</span>),
+    <span class="ident">RGB</span>(<span class="number">0.54305932424018233</span>, <span class="number">0.68153767253065878</span>, <span class="number">0.77194079697835083</span>),
+    <span class="ident">RGB</span>(<span class="number">0.53834015575176275</span>, <span class="number">0.67797081129095405</span>, <span class="number">0.77112734439057717</span>),
+    <span class="ident">RGB</span>(<span class="number">0.53368389147728401</span>, <span class="number">0.67439093705212727</span>, <span class="number">0.7703325054879735</span>),
+    <span class="ident">RGB</span>(<span class="number">0.529090861832473</span>,   <span class="number">0.67079812302806219</span>, <span class="number">0.76955552292313134</span>),
+    <span class="ident">RGB</span>(<span class="number">0.52456151470593582</span>, <span class="number">0.66719242996142225</span>, <span class="number">0.76879541714230948</span>),
+    <span class="ident">RGB</span>(<span class="number">0.52009627392235558</span>, <span class="number">0.66357391434030388</span>, <span class="number">0.76805119403344102</span>),
+    <span class="ident">RGB</span>(<span class="number">0.5156955988596057</span>,  <span class="number">0.65994260812897998</span>, <span class="number">0.76732191489596169</span>),
+    <span class="ident">RGB</span>(<span class="number">0.51135992541601927</span>, <span class="number">0.65629853981831865</span>, <span class="number">0.76660663780645333</span>),
+    <span class="ident">RGB</span>(<span class="number">0.50708969576451657</span>, <span class="number">0.65264172403146448</span>, <span class="number">0.76590445660835849</span>),
+    <span class="ident">RGB</span>(<span class="number">0.5028853540415561</span>,  <span class="number">0.64897216734095264</span>, <span class="number">0.76521446718174913</span>),
+    <span class="ident">RGB</span>(<span class="number">0.49874733661356069</span>, <span class="number">0.6452898684900934</span>,  <span class="number">0.76453578734180083</span>),
+    <span class="ident">RGB</span>(<span class="number">0.4946761847863938</span>,  <span class="number">0.64159484119504429</span>, <span class="number">0.76386719002130909</span>),
+    <span class="ident">RGB</span>(<span class="number">0.49067224938561221</span>, <span class="number">0.63788704858847078</span>, <span class="number">0.76320812763163837</span>),
+    <span class="ident">RGB</span>(<span class="number">0.4867359599430568</span>,  <span class="number">0.63416646251100506</span>, <span class="number">0.76255780085924041</span>),
+    <span class="ident">RGB</span>(<span class="number">0.4828677867260272</span>,  <span class="number">0.6304330455306234</span>,  <span class="number">0.76191537149895305</span>),
+    <span class="ident">RGB</span>(<span class="number">0.47906816236197386</span>, <span class="number">0.62668676251860134</span>, <span class="number">0.76128000375662419</span>),
+    <span class="ident">RGB</span>(<span class="number">0.47533752394906287</span>, <span class="number">0.62292757283835809</span>, <span class="number">0.76065085571817748</span>),
+    <span class="ident">RGB</span>(<span class="number">0.47167629518877091</span>, <span class="number">0.61915543242884641</span>, <span class="number">0.76002709227883047</span>),
+    <span class="ident">RGB</span>(<span class="number">0.46808490970531597</span>, <span class="number">0.61537028695790286</span>, <span class="number">0.75940789891092741</span>),
+    <span class="ident">RGB</span>(<span class="number">0.46456376716303932</span>, <span class="number">0.61157208822864151</span>, <span class="number">0.75879242623025811</span>),
+    <span class="ident">RGB</span>(<span class="number">0.46111326647023881</span>, <span class="number">0.607760777169989</span>,   <span class="number">0.75817986436807139</span>),
+    <span class="ident">RGB</span>(<span class="number">0.45773377230160567</span>, <span class="number">0.60393630046586455</span>, <span class="number">0.75756936901859162</span>),
+    <span class="ident">RGB</span>(<span class="number">0.45442563977552913</span>, <span class="number">0.60009859503858665</span>, <span class="number">0.75696013660606487</span>),
+    <span class="ident">RGB</span>(<span class="number">0.45118918687617743</span>, <span class="number">0.59624762051353541</span>, <span class="number">0.75635120643246645</span>),
+    <span class="ident">RGB</span>(<span class="number">0.44802470933589172</span>, <span class="number">0.59238331452146575</span>, <span class="number">0.75574176474107924</span>),
+    <span class="ident">RGB</span>(<span class="number">0.44493246854215379</span>, <span class="number">0.5885055998308617</span>,  <span class="number">0.7551311041857901</span>),
+    <span class="ident">RGB</span>(<span class="number">0.44191271766696399</span>, <span class="number">0.58461441100175571</span>, <span class="number">0.75451838884410671</span>),
+    <span class="ident">RGB</span>(<span class="number">0.43896563958048396</span>, <span class="number">0.58070969241098491</span>, <span class="number">0.75390276208285945</span>),
+    <span class="ident">RGB</span>(<span class="number">0.43609138958356369</span>, <span class="number">0.57679137998186081</span>, <span class="number">0.7532834105961016</span>),
+    <span class="ident">RGB</span>(<span class="number">0.43329008867358393</span>, <span class="number">0.57285941625606673</span>, <span class="number">0.75265946532566674</span>),
+    <span class="ident">RGB</span>(<span class="number">0.43056179073057571</span>, <span class="number">0.56891374572457176</span>, <span class="number">0.75203008099312696</span>),
+    <span class="ident">RGB</span>(<span class="number">0.42790652284925834</span>, <span class="number">0.5649543060909209</span>,  <span class="number">0.75139443521914839</span>),
+    <span class="ident">RGB</span>(<span class="number">0.42532423665011354</span>, <span class="number">0.56098104959950301</span>, <span class="number">0.75075164989005116</span>),
+    <span class="ident">RGB</span>(<span class="number">0.42281485675772662</span>, <span class="number">0.55699392126996583</span>, <span class="number">0.75010086988227642</span>),
+    <span class="ident">RGB</span>(<span class="number">0.42037822361396326</span>, <span class="number">0.55299287158108168</span>, <span class="number">0.7494412559451894</span>),
+    <span class="ident">RGB</span>(<span class="number">0.41801414079233629</span>, <span class="number">0.54897785421888889</span>, <span class="number">0.74877193167001121</span>),
+    <span class="ident">RGB</span>(<span class="number">0.4157223260454232</span>,  <span class="number">0.54494882715350401</span>, <span class="number">0.74809204459000522</span>),
+    <span class="ident">RGB</span>(<span class="number">0.41350245743314729</span>, <span class="number">0.54090574771098476</span>, <span class="number">0.74740073297543086</span>),
+    <span class="ident">RGB</span>(<span class="number">0.41135414697304568</span>, <span class="number">0.53684857765005933</span>, <span class="number">0.74669712855065784</span>),
+    <span class="ident">RGB</span>(<span class="number">0.4092768899914751</span>,  <span class="number">0.53277730177130322</span>, <span class="number">0.74598030635707824</span>),
+    <span class="ident">RGB</span>(<span class="number">0.40727018694219069</span>, <span class="number">0.52869188011057411</span>, <span class="number">0.74524942637581271</span>),
+    <span class="ident">RGB</span>(<span class="number">0.40533343789303178</span>, <span class="number">0.52459228174983119</span>, <span class="number">0.74450365836708132</span>),
+    <span class="ident">RGB</span>(<span class="number">0.40346600333905397</span>, <span class="number">0.52047847653840029</span>, <span class="number">0.74374215223567086</span>),
+    <span class="ident">RGB</span>(<span class="number">0.40166714010896104</span>, <span class="number">0.51635044969688759</span>, <span class="number">0.7429640345324835</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39993606933454834</span>, <span class="number">0.51220818143218516</span>, <span class="number">0.74216844571317986</span>),
+    <span class="ident">RGB</span>(<span class="number">0.3982719152586337</span>,  <span class="number">0.50805166539276136</span>, <span class="number">0.74135450918099721</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39667374905665609</span>, <span class="number">0.50388089053847973</span>, <span class="number">0.74052138580516735</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39514058808207631</span>, <span class="number">0.49969585326377758</span>, <span class="number">0.73966820211715711</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39367135736822567</span>, <span class="number">0.49549655777451179</span>, <span class="number">0.738794102296364</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39226494876209317</span>, <span class="number">0.49128300332899261</span>, <span class="number">0.73789824784475078</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39092017571994903</span>, <span class="number">0.48705520251223039</span>, <span class="number">0.73697977133881254</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38963580160340855</span>, <span class="number">0.48281316715123496</span>, <span class="number">0.73603782546932739</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38841053300842432</span>, <span class="number">0.47855691131792805</span>, <span class="number">0.73507157641157261</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38724301459330251</span>, <span class="number">0.47428645933635388</span>, <span class="number">0.73408016787854391</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38613184178892102</span>, <span class="number">0.4700018340988123</span>,  <span class="number">0.7330627749243106</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38507556793651387</span>, <span class="number">0.46570306719930193</span>, <span class="number">0.73201854033690505</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38407269378943537</span>, <span class="number">0.46139018782416635</span>, <span class="number">0.73094665432902683</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38312168084402748</span>, <span class="number">0.45706323581407199</span>, <span class="number">0.72984626791353258</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38222094988570376</span>, <span class="number">0.45272225034283325</span>, <span class="number">0.72871656144003782</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38136887930454161</span>, <span class="number">0.44836727669277859</span>, <span class="number">0.72755671317141346</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38056380696565623</span>, <span class="number">0.44399837208633719</span>, <span class="number">0.72636587045135315</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37980403744848751</span>, <span class="number">0.43961558821222629</span>, <span class="number">0.72514323778761092</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37908789283110761</span>, <span class="number">0.43521897612544935</span>, <span class="number">0.72388798691323131</span>),
+    <span class="ident">RGB</span>(<span class="number">0.378413635091359</span>,   <span class="number">0.43080859411413064</span>, <span class="number">0.72259931993061044</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37777949753513729</span>, <span class="number">0.4263845142616835</span>,  <span class="number">0.72127639993530235</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37718371844251231</span>, <span class="number">0.42194680223454828</span>, <span class="number">0.71991841524475775</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37662448930806297</span>, <span class="number">0.41749553747893614</span>, <span class="number">0.71852454736176108</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37610001286385814</span>, <span class="number">0.41303079952477062</span>, <span class="number">0.71709396919920232</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37560846919442398</span>, <span class="number">0.40855267638072096</span>, <span class="number">0.71562585091587549</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37514802505380473</span>, <span class="number">0.4040612609993941</span>,  <span class="number">0.7141193695725726</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37471686019302231</span>, <span class="number">0.3995566498711684</span>,  <span class="number">0.71257368516500463</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37431313199312338</span>, <span class="number">0.39503894828283309</span>, <span class="number">0.71098796522377461</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37393499330475782</span>, <span class="number">0.39050827529375831</span>, <span class="number">0.70936134293478448</span>),
+    <span class="ident">RGB</span>(<span class="number">0.3735806215098284</span>,  <span class="number">0.38596474386057539</span>, <span class="number">0.70769297607310577</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37324816143326384</span>, <span class="number">0.38140848555753937</span>, <span class="number">0.70598200974806036</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37293578646665032</span>, <span class="number">0.37683963835219841</span>, <span class="number">0.70422755780589941</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37264166757849604</span>, <span class="number">0.37225835004836849</span>, <span class="number">0.7024287314570723</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37236397858465387</span>, <span class="number">0.36766477862108266</span>, <span class="number">0.70058463496520773</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37210089702443822</span>, <span class="number">0.36305909736982378</span>, <span class="number">0.69869434615073722</span>),
+    <span class="ident">RGB</span>(<span class="number">0.3718506155898596</span>,  <span class="number">0.35844148285875221</span>, <span class="number">0.69675695810256544</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37161133234400479</span>, <span class="number">0.3538121372967869</span>,  <span class="number">0.69477149919380887</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37138124223736607</span>, <span class="number">0.34917126878479027</span>, <span class="number">0.69273703471928827</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37115856636209105</span>, <span class="number">0.34451911410230168</span>, <span class="number">0.69065253586464992</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37094151551337329</span>, <span class="number">0.33985591488818123</span>, <span class="number">0.68851703379505125</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37072833279422668</span>, <span class="number">0.33518193808489577</span>, <span class="number">0.68632948169606767</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37051738634484427</span>, <span class="number">0.33049741244307851</span>, <span class="number">0.68408888788857214</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37030682071842685</span>, <span class="number">0.32580269697872455</span>, <span class="number">0.68179411684486679</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37009487130772695</span>, <span class="number">0.3210981375964933</span>,  <span class="number">0.67944405399056851</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36987980329025361</span>, <span class="number">0.31638410101153364</span>, <span class="number">0.67703755438090574</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36965987626565955</span>, <span class="number">0.31166098762951971</span>, <span class="number">0.67457344743419545</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36943334591276228</span>, <span class="number">0.30692923551862339</span>, <span class="number">0.67205052849120617</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36919847837592484</span>, <span class="number">0.30218932176507068</span>, <span class="number">0.66946754331614522</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36895355306596778</span>, <span class="number">0.29744175492366276</span>, <span class="number">0.66682322089824264</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36869682231895268</span>, <span class="number">0.29268709856150099</span>, <span class="number">0.66411625298236909</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36842655638020444</span>, <span class="number">0.28792596437778462</span>, <span class="number">0.66134526910944602</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36814101479899719</span>, <span class="number">0.28315901221182987</span>, <span class="number">0.65850888806972308</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36783843696531082</span>, <span class="number">0.27838697181297761</span>, <span class="number">0.65560566838453704</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36751707094367697</span>, <span class="number">0.27361063317090978</span>, <span class="number">0.65263411711618635</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36717513650699446</span>, <span class="number">0.26883085667326956</span>, <span class="number">0.64959272297892245</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36681085540107988</span>, <span class="number">0.26404857724525643</span>, <span class="number">0.64647991652908243</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36642243251550632</span>, <span class="number">0.25926481158628106</span>, <span class="number">0.64329409140765537</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36600853966739794</span>, <span class="number">0.25448043878086224</span>, <span class="number">0.64003361803368586</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36556698373538982</span>, <span class="number">0.24969683475296395</span>, <span class="number">0.63669675187488584</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36509579845886808</span>, <span class="number">0.24491536803550484</span>, <span class="number">0.63328173520055586</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36459308890125008</span>, <span class="number">0.24013747024823828</span>, <span class="number">0.62978680155026101</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36405693022088509</span>, <span class="number">0.23536470386204195</span>, <span class="number">0.62621013451953023</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36348537610385145</span>, <span class="number">0.23059876218396419</span>, <span class="number">0.62254988622392882</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36287643560041027</span>, <span class="number">0.22584149293287031</span>, <span class="number">0.61880417410823019</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36222809558295926</span>, <span class="number">0.22109488427338303</span>, <span class="number">0.61497112346096128</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36153829010998356</span>, <span class="number">0.21636111429594002</span>, <span class="number">0.61104880679640927</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36080493826624654</span>, <span class="number">0.21164251793458128</span>, <span class="number">0.60703532172064711</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36002681809096376</span>, <span class="number">0.20694122817889948</span>, <span class="number">0.60292845431916875</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35920088560930186</span>, <span class="number">0.20226037920758122</span>, <span class="number">0.5987265295935138</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35832489966617809</span>, <span class="number">0.197602942459778</span>,   <span class="number">0.59442768517501066</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35739663292915563</span>, <span class="number">0.19297208197842461</span>, <span class="number">0.59003011251063131</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35641381143126327</span>, <span class="number">0.18837119869242164</span>, <span class="number">0.5855320765920552</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35537415306906722</span>, <span class="number">0.18380392577704466</span>, <span class="number">0.58093191431832802</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35427534960663759</span>, <span class="number">0.17927413271618647</span>, <span class="number">0.57622809660668717</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35311574421123737</span>, <span class="number">0.17478570377561287</span>, <span class="number">0.57141871523555288</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35189248608873791</span>, <span class="number">0.17034320478524959</span>, <span class="number">0.56650284911216653</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35060304441931012</span>, <span class="number">0.16595129984720861</span>, <span class="number">0.56147964703993225</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34924513554955644</span>, <span class="number">0.16161477763045118</span>, <span class="number">0.55634837474163779</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34781653238777782</span>, <span class="number">0.15733863511152979</span>, <span class="number">0.55110853452703257</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34631507175793091</span>, <span class="number">0.15312802296627787</span>, <span class="number">0.5457599924248665</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34473901574536375</span>, <span class="number">0.14898820589826409</span>, <span class="number">0.54030245920406539</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34308600291572294</span>, <span class="number">0.14492465359918028</span>, <span class="number">0.53473704282067103</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34135411074506483</span>, <span class="number">0.1409427920655632</span>,  <span class="number">0.52906500940336754</span>),
+    <span class="ident">RGB</span>(<span class="number">0.33954168752669694</span>, <span class="number">0.13704801896718169</span>, <span class="number">0.52328797535085236</span>),
+    <span class="ident">RGB</span>(<span class="number">0.33764732090671112</span>, <span class="number">0.13324562282438077</span>, <span class="number">0.51740807573979475</span>),
+    <span class="ident">RGB</span>(<span class="number">0.33566978565015315</span>, <span class="number">0.12954074251271822</span>, <span class="number">0.51142807215168951</span>),
+    <span class="ident">RGB</span>(<span class="number">0.33360804901486002</span>, <span class="number">0.12593818301005921</span>, <span class="number">0.50535164796654897</span>),
+    <span class="ident">RGB</span>(<span class="number">0.33146154891145124</span>, <span class="number">0.12244245263391232</span>, <span class="number">0.49918274588431072</span>),
+    <span class="ident">RGB</span>(<span class="number">0.32923005203231409</span>, <span class="number">0.11905764321981127</span>, <span class="number">0.49292595612342666</span>),
+    <span class="ident">RGB</span>(<span class="number">0.3269137124539796</span>,  <span class="number">0.1157873496841953</span>,  <span class="number">0.48658646495697461</span>),
+    <span class="ident">RGB</span>(<span class="number">0.32451307931207785</span>, <span class="number">0.11263459791730848</span>, <span class="number">0.48017007211645196</span>),
+    <span class="ident">RGB</span>(<span class="number">0.32202882276069322</span>, <span class="number">0.10960114111258401</span>, <span class="number">0.47368494725726878</span>),
+    <span class="ident">RGB</span>(<span class="number">0.31946262395497965</span>, <span class="number">0.10668879882392659</span>, <span class="number">0.46713728801395243</span>),
+    <span class="ident">RGB</span>(<span class="number">0.31681648089023501</span>, <span class="number">0.10389861387653518</span>, <span class="number">0.46053414662739794</span>),
+    <span class="ident">RGB</span>(<span class="number">0.31409278414755532</span>, <span class="number">0.10123077676403242</span>, <span class="number">0.45388335612058467</span>),
+    <span class="ident">RGB</span>(<span class="number">0.31129434479712365</span>, <span class="number">0.098684771934052201</span>,<span class="number">0.44719313715161618</span>),
+    <span class="ident">RGB</span>(<span class="number">0.30842444457210105</span>, <span class="number">0.096259385340577736</span>,<span class="number">0.44047194882050544</span>),
+    <span class="ident">RGB</span>(<span class="number">0.30548675819945936</span>, <span class="number">0.093952764840823738</span>,<span class="number">0.43372849999361113</span>),
+    <span class="ident">RGB</span>(<span class="number">0.30248536364574252</span>, <span class="number">0.091761187397303601</span>,<span class="number">0.42697404043749887</span>),
+    <span class="ident">RGB</span>(<span class="number">0.29942483960214772</span>, <span class="number">0.089682253716750038</span>,<span class="number">0.42021619665853854</span>),
+    <span class="ident">RGB</span>(<span class="number">0.29631000388905288</span>, <span class="number">0.087713250960463951</span>,<span class="number">0.41346259134143476</span>),
+    <span class="ident">RGB</span>(<span class="number">0.29314593096985248</span>, <span class="number">0.085850656889620708</span>,<span class="number">0.40672178082365834</span>),
+    <span class="ident">RGB</span>(<span class="number">0.28993792445176608</span>, <span class="number">0.08409078829085731</span>, <span class="number">0.40000214725256295</span>),
+    <span class="ident">RGB</span>(<span class="number">0.28669151388283165</span>, <span class="number">0.082429873848480689</span>,<span class="number">0.39331182532243375</span>),
+    <span class="ident">RGB</span>(<span class="number">0.28341239797185225</span>, <span class="number">0.080864153365499375</span>,<span class="number">0.38665868550105914</span>),
+    <span class="ident">RGB</span>(<span class="number">0.28010638576975472</span>, <span class="number">0.079389994802261526</span>,<span class="number">0.38005028528138707</span>),
+    <span class="ident">RGB</span>(<span class="number">0.27677939615815589</span>, <span class="number">0.078003941033788216</span>,<span class="number">0.37349382846504675</span>),
+    <span class="ident">RGB</span>(<span class="number">0.27343739342450812</span>, <span class="number">0.076702800237496066</span>,<span class="number">0.36699616136347685</span>),
+    <span class="ident">RGB</span>(<span class="number">0.27008637749114051</span>, <span class="number">0.075483675584275545</span>,<span class="number">0.36056376228111864</span>),
+    <span class="ident">RGB</span>(<span class="number">0.26673233211995284</span>, <span class="number">0.074344018028546205</span>,<span class="number">0.35420276066240958</span>),
+    <span class="ident">RGB</span>(<span class="number">0.26338121807151404</span>, <span class="number">0.073281657939897077</span>,<span class="number">0.34791888996380105</span>),
+    <span class="ident">RGB</span>(<span class="number">0.26003895187439957</span>, <span class="number">0.072294781043362205</span>,<span class="number">0.3417175669546984</span>),
+    <span class="ident">RGB</span>(<span class="number">0.25671191651083902</span>, <span class="number">0.071380106242082242</span>,<span class="number">0.33560648984600089</span>),
+    <span class="ident">RGB</span>(<span class="number">0.25340685873736807</span>, <span class="number">0.070533582926851829</span>,<span class="number">0.3295945757321303</span>),
+    <span class="ident">RGB</span>(<span class="number">0.25012845306199383</span>, <span class="number">0.069758206429106989</span>,<span class="number">0.32368100685760637</span>),
+    <span class="ident">RGB</span>(<span class="number">0.24688226237958999</span>, <span class="number">0.069053639449204451</span>,<span class="number">0.31786993834254956</span>),
+    <span class="ident">RGB</span>(<span class="number">0.24367372557466271</span>, <span class="number">0.068419855150922693</span>,<span class="number">0.31216524050888372</span>),
+    <span class="ident">RGB</span>(<span class="number">0.24050813332295939</span>, <span class="number">0.067857103814855602</span>,<span class="number">0.30657054493678321</span>),
+    <span class="ident">RGB</span>(<span class="number">0.23739062429054825</span>, <span class="number">0.067365888050555517</span>,<span class="number">0.30108922184065873</span>),
+    <span class="ident">RGB</span>(<span class="number">0.23433055727563878</span>, <span class="number">0.066935599661639394</span>,<span class="number">0.29574009929867601</span>),
+    <span class="ident">RGB</span>(<span class="number">0.23132955273021344</span>, <span class="number">0.066576186939090592</span>,<span class="number">0.29051361067988485</span>),
+    <span class="ident">RGB</span>(<span class="number">0.2283917709422868</span>,  <span class="number">0.06628997924139618</span>, <span class="number">0.28541074411068496</span>),
+    <span class="ident">RGB</span>(<span class="number">0.22552164337737857</span>, <span class="number">0.066078173119395595</span>,<span class="number">0.28043398847505197</span>),
+    <span class="ident">RGB</span>(<span class="number">0.22272706739121817</span>, <span class="number">0.065933790675651943</span>,<span class="number">0.27559714652053702</span>),
+    <span class="ident">RGB</span>(<span class="number">0.22001251100779617</span>, <span class="number">0.065857918918907604</span>,<span class="number">0.27090279994325861</span>),
+    <span class="ident">RGB</span>(<span class="number">0.21737845072382705</span>, <span class="number">0.065859661233562045</span>,<span class="number">0.26634209349669508</span>),
+    <span class="ident">RGB</span>(<span class="number">0.21482843531473683</span>, <span class="number">0.065940385613778491</span>,<span class="number">0.26191675992376573</span>),
+    <span class="ident">RGB</span>(<span class="number">0.21237411048541005</span>, <span class="number">0.066085024661758446</span>,<span class="number">0.25765165093569542</span>),
+    <span class="ident">RGB</span>(<span class="number">0.21001214221188125</span>, <span class="number">0.066308573918947178</span>,<span class="number">0.2535289048041211</span>),
+    <span class="ident">RGB</span>(<span class="number">0.2077442377448806</span>,  <span class="number">0.06661453200418091</span>, <span class="number">0.24954644291943817</span>),
+    <span class="ident">RGB</span>(<span class="number">0.20558051999470117</span>, <span class="number">0.066990462397868739</span>,<span class="number">0.24572497420147632</span>),
+    <span class="ident">RGB</span>(<span class="number">0.20352007949514977</span>, <span class="number">0.067444179612424215</span>,<span class="number">0.24205576625191821</span>),
+    <span class="ident">RGB</span>(<span class="number">0.20156133764129841</span>, <span class="number">0.067983271026200248</span>,<span class="number">0.23852974228695395</span>),
+    <span class="ident">RGB</span>(<span class="number">0.19971571438603364</span>, <span class="number">0.068592710553704722</span>,<span class="number">0.23517094067076993</span>),
+    <span class="ident">RGB</span>(<span class="number">0.19794834061899208</span>, <span class="number">0.069314066071660657</span>,<span class="number">0.23194647381302336</span>),
+    <span class="ident">RGB</span>(<span class="number">0.1960826032659409</span>,  <span class="number">0.070321227242423623</span>,<span class="number">0.22874673279569585</span>),
+    <span class="ident">RGB</span>(<span class="number">0.19410351363791453</span>, <span class="number">0.071608304856891569</span>,<span class="number">0.22558727307410353</span>),
+    <span class="ident">RGB</span>(<span class="number">0.19199449184606268</span>, <span class="number">0.073182830649273306</span>,<span class="number">0.22243385243433622</span>),
+    <span class="ident">RGB</span>(<span class="number">0.18975853639094634</span>, <span class="number">0.075019861862143766</span>,<span class="number">0.2193005075652994</span>),
+    <span class="ident">RGB</span>(<span class="number">0.18739228342697645</span>, <span class="number">0.077102096899588329</span>,<span class="number">0.21618875376309582</span>),
+    <span class="ident">RGB</span>(<span class="number">0.18488035509396164</span>, <span class="number">0.079425730279723883</span>,<span class="number">0.21307651648984993</span>),
+    <span class="ident">RGB</span>(<span class="number">0.18774482037046955</span>, <span class="number">0.077251588468039312</span>,<span class="number">0.21387448578597812</span>),
+    <span class="ident">RGB</span>(<span class="number">0.19049578401722037</span>, <span class="number">0.075311278416787641</span>,<span class="number">0.2146562337112265</span>),
+    <span class="ident">RGB</span>(<span class="number">0.1931548636579131</span>,  <span class="number">0.073606819040117955</span>,<span class="number">0.21542362939081539</span>),
+    <span class="ident">RGB</span>(<span class="number">0.19571853588267552</span>, <span class="number">0.072157781039602742</span>,<span class="number">0.21617499187076789</span>),
+    <span class="ident">RGB</span>(<span class="number">0.19819343656336558</span>, <span class="number">0.070974625252738788</span>,<span class="number">0.21690975060032436</span>),
+    <span class="ident">RGB</span>(<span class="number">0.20058760685133747</span>, <span class="number">0.070064576149984209</span>,<span class="number">0.21762721310371608</span>),
+    <span class="ident">RGB</span>(<span class="number">0.20290365333558247</span>, <span class="number">0.069435248580458964</span>,<span class="number">0.21833167885096033</span>),
+    <span class="ident">RGB</span>(<span class="number">0.20531725273301316</span>, <span class="number">0.068919592266397572</span>,<span class="number">0.21911516689288835</span>),
+    <span class="ident">RGB</span>(<span class="number">0.20785704662965598</span>, <span class="number">0.068484398797025281</span>,<span class="number">0.22000133917653536</span>),
+    <span class="ident">RGB</span>(<span class="number">0.21052882914958676</span>, <span class="number">0.06812195249816172</span>, <span class="number">0.22098759107715404</span>),
+    <span class="ident">RGB</span>(<span class="number">0.2133313859647627</span>,  <span class="number">0.067830148426026665</span>,<span class="number">0.22207043213024291</span>),
+    <span class="ident">RGB</span>(<span class="number">0.21625279838647882</span>, <span class="number">0.067616330270516389</span>,<span class="number">0.22324568672294431</span>),
+    <span class="ident">RGB</span>(<span class="number">0.21930503925136402</span>, <span class="number">0.067465786362940039</span>,<span class="number">0.22451023616807558</span>),
+    <span class="ident">RGB</span>(<span class="number">0.22247308588973624</span>, <span class="number">0.067388214053092838</span>,<span class="number">0.22585960379408354</span>),
+    <span class="ident">RGB</span>(<span class="number">0.2257539681670791</span>,  <span class="number">0.067382132300147474</span>,<span class="number">0.22728984778098055</span>),
+    <span class="ident">RGB</span>(<span class="number">0.22915620278592841</span>, <span class="number">0.067434730871152565</span>,<span class="number">0.22879681433956656</span>),
+    <span class="ident">RGB</span>(<span class="number">0.23266299920501882</span>, <span class="number">0.067557104388479783</span>,<span class="number">0.23037617493752832</span>),
+    <span class="ident">RGB</span>(<span class="number">0.23627495835774248</span>, <span class="number">0.06774359820987802</span>, <span class="number">0.23202360805926608</span>),
+    <span class="ident">RGB</span>(<span class="number">0.23999586188690308</span>, <span class="number">0.067985029964779953</span>,<span class="number">0.23373434258507808</span>),
+    <span class="ident">RGB</span>(<span class="number">0.24381149720247919</span>, <span class="number">0.068289851529011875</span>,<span class="number">0.23550427698321885</span>),
+    <span class="ident">RGB</span>(<span class="number">0.24772092990501099</span>, <span class="number">0.068653337909486523</span>,<span class="number">0.2373288009471749</span>),
+    <span class="ident">RGB</span>(<span class="number">0.25172899728289466</span>, <span class="number">0.069064630826035506</span>,<span class="number">0.23920260612763083</span>),
+    <span class="ident">RGB</span>(<span class="number">0.25582135547481771</span>, <span class="number">0.06953231029187984</span>, <span class="number">0.24112190491594204</span>),
+    <span class="ident">RGB</span>(<span class="number">0.25999463887892144</span>, <span class="number">0.070053855603861875</span>,<span class="number">0.24308218808684579</span>),
+    <span class="ident">RGB</span>(<span class="number">0.26425512207060942</span>, <span class="number">0.070616595622995437</span>,<span class="number">0.24507758869355967</span>),
+    <span class="ident">RGB</span>(<span class="number">0.26859095948172862</span>, <span class="number">0.071226716277922458</span>,<span class="number">0.24710443563450618</span>),
+    <span class="ident">RGB</span>(<span class="number">0.27299701518897301</span>, <span class="number">0.071883555446163511</span>,<span class="number">0.24915847093232929</span>),
+    <span class="ident">RGB</span>(<span class="number">0.27747150809142801</span>, <span class="number">0.072582969899254779</span>,<span class="number">0.25123493995942769</span>),
+    <span class="ident">RGB</span>(<span class="number">0.28201746297366942</span>, <span class="number">0.073315693214040967</span>,<span class="number">0.25332800295084507</span>),
+    <span class="ident">RGB</span>(<span class="number">0.28662309235899847</span>, <span class="number">0.074088460826808866</span>,<span class="number">0.25543478673717029</span>),
+    <span class="ident">RGB</span>(<span class="number">0.29128515387578635</span>, <span class="number">0.074899049847466703</span>,<span class="number">0.25755101595750435</span>),
+    <span class="ident">RGB</span>(<span class="number">0.2960004726065818</span>,  <span class="number">0.075745336000958424</span>,<span class="number">0.25967245030364566</span>),
+    <span class="ident">RGB</span>(<span class="number">0.30077276812918691</span>, <span class="number">0.076617824336164764</span>,<span class="number">0.26179294097819672</span>),
+    <span class="ident">RGB</span>(<span class="number">0.30559226007249934</span>, <span class="number">0.077521963107537312</span>,<span class="number">0.26391006692119662</span>),
+    <span class="ident">RGB</span>(<span class="number">0.31045520848595526</span>, <span class="number">0.078456871676182177</span>,<span class="number">0.2660200572779356</span>),
+    <span class="ident">RGB</span>(<span class="number">0.31535870009205808</span>, <span class="number">0.079420997315243186</span>,<span class="number">0.26811904076941961</span>),
+    <span class="ident">RGB</span>(<span class="number">0.32029986557994061</span>, <span class="number">0.080412994737554838</span>,<span class="number">0.27020322893039511</span>),
+    <span class="ident">RGB</span>(<span class="number">0.32527888860401261</span>, <span class="number">0.081428390076546092</span>,<span class="number">0.27226772884656186</span>),
+    <span class="ident">RGB</span>(<span class="number">0.33029174471181438</span>, <span class="number">0.08246763389003825</span>, <span class="number">0.27430929404579435</span>),
+    <span class="ident">RGB</span>(<span class="number">0.33533353224455448</span>, <span class="number">0.083532434119003962</span>,<span class="number">0.27632534356790039</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34040164359597463</span>, <span class="number">0.084622236191702671</span>,<span class="number">0.27831254595259397</span>),
+    <span class="ident">RGB</span>(<span class="number">0.34549355713871799</span>, <span class="number">0.085736654965126335</span>,<span class="number">0.28026769921081435</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35060678246032478</span>, <span class="number">0.08687555176033529</span>, <span class="number">0.28218770540182386</span>),
+    <span class="ident">RGB</span>(<span class="number">0.35573889947341125</span>, <span class="number">0.088038974350243354</span>,<span class="number">0.2840695897279818</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36088752387578377</span>, <span class="number">0.089227194362745205</span>,<span class="number">0.28591050458531014</span>),
+    <span class="ident">RGB</span>(<span class="number">0.36605031412464006</span>, <span class="number">0.090440685427697898</span>,<span class="number">0.2877077458811747</span>),
+    <span class="ident">RGB</span>(<span class="number">0.37122508431309342</span>, <span class="number">0.091679997480262732</span>,<span class="number">0.28945865397633169</span>),
+    <span class="ident">RGB</span>(<span class="number">0.3764103053221462</span>,  <span class="number">0.092945198093777909</span>,<span class="number">0.29116024157313919</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38160247377467543</span>, <span class="number">0.094238731263712183</span>,<span class="number">0.29281107506269488</span>),
+    <span class="ident">RGB</span>(<span class="number">0.38679939079544168</span>, <span class="number">0.09556181960083443</span>, <span class="number">0.29440901248173756</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39199887556812907</span>, <span class="number">0.09691583650296684</span>, <span class="number">0.29595212005509081</span>),
+    <span class="ident">RGB</span>(<span class="number">0.39719876876325577</span>, <span class="number">0.098302320968278623</span>,<span class="number">0.29743856476285779</span>),
+    <span class="ident">RGB</span>(<span class="number">0.40239692379737496</span>, <span class="number">0.099722930314950553</span>,<span class="number">0.29886674369733968</span>),
+    <span class="ident">RGB</span>(<span class="number">0.40759120392688708</span>, <span class="number">0.10117945586419633</span>, <span class="number">0.30023519507728602</span>),
+    <span class="ident">RGB</span>(<span class="number">0.41277985630360303</span>, <span class="number">0.1026734006932461</span>,  <span class="number">0.30154226437468967</span>),
+    <span class="ident">RGB</span>(<span class="number">0.41796105205173684</span>, <span class="number">0.10420644885760968</span>, <span class="number">0.30278652039631843</span>),
+    <span class="ident">RGB</span>(<span class="number">0.42313214269556043</span>, <span class="number">0.10578120994917611</span>, <span class="number">0.3039675809469457</span>),
+    <span class="ident">RGB</span>(<span class="number">0.42829101315789753</span>, <span class="number">0.1073997763055258</span>,  <span class="number">0.30508479060294547</span>),
+    <span class="ident">RGB</span>(<span class="number">0.4334355841041439</span>,  <span class="number">0.1090642347484701</span>,  <span class="number">0.30613767928289148</span>),
+    <span class="ident">RGB</span>(<span class="number">0.43856378187931538</span>, <span class="number">0.11077667828375456</span>, <span class="number">0.30712600062348083</span>),
+    <span class="ident">RGB</span>(<span class="number">0.44367358645071275</span>, <span class="number">0.11253912421257944</span>, <span class="number">0.30804973095465449</span>),
+    <span class="ident">RGB</span>(<span class="number">0.44876299173174822</span>, <span class="number">0.11435355574622549</span>, <span class="number">0.30890905921943196</span>),
+    <span class="ident">RGB</span>(<span class="number">0.45383005086999889</span>, <span class="number">0.11622183788331528</span>, <span class="number">0.30970441249844921</span>),
+    <span class="ident">RGB</span>(<span class="number">0.45887288947308297</span>, <span class="number">0.11814571137706886</span>, <span class="number">0.31043636979038808</span>),
+    <span class="ident">RGB</span>(<span class="number">0.46389102840284874</span>, <span class="number">0.12012561256850712</span>, <span class="number">0.31110343446582983</span>),
+    <span class="ident">RGB</span>(<span class="number">0.46888111384598413</span>, <span class="number">0.12216445576414045</span>, <span class="number">0.31170911458932665</span>),
+    <span class="ident">RGB</span>(<span class="number">0.473841437035254</span>,   <span class="number">0.12426354237989065</span>, <span class="number">0.31225470169927194</span>),
+    <span class="ident">RGB</span>(<span class="number">0.47877034239726296</span>, <span class="number">0.12642401401409453</span>, <span class="number">0.31274172735821959</span>),
+    <span class="ident">RGB</span>(<span class="number">0.48366628618847957</span>, <span class="number">0.12864679022013889</span>, <span class="number">0.31317188565991266</span>),
+    <span class="ident">RGB</span>(<span class="number">0.48852847371852987</span>, <span class="number">0.13093210934893723</span>, <span class="number">0.31354553695453014</span>),
+    <span class="ident">RGB</span>(<span class="number">0.49335504375145617</span>, <span class="number">0.13328091630401023</span>, <span class="number">0.31386561956734976</span>),
+    <span class="ident">RGB</span>(<span class="number">0.49814435462074153</span>, <span class="number">0.13569380302451714</span>, <span class="number">0.314135190862664</span>),
+    <span class="ident">RGB</span>(<span class="number">0.50289524974970612</span>, <span class="number">0.13817086581280427</span>, <span class="number">0.31435662153833671</span>),
+    <span class="ident">RGB</span>(<span class="number">0.50760681181053691</span>, <span class="number">0.14071192654913128</span>, <span class="number">0.31453200120082569</span>),
+    <span class="ident">RGB</span>(<span class="number">0.51227835105321762</span>, <span class="number">0.14331656120063752</span>, <span class="number">0.3146630922831542</span>),
+    <span class="ident">RGB</span>(<span class="number">0.51690848800544464</span>, <span class="number">0.14598463068714407</span>, <span class="number">0.31475407592280041</span>),
+    <span class="ident">RGB</span>(<span class="number">0.52149652863229956</span>, <span class="number">0.14871544765633712</span>, <span class="number">0.31480767954534428</span>),
+    <span class="ident">RGB</span>(<span class="number">0.52604189625477482</span>, <span class="number">0.15150818660835483</span>, <span class="number">0.31482653406646727</span>),
+    <span class="ident">RGB</span>(<span class="number">0.53054420489856446</span>, <span class="number">0.15436183633886777</span>, <span class="number">0.31481299789187128</span>),
+    <span class="ident">RGB</span>(<span class="number">0.5350027976174474</span>,  <span class="number">0.15727540775107324</span>, <span class="number">0.31477085207396532</span>),
+    <span class="ident">RGB</span>(<span class="number">0.53941736649199057</span>, <span class="number">0.16024769309971934</span>, <span class="number">0.31470295028655965</span>),
+    <span class="ident">RGB</span>(<span class="number">0.54378771313608565</span>, <span class="number">0.16327738551419116</span>, <span class="number">0.31461204226295625</span>),
+    <span class="ident">RGB</span>(<span class="number">0.54811370033467621</span>, <span class="number">0.1663630904279047</span>,  <span class="number">0.31450102990914708</span>),
+    <span class="ident">RGB</span>(<span class="number">0.55239521572711914</span>, <span class="number">0.16950338809328983</span>, <span class="number">0.31437291554615371</span>),
+    <span class="ident">RGB</span>(<span class="number">0.55663229034969341</span>, <span class="number">0.17269677158182117</span>, <span class="number">0.31423043195101424</span>),
+    <span class="ident">RGB</span>(<span class="number">0.56082499039117173</span>, <span class="number">0.17594170887918095</span>, <span class="number">0.31407639883970623</span>),
+    <span class="ident">RGB</span>(<span class="number">0.56497343529017696</span>, <span class="number">0.17923664950367169</span>, <span class="number">0.3139136046337036</span>),
+    <span class="ident">RGB</span>(<span class="number">0.56907784784011428</span>, <span class="number">0.18258004462335425</span>, <span class="number">0.31374440956796529</span>),
+    <span class="ident">RGB</span>(<span class="number">0.57313845754107873</span>, <span class="number">0.18597036007065024</span>, <span class="number">0.31357126868520002</span>),
+    <span class="ident">RGB</span>(<span class="number">0.57715550812992045</span>, <span class="number">0.18940601489760422</span>, <span class="number">0.31339704333572083</span>),
+    <span class="ident">RGB</span>(<span class="number">0.58112932761586555</span>, <span class="number">0.19288548904692518</span>, <span class="number">0.31322399394183942</span>),
+    <span class="ident">RGB</span>(<span class="number">0.58506024396466882</span>, <span class="number">0.19640737049066315</span>, <span class="number">0.31305401163732732</span>),
+    <span class="ident">RGB</span>(<span class="number">0.58894861935544707</span>, <span class="number">0.19997020971775276</span>, <span class="number">0.31288922211590126</span>),
+    <span class="ident">RGB</span>(<span class="number">0.59279480536520257</span>, <span class="number">0.20357251410079796</span>, <span class="number">0.31273234839304942</span>),
+    <span class="ident">RGB</span>(<span class="number">0.59659918109122367</span>, <span class="number">0.207212956082026</span>,   <span class="number">0.31258523031121233</span>),
+    <span class="ident">RGB</span>(<span class="number">0.60036213010411577</span>, <span class="number">0.21089030138947745</span>, <span class="number">0.31244934410414688</span>),
+    <span class="ident">RGB</span>(<span class="number">0.60408401696732739</span>, <span class="number">0.21460331490206347</span>, <span class="number">0.31232652641170694</span>),
+    <span class="ident">RGB</span>(<span class="number">0.60776523994818654</span>, <span class="number">0.21835070166659282</span>, <span class="number">0.31221903291870201</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6114062072731884</span>,  <span class="number">0.22213124697023234</span>, <span class="number">0.31212881396435238</span>),
+    <span class="ident">RGB</span>(<span class="number">0.61500723236391375</span>, <span class="number">0.22594402043981826</span>, <span class="number">0.31205680685765741</span>),
+    <span class="ident">RGB</span>(<span class="number">0.61856865258877192</span>, <span class="number">0.22978799249179921</span>, <span class="number">0.31200463838728931</span>),
+    <span class="ident">RGB</span>(<span class="number">0.62209079821082613</span>, <span class="number">0.2336621873300741</span>,  <span class="number">0.31197383273627388</span>),
+    <span class="ident">RGB</span>(<span class="number">0.62557416500434959</span>, <span class="number">0.23756535071152696</span>, <span class="number">0.31196698314912269</span>),
+    <span class="ident">RGB</span>(<span class="number">0.62901892016985872</span>, <span class="number">0.24149689191922535</span>, <span class="number">0.31198447195645718</span>),
+    <span class="ident">RGB</span>(<span class="number">0.63242534854210275</span>, <span class="number">0.24545598775548677</span>, <span class="number">0.31202765974624452</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6357937104834237</span>,  <span class="number">0.24944185818822678</span>, <span class="number">0.31209793953300591</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6391243387840212</span>,  <span class="number">0.25345365461983138</span>, <span class="number">0.31219689612063978</span>),
+    <span class="ident">RGB</span>(<span class="number">0.642417577481186</span>,   <span class="number">0.257490519876798</span>,   <span class="number">0.31232631707560987</span>),
+    <span class="ident">RGB</span>(<span class="number">0.64567349382645434</span>, <span class="number">0.26155203161615281</span>, <span class="number">0.31248673753935263</span>),
+    <span class="ident">RGB</span>(<span class="number">0.64889230169458245</span>, <span class="number">0.26563755336209077</span>, <span class="number">0.31267941819570189</span>),
+    <span class="ident">RGB</span>(<span class="number">0.65207417290277303</span>, <span class="number">0.26974650525236699</span>, <span class="number">0.31290560605819168</span>),
+    <span class="ident">RGB</span>(<span class="number">0.65521932609327127</span>, <span class="number">0.27387826652410152</span>, <span class="number">0.3131666792687211</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6583280801134499</span>,  <span class="number">0.27803210957665631</span>, <span class="number">0.3134643447952643</span>),
+    <span class="ident">RGB</span>(<span class="number">0.66140037532601781</span>, <span class="number">0.28220778870555907</span>, <span class="number">0.31379912926498488</span>),
+    <span class="ident">RGB</span>(<span class="number">0.66443632469878844</span>, <span class="number">0.28640483614256179</span>, <span class="number">0.31417223403606975</span>),
+    <span class="ident">RGB</span>(<span class="number">0.66743603766369131</span>, <span class="number">0.29062280081258873</span>, <span class="number">0.31458483752056837</span>),
+    <span class="ident">RGB</span>(<span class="number">0.67039959547676198</span>, <span class="number">0.29486126309253047</span>, <span class="number">0.31503813956872212</span>),
+    <span class="ident">RGB</span>(<span class="number">0.67332725564817331</span>, <span class="number">0.29911962764489264</span>, <span class="number">0.31553372323982209</span>),
+    <span class="ident">RGB</span>(<span class="number">0.67621897924409746</span>, <span class="number">0.30339762792450425</span>, <span class="number">0.3160724937230589</span>),
+    <span class="ident">RGB</span>(<span class="number">0.67907474028157344</span>, <span class="number">0.30769497879760166</span>, <span class="number">0.31665545668946665</span>),
+    <span class="ident">RGB</span>(<span class="number">0.68189457150944521</span>, <span class="number">0.31201133280550686</span>, <span class="number">0.31728380489244951</span>),
+    <span class="ident">RGB</span>(<span class="number">0.68467850942494535</span>, <span class="number">0.31634634821222207</span>, <span class="number">0.31795870784057567</span>),
+    <span class="ident">RGB</span>(<span class="number">0.68742656435169625</span>, <span class="number">0.32069970535138104</span>, <span class="number">0.31868137622277692</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6901389321505248</span>,  <span class="number">0.32507091815606004</span>, <span class="number">0.31945332332898302</span>),
+    <span class="ident">RGB</span>(<span class="number">0.69281544846764931</span>, <span class="number">0.32945984647042675</span>, <span class="number">0.3202754315314667</span>),
+    <span class="ident">RGB</span>(<span class="number">0.69545608346891119</span>, <span class="number">0.33386622163232865</span>, <span class="number">0.32114884306985791</span>),
+    <span class="ident">RGB</span>(<span class="number">0.6980608153581771</span>,  <span class="number">0.33828976326048621</span>, <span class="number">0.32207478855218091</span>),
+    <span class="ident">RGB</span>(<span class="number">0.70062962477242097</span>, <span class="number">0.34273019305341756</span>, <span class="number">0.32305449047765694</span>),
+    <span class="ident">RGB</span>(<span class="number">0.70316249458814151</span>, <span class="number">0.34718723719597999</span>, <span class="number">0.32408913679491225</span>),
+    <span class="ident">RGB</span>(<span class="number">0.70565951122610093</span>, <span class="number">0.35166052978120937</span>, <span class="number">0.32518014084085567</span>),
+    <span class="ident">RGB</span>(<span class="number">0.70812059568420482</span>, <span class="number">0.35614985523380299</span>, <span class="number">0.32632861885644465</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7105456546582587</span>,  <span class="number">0.36065500290840113</span>, <span class="number">0.32753574162788762</span>),
+    <span class="ident">RGB</span>(<span class="number">0.71293466839773467</span>, <span class="number">0.36517570519856757</span>, <span class="number">0.3288027427038317</span>),
+    <span class="ident">RGB</span>(<span class="number">0.71528760614847287</span>, <span class="number">0.36971170225223449</span>, <span class="number">0.3301308728723546</span>),
+    <span class="ident">RGB</span>(<span class="number">0.71760444908133847</span>, <span class="number">0.37426272710686193</span>, <span class="number">0.33152138620958932</span>),
+    <span class="ident">RGB</span>(<span class="number">0.71988521490549851</span>, <span class="number">0.37882848839337313</span>, <span class="number">0.33297555200245399</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7221299918421461</span>,  <span class="number">0.38340864508963057</span>, <span class="number">0.33449469983585844</span>),
+    <span class="ident">RGB</span>(<span class="number">0.72433865647781592</span>, <span class="number">0.38800301593162145</span>, <span class="number">0.33607995965691828</span>),
+    <span class="ident">RGB</span>(<span class="number">0.72651122900227549</span>, <span class="number">0.3926113126792577</span>,  <span class="number">0.3377325942005665</span>),
+    <span class="ident">RGB</span>(<span class="number">0.72864773856716547</span>, <span class="number">0.39723324476747235</span>, <span class="number">0.33945384341064017</span>),
+    <span class="ident">RGB</span>(<span class="number">0.73074820754845171</span>, <span class="number">0.401868526884681</span>,   <span class="number">0.3412449533046818</span>),
+    <span class="ident">RGB</span>(<span class="number">0.73281270506268747</span>, <span class="number">0.4065168468778026</span>,  <span class="number">0.34310715173410822</span>),
+    <span class="ident">RGB</span>(<span class="number">0.73484133598564938</span>, <span class="number">0.41117787004519513</span>, <span class="number">0.34504169470809071</span>),
+    <span class="ident">RGB</span>(<span class="number">0.73683422173585866</span>, <span class="number">0.41585125850290111</span>, <span class="number">0.34704978520758401</span>),
+    <span class="ident">RGB</span>(<span class="number">0.73879140024599266</span>, <span class="number">0.42053672992315327</span>, <span class="number">0.34913260148542435</span>),
+    <span class="ident">RGB</span>(<span class="number">0.74071301619506091</span>, <span class="number">0.4252339389526239</span>,  <span class="number">0.35129130890802607</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7425992159973317</span>,  <span class="number">0.42994254036133867</span>, <span class="number">0.35352709245374592</span>),
+    <span class="ident">RGB</span>(<span class="number">0.74445018676570673</span>, <span class="number">0.43466217184617112</span>, <span class="number">0.35584108091122535</span>),
+    <span class="ident">RGB</span>(<span class="number">0.74626615789163442</span>, <span class="number">0.43939245044973502</span>, <span class="number">0.35823439142300639</span>),
+    <span class="ident">RGB</span>(<span class="number">0.74804739275559562</span>, <span class="number">0.44413297780351974</span>, <span class="number">0.36070813602540136</span>),
+    <span class="ident">RGB</span>(<span class="number">0.74979420547170472</span>, <span class="number">0.44888333481548809</span>, <span class="number">0.36326337558360278</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75150685045891663</span>, <span class="number">0.45364314496866825</span>, <span class="number">0.36590112443835765</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75318566369046569</span>, <span class="number">0.45841199172949604</span>, <span class="number">0.36862236642234769</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75483105066959544</span>, <span class="number">0.46318942799460555</span>, <span class="number">0.3714280448394211</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75644341577140706</span>, <span class="number">0.46797501437948458</span>, <span class="number">0.37431909037543515</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75802325538455839</span>, <span class="number">0.4727682731566229</span>,  <span class="number">0.37729635531096678</span>),
+    <span class="ident">RGB</span>(<span class="number">0.75957111105340058</span>, <span class="number">0.47756871222057079</span>, <span class="number">0.380360657784311</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7610876378057071</span>,  <span class="number">0.48237579130289127</span>, <span class="number">0.38351275723852291</span>),
+    <span class="ident">RGB</span>(<span class="number">0.76257333554052609</span>, <span class="number">0.48718906673415824</span>, <span class="number">0.38675335037837993</span>),
+    <span class="ident">RGB</span>(<span class="number">0.76402885609288662</span>, <span class="number">0.49200802533379656</span>, <span class="number">0.39008308392311997</span>),
+    <span class="ident">RGB</span>(<span class="number">0.76545492593330511</span>, <span class="number">0.49683212909727231</span>, <span class="number">0.39350254000115381</span>),
+    <span class="ident">RGB</span>(<span class="number">0.76685228950643891</span>, <span class="number">0.5016608471009063</span>,  <span class="number">0.39701221751773474</span>),
+    <span class="ident">RGB</span>(<span class="number">0.76822176599735303</span>, <span class="number">0.50649362371287909</span>, <span class="number">0.40061257089416885</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7695642334401418</span>,  <span class="number">0.5113298901696085</span>,  <span class="number">0.40430398069682483</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77088091962302474</span>, <span class="number">0.51616892643469103</span>, <span class="number">0.40808667584648967</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77217257229605551</span>, <span class="number">0.5210102658711383</span>,  <span class="number">0.41196089987122869</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77344021829889886</span>, <span class="number">0.52585332093451564</span>, <span class="number">0.41592679539764366</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77468494746063199</span>, <span class="number">0.53069749384776732</span>, <span class="number">0.41998440356963762</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77590790730685699</span>, <span class="number">0.53554217882461186</span>, <span class="number">0.42413367909988375</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7771103295521099</span>,  <span class="number">0.54038674910561235</span>, <span class="number">0.42837450371258479</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77829345807633121</span>, <span class="number">0.54523059488426595</span>, <span class="number">0.432706647838971</span>),
+    <span class="ident">RGB</span>(<span class="number">0.77945862731506643</span>, <span class="number">0.55007308413977274</span>, <span class="number">0.43712979856444761</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78060774749483774</span>, <span class="number">0.55491335744890613</span>, <span class="number">0.44164332426364639</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78174180478981836</span>, <span class="number">0.55975098052594863</span>, <span class="number">0.44624687186865436</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78286225264440912</span>, <span class="number">0.56458533111166875</span>, <span class="number">0.45093985823706345</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78397060836414478</span>, <span class="number">0.56941578326710418</span>, <span class="number">0.45572154742892063</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78506845019606841</span>, <span class="number">0.5742417003617839</span>,  <span class="number">0.46059116206904965</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78615737132332963</span>, <span class="number">0.5790624629815756</span>,  <span class="number">0.46554778281918402</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78723904108188347</span>, <span class="number">0.58387743744557208</span>, <span class="number">0.47059039582133383</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78831514045623963</span>, <span class="number">0.58868600173562435</span>, <span class="number">0.47571791879076081</span>),
+    <span class="ident">RGB</span>(<span class="number">0.78938737766251943</span>, <span class="number">0.5934875421745599</span>,  <span class="number">0.48092913815357724</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79045776847727878</span>, <span class="number">0.59828134277062461</span>, <span class="number">0.48622257801969754</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79152832843475607</span>, <span class="number">0.60306670593147205</span>, <span class="number">0.49159667021646397</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79260034304237448</span>, <span class="number">0.60784322087037024</span>, <span class="number">0.49705020621532009</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79367559698664958</span>, <span class="number">0.61261029334072192</span>, <span class="number">0.50258161291269432</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79475585972654039</span>, <span class="number">0.61736734400220705</span>, <span class="number">0.50818921213102985</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79584292379583765</span>, <span class="number">0.62211378808451145</span>, <span class="number">0.51387124091909786</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79693854719951607</span>, <span class="number">0.62684905679296699</span>, <span class="number">0.5196258425240281</span>),
+    <span class="ident">RGB</span>(<span class="number">0.79804447815136637</span>, <span class="number">0.63157258225089552</span>, <span class="number">0.52545108144834785</span>),
+    <span class="ident">RGB</span>(<span class="number">0.7991624518501963</span>,  <span class="number">0.63628379372029187</span>, <span class="number">0.53134495942561433</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80029415389753977</span>, <span class="number">0.64098213306749863</span>, <span class="number">0.53730535185141037</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80144124292560048</span>, <span class="number">0.64566703459218766</span>, <span class="number">0.5433300863249918</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80260531146112946</span>, <span class="number">0.65033793748103852</span>, <span class="number">0.54941691584603647</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80378792531077625</span>, <span class="number">0.65499426549472628</span>, <span class="number">0.55556350867083815</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80499054790810298</span>, <span class="number">0.65963545027564163</span>, <span class="number">0.56176745110546977</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80621460526927058</span>, <span class="number">0.66426089585282289</span>, <span class="number">0.56802629178649788</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8074614045096935</span>,  <span class="number">0.6688700095398864</span>,  <span class="number">0.57433746373459582</span>),
+    <span class="ident">RGB</span>(<span class="number">0.80873219170089694</span>, <span class="number">0.67346216702194517</span>, <span class="number">0.58069834805576737</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81002809466520687</span>, <span class="number">0.67803672673971815</span>, <span class="number">0.58710626908082753</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81135014011763329</span>, <span class="number">0.68259301546243389</span>, <span class="number">0.59355848909050757</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81269922039881493</span>, <span class="number">0.68713033714618876</span>, <span class="number">0.60005214820435104</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81407611046993344</span>, <span class="number">0.69164794791482131</span>, <span class="number">0.6065843782630862</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81548146627279483</span>, <span class="number">0.69614505508308089</span>, <span class="number">0.61315221209322646</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81691575775055891</span>, <span class="number">0.70062083014783982</span>, <span class="number">0.61975260637257923</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81837931164498223</span>, <span class="number">0.70507438189635097</span>, <span class="number">0.62638245478933297</span>),
+    <span class="ident">RGB</span>(<span class="number">0.81987230650455289</span>, <span class="number">0.70950474978787481</span>, <span class="number">0.63303857040067113</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8213947205565636</span>,  <span class="number">0.7139109141951604</span>,  <span class="number">0.63971766697672761</span>),
+    <span class="ident">RGB</span>(<span class="number">0.82294635110428427</span>, <span class="number">0.71829177331290062</span>, <span class="number">0.6464164243818421</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8245268129450285</span>,  <span class="number">0.72264614312088882</span>, <span class="number">0.65313137915422603</span>),
+    <span class="ident">RGB</span>(<span class="number">0.82613549710580259</span>, <span class="number">0.72697275518238258</span>, <span class="number">0.65985900156216504</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8277716072353446</span>,  <span class="number">0.73127023324078089</span>, <span class="number">0.66659570204682972</span>),
+    <span class="ident">RGB</span>(<span class="number">0.82943407816481474</span>, <span class="number">0.7355371221572935</span>,  <span class="number">0.67333772009301907</span>),
+    <span class="ident">RGB</span>(<span class="number">0.83112163529096306</span>, <span class="number">0.73977184647638616</span>, <span class="number">0.68008125203631464</span>),
+    <span class="ident">RGB</span>(<span class="number">0.83283277185777982</span>, <span class="number">0.74397271817459876</span>, <span class="number">0.68682235874648545</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8345656905566583</span>,  <span class="number">0.7481379479992134</span>,  <span class="number">0.69355697649863846</span>),
+    <span class="ident">RGB</span>(<span class="number">0.83631898844737929</span>, <span class="number">0.75226548952875261</span>, <span class="number">0.70027999028864962</span>),
+    <span class="ident">RGB</span>(<span class="number">0.83809123476131964</span>, <span class="number">0.75635314860808633</span>, <span class="number">0.70698561390212977</span>),
+    <span class="ident">RGB</span>(<span class="number">0.83987839884120874</span>, <span class="number">0.76039907199779677</span>, <span class="number">0.71367147811129228</span>),
+    <span class="ident">RGB</span>(<span class="number">0.84167750766845151</span>, <span class="number">0.76440101200982946</span>, <span class="number">0.72033299387284622</span>),
+    <span class="ident">RGB</span>(<span class="number">0.84348529222933699</span>, <span class="number">0.76835660399870176</span>, <span class="number">0.72696536998972039</span>),
+    <span class="ident">RGB</span>(<span class="number">0.84529810731955113</span>, <span class="number">0.77226338601044719</span>, <span class="number">0.73356368240541492</span>),
+    <span class="ident">RGB</span>(<span class="number">0.84711195507965098</span>, <span class="number">0.77611880236047159</span>, <span class="number">0.74012275762807056</span>),
+    <span class="ident">RGB</span>(<span class="number">0.84892245563117641</span>, <span class="number">0.77992021407650147</span>, <span class="number">0.74663719293664366</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85072697023178789</span>, <span class="number">0.78366457342383888</span>, <span class="number">0.7530974636118285</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85251907207708444</span>, <span class="number">0.78734936133548439</span>, <span class="number">0.7594994148789691</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85429219611470464</span>, <span class="number">0.79097196777091994</span>, <span class="number">0.76583801477914104</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85604022314725403</span>, <span class="number">0.79452963601550608</span>, <span class="number">0.77210610037674143</span>),
+    <span class="ident">RGB</span>(<span class="number">0.85775662943504905</span>, <span class="number">0.79801963142713928</span>, <span class="number">0.77829571667247499</span>),
+    <span class="ident">RGB</span>(<span class="number">0.8594346370300241</span>,  <span class="number">0.8014392309950078</span>,  <span class="number">0.78439788751383921</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86107117027565516</span>, <span class="number">0.80478517909812231</span>, <span class="number">0.79039529663736285</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86265601051127572</span>, <span class="number">0.80805523804261525</span>, <span class="number">0.796282666437655</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86418343723941027</span>, <span class="number">0.81124644224653542</span>, <span class="number">0.80204612696863953</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86564934325605325</span>, <span class="number">0.81435544067514909</span>, <span class="number">0.80766972324164554</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86705314907048503</span>, <span class="number">0.81737804041911244</span>, <span class="number">0.81313419626911398</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86839954695818633</span>, <span class="number">0.82030875512181523</span>, <span class="number">0.81841638963128993</span>),
+    <span class="ident">RGB</span>(<span class="number">0.86969131502613806</span>, <span class="number">0.82314158859569164</span>, <span class="number">0.82350476683173168</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87093846717297507</span>, <span class="number">0.82586857889438514</span>, <span class="number">0.82838497261149613</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87215331978454325</span>, <span class="number">0.82848052823709672</span>, <span class="number">0.8330486712880828</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87335171360916275</span>, <span class="number">0.83096715251272624</span>, <span class="number">0.83748851001197089</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87453793320260187</span>, <span class="number">0.83331972948645461</span>, <span class="number">0.84171925358069011</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87571458709961403</span>, <span class="number">0.8355302318472394</span>,  <span class="number">0.84575537519027078</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87687848451614692</span>, <span class="number">0.83759238071186537</span>, <span class="number">0.84961373549150254</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87802298436649007</span>, <span class="number">0.83950165618540074</span>, <span class="number">0.85330645352458923</span>),
+    <span class="ident">RGB</span>(<span class="number">0.87913244240792765</span>, <span class="number">0.84125554884475906</span>, <span class="number">0.85685572291039636</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88019293315695812</span>, <span class="number">0.84285224824778615</span>, <span class="number">0.86027399927156634</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88119169871341951</span>, <span class="number">0.84429066717717349</span>, <span class="number">0.86356595168669881</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88211542489401606</span>, <span class="number">0.84557007254559347</span>, <span class="number">0.86673765046233331</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88295168595448525</span>, <span class="number">0.84668970275699273</span>, <span class="number">0.86979617048190971</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88369127145898041</span>, <span class="number">0.84764891761519268</span>, <span class="number">0.87274147101441557</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88432713054113543</span>, <span class="number">0.84844741572055415</span>, <span class="number">0.87556785228242973</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88485138159908572</span>, <span class="number">0.84908426422893801</span>, <span class="number">0.87828235285372469</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88525897972630474</span>, <span class="number">0.84955892810989209</span>, <span class="number">0.88088414794024839</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88554714811952384</span>, <span class="number">0.84987174283631584</span>, <span class="number">0.88336206121170946</span>),
+    <span class="ident">RGB</span>(<span class="number">0.88571155122845646</span>, <span class="number">0.85002186115856315</span>,<span class="number">0.88572538990087124</span>),
+];
+}
+</pre></div>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="a_fractal_a_day" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

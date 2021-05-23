@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["FractalType","Supported types of fractals"]],"fn":[["postprocess_image","compress a png  in place using `optipng`"],["postprocess_image_for_twitter","reduce the size to something twitter allows"]],"mod":[["color",""],["colormap",""],["fractal",""],["histogram",""],["numbers",""],["png_helper",""]]});

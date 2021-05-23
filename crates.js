@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["a_fractal_a_day"];

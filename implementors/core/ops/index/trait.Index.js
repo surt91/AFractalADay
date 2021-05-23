@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["a_fractal_a_day"] = [{"text":"impl&lt;'a&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/ops/index/trait.Index.html\" title=\"trait core::ops::index::Index\">Index</a>&lt;&amp;'a <a class=\"enum\" href=\"a_fractal_a_day/fractal/enum.Alphabet.html\" title=\"enum a_fractal_a_day::fractal::Alphabet\">Alphabet</a>&gt; for <a class=\"struct\" href=\"a_fractal_a_day/fractal/struct.Lrules.html\" title=\"struct a_fractal_a_day::fractal::Lrules\">Lrules</a>","synthetic":false,"types":["a_fractal_a_day::fractal::lsystem::rules::Lrules"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

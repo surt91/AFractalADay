@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["a_fractal_a_day"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"enum\" href=\"a_fractal_a_day/histogram/enum.BoundsTypes.html\" title=\"enum a_fractal_a_day::histogram::BoundsTypes\">BoundsTypes</a>","synthetic":false,"types":["a_fractal_a_day::histogram::BoundsTypes"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
