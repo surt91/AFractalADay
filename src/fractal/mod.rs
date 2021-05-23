@@ -313,7 +313,7 @@ impl Fractal {
                 serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))
             },
             FractalInstance::Lattice(ref f) => {
-                serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))
+                serde_json::to_string(&f.get_serializable()).expect(&format!("Lattice: {:#?}", &f.get_serializable()))
             },
         }
     }
