@@ -43,6 +43,7 @@ pub enum FractalType {
     Ising,
     QuadraticMap,
     Lorenz,
+    Rossler,
     DoublePendulum,
 }
 

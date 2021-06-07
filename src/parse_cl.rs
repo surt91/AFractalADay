@@ -230,6 +230,11 @@ pub fn parse_cl() -> Options {
                     .help("render the Lorenz attractor")
                     .group("ode")
               )
+              .arg(Arg::with_name("rossler")
+                    .long("rossler")
+                    .help("render the Rössler attractor")
+                    .group("ode")
+              )
               .arg(Arg::with_name("doublependulum")
                     .long("doublependulum")
                     .help("render the double pendulum (fractal dimension 2, I guess)")
@@ -524,6 +529,8 @@ pub fn parse_cl() -> Options {
         FractalType::QuadraticMap
     } else if matches.is_present("lorenz") {
         FractalType::Lorenz
+    } else if matches.is_present("rossler") {
+        FractalType::Rossler
     } else if matches.is_present("doublependulum") {
         FractalType::DoublePendulum
     } else {

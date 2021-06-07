@@ -1,6 +1,7 @@
 mod ode_system;
 mod sampler;
 mod lorenz;
+mod rossler;
 mod double_pendulum;
 
 use serde::{self, Serialize, Deserialize};
@@ -11,6 +12,7 @@ use super::{IteratedFunctionSystem, SuggestedIterations, SuggestedParallelism};
 use sampler::OdeFractalSampler;
 use ode_system::OdeSystem;
 use lorenz::LorenzOde;
+use rossler::RosslerOde;
 use double_pendulum::DoublePendulumOde;
 use crate::{color::RGB, histogram::BoundsTypes, numbers::Real};
 
@@ -33,6 +35,7 @@ fn default_bounds() -> BoundsTypes {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum OdeTypes {
     Lorenz(LorenzOde),
+    Rossler(RosslerOde),
     DoublePendulum(DoublePendulumOde),
 }
 
@@ -97,6 +100,7 @@ impl IteratedFunctionSystem for OdeFractal
 
         let ode: Box<dyn OdeSystem> = match &self.ode {
             OdeTypes::Lorenz(x) => Box::new(x.clone()),
+            OdeTypes::Rossler(x) => Box::new(x.clone()),
             OdeTypes::DoublePendulum(x) => Box::new(x.clone()),
         };
 
