@@ -14,7 +14,6 @@ impl FractalBuilder
     pub fn quadratic_map(self) -> QuadraticMap {
         let mut rng = self.seed_rng();
 
-
         let a = match self.qmaprule {
             Some(s) => QuadraticMap::from_string(&s),
             None => (0..12).map(|_| rng.gen::<Real>() * 2.4 - 1.2).collect(),

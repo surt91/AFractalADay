@@ -4,7 +4,7 @@ mod sampler;
 use serde::{self, Serialize, Deserialize};
 use rand::{Rng, SeedableRng};
 
-use super::IteratedFunctionSystem;
+use super::{IteratedFunctionSystem, SuggestedIterations};
 use sampler::QuadraticMapSampler;
 use crate::{color::RGB, histogram::BoundsTypes};
 use crate::numbers::Real;
@@ -72,6 +72,10 @@ impl IteratedFunctionSystem for QuadraticMap
 
     fn description(&self) -> &str {
         &self.description
+    }
+
+    fn suggested_iterations_draft(&self) -> SuggestedIterations {
+        SuggestedIterations::PerPixel(5)
     }
 
     fn get_rng(&mut self) -> &mut RngType
