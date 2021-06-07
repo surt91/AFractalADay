@@ -10,8 +10,6 @@ use crate::numbers::Real;
 
 use serde::{self, Serialize, Deserialize};
 
-use quaternion;
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LorenzOde {
     state: Vec<Real>,
@@ -37,10 +35,6 @@ impl LorenzOde {
 }
 
 impl OdeSystem for LorenzOde {
-    fn get_dimension(&self) -> usize {
-        3
-    }
-
     fn get_state(&self) -> &Vec<Real>{
         &self.state
     }
@@ -61,16 +55,6 @@ impl OdeSystem for LorenzOde {
         } else {
             unreachable!()
         }
-    }
-
-    fn project(&self, n: [Real; 3]) -> [Real; 2]
-    {
-        let point = [self.state[0], self.state[1], self.state[2]];
-
-        let quat = quaternion::rotation_from_to([0., 0., 1.], n);
-        let p = quaternion::rotate_vector(quat, point);
-
-        [p[0], p[1]]
     }
 }
 

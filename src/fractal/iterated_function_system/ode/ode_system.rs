@@ -2,12 +2,28 @@ use std::fmt;
 
 use crate::numbers::Real;
 
+use quaternion;
+
 pub trait OdeSystem : Sync + Send + fmt::Debug {
-    fn get_dimension(&self) -> usize;
     fn get_state(&self) -> &Vec<Real>;
     fn set_state(&mut self, state: Vec<Real>);
     fn derivative(&self, state: &[Real]) -> Vec<Real>;
-    fn project(&self, normal: [Real; 3]) -> [Real; 2];
+
+    fn get_dimension(&self) -> usize {
+        3
+    }
+
+    // default projection is 3D to random plane
+    // for non 3D ODE, you need a custom projection
+    fn project(&self, normal: [Real; 3]) -> [Real; 2] {
+        let state = self.get_state();
+        let point = [state[0], state[1], state[2]];
+
+        let quat = quaternion::rotation_from_to([0., 0., 1.], normal);
+        let p = quaternion::rotate_vector(quat, point);
+
+        [p[0], p[1]]
+    }
 
     fn update(&mut self, tau: Real) {
         // let tau = self.adaptive_tau();
