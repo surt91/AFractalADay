@@ -235,6 +235,11 @@ pub fn parse_cl() -> Options {
                     .help("render the Rössler attractor")
                     .group("ode")
               )
+              .arg(Arg::with_name("thomas")
+                    .long("thomas")
+                    .help("render the Thomas attractor")
+                    .group("ode")
+              )
               .arg(Arg::with_name("doublependulum")
                     .long("doublependulum")
                     .help("render the double pendulum (fractal dimension 2, I guess)")
@@ -531,6 +536,8 @@ pub fn parse_cl() -> Options {
         FractalType::Lorenz
     } else if matches.is_present("rossler") {
         FractalType::Rossler
+    } else if matches.is_present("thomas") {
+        FractalType::Thomas
     } else if matches.is_present("doublependulum") {
         FractalType::DoublePendulum
     } else {

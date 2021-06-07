@@ -241,6 +241,7 @@ impl FractalBuilder {
             FractalType::QuadraticMap => FractalInstance::IFS(Box::new(self.quadratic_map())),
             FractalType::Lorenz => FractalInstance::IFS(Box::new(self.lorenz())),
             FractalType::Rossler => FractalInstance::IFS(Box::new(self.rossler())),
+            FractalType::Thomas => FractalInstance::IFS(Box::new(self.thomas())),
             FractalType::DoublePendulum => FractalInstance::IFS(Box::new(self.double_pendulum())),
             FractalType::Random => unreachable!(),
             FractalType::LoadJson(ref json) => FractalInstance::guess_fractal_from_json(json),

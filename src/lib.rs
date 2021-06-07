@@ -44,6 +44,7 @@ pub enum FractalType {
     QuadraticMap,
     Lorenz,
     Rossler,
+    Thomas,
     DoublePendulum,
 }
 
