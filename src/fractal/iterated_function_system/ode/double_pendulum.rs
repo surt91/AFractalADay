@@ -30,7 +30,7 @@ impl DoublePendulumOde {
         l2: Option<Real>,
     ) -> DoublePendulumOde {
         DoublePendulumOde {
-            state: state0.unwrap_or_else(|| vec![1.7, 3.1415, 0., 0.]),
+            state: state0.unwrap_or_else(|| vec![1.7, std::f64::consts::PI, 0., 0.]),
             m1: m1.unwrap_or(2.),
             m2: m2.unwrap_or(1.),
             l1: l1.unwrap_or(10.),

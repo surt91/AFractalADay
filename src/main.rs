@@ -18,7 +18,6 @@ use my_twitter::twitter as twitter;
 mod parse_cl;
 use parse_cl::{parse_cl, Options};
 
-
 // only log errors to stdout, but everything to a log file
 fn init_logging(quiet: bool) {
     let level = if quiet {LevelFilter::Error} else {LevelFilter::Info};
