@@ -1,0 +1,9 @@
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.vscode
+**/Dockerfile*
+**/target
+README.md
+img/

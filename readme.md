@@ -14,14 +14,27 @@ Documentation at [surt91.github.io/AFractalADay](https://surt91.github.io/AFract
 
 ## Setup
 
-This program is pure rust with an optional dependency on Imagemagick and optipng
+This program is pure rust with an optional dependency on `Imagemagick` and `optipng`
 which will be called through the shell.
 
 Just use cargo: `cargo run --release --features="binaries"`
 
 **Important:** Do not forget to put in valid keys and secrets in `keys_and_secrets.json`.
 
+### Docker
+
+You can also use a docker container:
+
+```bash
+# build it
+docker build . -t fractal
+# run it
+mkdir -p img
+docker run -v $PWD/img:/img fractal --appolonian --width 400 --height 400
+# the generated fractal will be saved to the mounted volume (here `./img`)
+```
+
 ## Dependencies
 
-*   Imagemagick (optional)
-*   optipng (optional)
+* Imagemagick (optional)
+* optipng (optional)
