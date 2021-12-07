@@ -84,7 +84,7 @@ pub trait IteratedFunctionSystem : Sync {
 
         // warm up and get sample to derive bounds
         let values: Vec<([Real; 2], RGB)> = sampler.skip(1000)
-                                                   .take(100000 as usize)
+                                                   .take(100000_usize)
                                                    .collect();
         let coords: Vec<[Real; 2]> = values.iter()
                                            .map(|&(z, _)| z)

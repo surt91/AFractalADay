@@ -34,10 +34,7 @@ impl Generic {
         angle: f64,
         iterations: Option<u32>
     ) -> Generic {
-        let iterations = match iterations {
-            Some(n) => n,
-            None => 6
-        };
+        let iterations = iterations.unwrap_or(6);
 
         info!("Will render {}, n = {}", description, iterations);
 
@@ -91,10 +88,7 @@ impl LSystem for Generic {
 impl FractalBuilder
 {
     pub fn generic(self) -> Generic {
-        let iterations = match self.iterations {
-            Some(n) => n,
-            None => 5
-        };
+        let iterations = self.iterations.unwrap_or(5);
         let start = match self.start.clone() {
             Some(s) => s,
             None => Alphabet::parse("F")
@@ -109,7 +103,7 @@ impl FractalBuilder
         };
 
         let rule_string = format!("{}", rules);
-        let start_string = format!("{}", start.iter().map(|x| format!("{}", x)).join(""));
+        let start_string = start.iter().map(|x| format!("{}", x)).join("");
 
         let description = format!(
             "L-System, start = {}, rules = ({}), angle = {:.0}°, n = {}",

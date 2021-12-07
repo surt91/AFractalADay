@@ -130,12 +130,12 @@ impl fmt::Display for Op {
 
 fn parse_cplx(s: &str) -> Result<Cplx, ParseFloatError> {
     Ok(
-        if s.contains("i") {
-            if s.contains("-") {
-                let mut s = s.trim_matches('i').split("-");
+        if s.contains('i') {
+            if s.contains('-') {
+                let mut s = s.trim_matches('i').split('-');
                 Cplx::new(s.next().unwrap().parse::<Real>()?, -s.next().unwrap().parse::<Real>()?)
             } else {
-                let mut s = s.trim_matches('i').split("+");
+                let mut s = s.trim_matches('i').split('+');
                 Cplx::new(s.next().unwrap().parse::<Real>()?, s.next().unwrap().parse::<Real>()?)
             }
         } else {
@@ -152,7 +152,7 @@ pub enum ComplexFunction {
 
 impl ComplexFunction {
     pub fn rpn_from_string(s: &str) -> ComplexFunction {
-        let v = s.split(" ")
+        let v = s.split(' ')
             .map(|t| Op::from_str(t).unwrap())
             .collect::<Vec<Op>>();
         ComplexFunction::RPN(v)
@@ -165,7 +165,7 @@ impl ComplexFunction {
         }
     }
 
-    fn eval_rpn(z: Cplx, ops: &Vec<Op>) -> Cplx {
+    fn eval_rpn(z: Cplx, ops: &[Op]) -> Cplx {
         let mut stack: Vec<Cplx> = vec![];
         for op in ops {
             let result = match op {
@@ -199,7 +199,7 @@ impl ComplexFunction {
         stack[0]
     }
 
-    fn eval_poly(z: Cplx, poly: &Vec<Cplx>) -> Cplx {
+    fn eval_poly(z: Cplx, poly: &[Cplx]) -> Cplx {
         // TODO, maybe something fast like horner schema?
         (0..poly.len()).map(|i| poly[i] * z.powf(i as Real)).sum()
     }
@@ -215,8 +215,7 @@ impl ComplexFunction {
                 .collect::<Vec<Cplx>>();
             ComplexFunction::Polynom(coefficients)
         } else {
-            let mut stack: Vec<Op> = Vec::new();
-            stack.push(Op::random_binary_operator(rng));
+            let mut stack = vec![Op::random_binary_operator(rng)];
             let mut needed = 2;
 
             while needed > 0 {

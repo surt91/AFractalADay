@@ -45,24 +45,22 @@ impl FractalBuilder {
         let extra_r = 1. + rng.gen_range(0.0, 0.1);
         let shift = if let Some(c) = self.center {
             Cplx::new(c.0 as Real, c.1 as Real)
+        } else if rng.gen::<f32>() < 0.5 {
+            // either near the cardiod
+            let phi = rng.gen_range(0., 2.*PI as Real);
+            let r = (1. - phi.cos()) / 2.;
+            let r = r * extra_r;  // go a bit outside
+            let x = r * phi.cos() + 0.25;
+            let y = r * phi.sin();
+            Cplx::new(x, y)
         } else {
-            if rng.gen::<f32>() < 0.5 {
-                // either near the cardiod
-                let phi = rng.gen_range(0., 2.*PI as Real);
-                let r = (1. - phi.cos()) / 2.;
-                let r = r * extra_r;  // go a bit outside
-                let x = r * phi.cos() + 0.25;
-                let y = r * phi.sin();
-                Cplx::new(x, y)
-            } else {
-                // or near the circle
-                let phi = rng.gen_range(0., 2.*PI as Real);
-                let r = 0.25;
-                let r = r * extra_r;  // go a bit outside
-                let x = r * phi.cos() - 1.;
-                let y = r * phi.sin();
-                Cplx::new(x, y)
-            }
+            // or near the circle
+            let phi = rng.gen_range(0., 2.*PI as Real);
+            let r = 0.25;
+            let r = r * extra_r;  // go a bit outside
+            let x = r * phi.cos() - 1.;
+            let y = r * phi.sin();
+            Cplx::new(x, y)
         };
 
 

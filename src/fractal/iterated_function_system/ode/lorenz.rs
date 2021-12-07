@@ -26,7 +26,7 @@ impl LorenzOde {
         b: Option<Real>,
     ) -> LorenzOde {
         LorenzOde {
-            state: x0.unwrap_or(vec![1., 1., 20.]),
+            state: x0.unwrap_or_else(|| vec![1., 1., 20.]),
             sigma: sigma.unwrap_or(10.),
             r: r.unwrap_or(28.),
             b: b.unwrap_or(8./3.),
@@ -72,9 +72,9 @@ impl FractalBuilder
 
         let gamma = self.gamma.unwrap_or(4.);
         let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
-        let bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
+        let bounds = self.bounds.unwrap_or(BoundsTypes::StrictBounds);
 
-        let description = format!("Lorenz attractor");
+        let description = "Lorenz attractor".to_string();
 
         info!("Will render {}", description);
 

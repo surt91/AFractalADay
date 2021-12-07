@@ -49,7 +49,7 @@ impl QuadraticMap {
         let mut a: Vec<f64> = Vec::new();
         for c in s.chars() {
             assert!(c.is_ascii_alphabetic());
-            let tmp = (c.to_ascii_lowercase() as u8 - 'a' as u8) as f64;
+            let tmp = (c.to_ascii_lowercase() as u8 - b'a') as f64;
             a.push(0.1*tmp-1.2);
         }
         a

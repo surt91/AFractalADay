@@ -21,7 +21,7 @@ where
     D: Deserializer<'de>,
 {
     let s = String::deserialize(deserializer)?;
-    Ok(Style::from_string(&s).unwrap_or(Style::vibrant()))
+    Ok(Style::from_string(&s).unwrap_or_else(Style::vibrant))
 }
 
 pub trait Stylable {
@@ -76,7 +76,7 @@ impl Style {
             1 => Style::spooky(),
             2 => Style::strong(),
             3 => Style::pastell(),
-            0 | _ => Style::vibrant(),
+            _ => Style::vibrant(),
         }
     }
 

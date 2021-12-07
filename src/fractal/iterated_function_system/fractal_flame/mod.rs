@@ -5,7 +5,7 @@ mod sierpinski_pentagon;
 mod pythagorean_tree;
 mod appolonian_gasket;
 mod mobius_flame;
-mod fractal_flame;
+mod affine_flame;
 
 use serde::{self, Serialize, Deserialize};
 use rand::{Rng, SeedableRng};

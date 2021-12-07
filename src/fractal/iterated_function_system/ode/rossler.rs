@@ -26,7 +26,7 @@ impl RosslerOde {
         c: Option<Real>,
     ) -> RosslerOde {
         RosslerOde {
-            state: x0.unwrap_or(vec![1., 2., 0.]),
+            state: x0.unwrap_or_else(|| vec![1., 2., 0.]),
             a: a.unwrap_or(0.2),
             b: b.unwrap_or(0.2),
             c: c.unwrap_or(5.7),
@@ -72,9 +72,9 @@ impl FractalBuilder
 
         let gamma = self.gamma.unwrap_or(4.);
         let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
-        let bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
+        let bounds = self.bounds.unwrap_or(BoundsTypes::StrictBounds);
 
-        let description = format!("Rössler attractor");
+        let description = "Rössler attractor".to_string();
 
         info!("Will render {}", description);
 

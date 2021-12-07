@@ -57,7 +57,7 @@ impl FractalBuilder
 
         let gamma = self.gamma.unwrap_or(4.);
         let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
-        let bounds = self.bounds.unwrap_or_else(|| BoundsTypes::ZoomedBounds);
+        let bounds = self.bounds.unwrap_or(BoundsTypes::ZoomedBounds);
 
         // handle symmetries
         let symmetry = match self.symmetry {
@@ -95,8 +95,8 @@ impl FractalBuilder
             }
         };
 
-        for i in 0..probabilities.len() {
-            probabilities[i] /= number_of_symmetries as f64;
+        for i in &mut probabilities {
+            *i /= number_of_symmetries as f64;
         }
 
         p = 1./number_of_symmetries as f64;

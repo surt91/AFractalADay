@@ -22,7 +22,7 @@ impl ThomasOde {
         b: Option<Real>,
     ) -> ThomasOde {
         ThomasOde {
-            state: x0.unwrap_or(vec![1., 1., 4.]),
+            state: x0.unwrap_or_else(|| vec![1., 1., 4.]),
             b: b.unwrap_or(0.208186),
         }
     }
@@ -68,9 +68,9 @@ impl FractalBuilder
 
         let gamma = self.gamma.unwrap_or(4.);
         let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
-        let bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
+        let bounds = self.bounds.unwrap_or(BoundsTypes::StrictBounds);
 
-        let description = format!("Thomas' cyclically symmetric attractor");
+        let description = "Thomas' cyclically symmetric attractor".to_string();
 
         info!("Will render {}", description);
 

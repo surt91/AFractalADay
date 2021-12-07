@@ -42,7 +42,7 @@ impl Alphabet {
 
     pub fn parse(rule: &str) -> Vec<Alphabet> {
         rule.chars()
-            .map(|c| Alphabet::new(c))
+            .map(Alphabet::new)
             .collect()
     }
 }

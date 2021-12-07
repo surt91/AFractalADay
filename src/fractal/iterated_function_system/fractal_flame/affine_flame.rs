@@ -96,8 +96,8 @@ impl FractalBuilder
             }
         };
 
-        for i in 0..probabilities.len() {
-            probabilities[i] /= number_of_symmetries as f64;
+        for i in &mut probabilities {
+            *i /= number_of_symmetries as f64;
         }
 
         p = 1./number_of_symmetries as f64;

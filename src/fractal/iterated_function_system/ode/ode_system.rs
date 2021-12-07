@@ -34,7 +34,7 @@ pub trait OdeSystem : Sync + Send + fmt::Debug {
     fn rk4_step(&self, state: &[Real], tau: Real) -> Vec<Real> {
         let mut tmp = vec![0.; self.get_dimension()];
 
-        let est0 = self.derivative(&state);
+        let est0 = self.derivative(state);
 
         for i in 0..self.get_dimension() {
             tmp[i] = state[i] + tau/2.*est0[i];

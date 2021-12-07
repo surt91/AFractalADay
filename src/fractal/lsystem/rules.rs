@@ -35,10 +35,10 @@ where
     D: Deserializer<'de>,
 {
     let s = String::deserialize(deserializer)?;
-    let mut split = s.split("&");
+    let mut split = s.split('&');
     let start_string = split.next().unwrap();
     let rule_string = split.next().unwrap();
-    Ok(Lrules::from_string(start_string, &rule_string))
+    Ok(Lrules::from_string(start_string, rule_string))
 }
 
 impl Lrules {
@@ -50,7 +50,7 @@ impl Lrules {
     /// only upper case letters are valid symbols
     pub fn from_string(start_string: &str, rule_string: &str) -> Lrules {
         let start = start_string.chars()
-                                .map(|c| Alphabet::new(c))
+                                .map(Alphabet::new)
                                 .collect();
 
         let mut rules: HashMap<Alphabet, Vec<Alphabet>> = HashMap::new();
@@ -64,10 +64,10 @@ impl Lrules {
 
         for rule in rule_string.split(',') {
             let mut it = rule.chars();
-            let key = it.by_ref().skip_while(|&x| x == ' ' || x == '\n').next().unwrap();
+            let key = it.by_ref().find(|&x| x != ' ' && x != '\n').unwrap();
 
             // jump over :
-            let delimiter = it.by_ref().skip_while(|&x| x == ' ' || x == '\n').next().unwrap();
+            let delimiter = it.by_ref().find(|&x| x != ' ' && x != '\n').unwrap();
             if delimiter != ':' && delimiter != '→' {
                 error!(
                     "Rule is not valid: not exactly one symbols as key in '{}', but: '{}'",
@@ -151,7 +151,7 @@ impl Lrules {
         }
     }
 
-    pub fn start<'a>(&'a self) -> &'a Vec<Alphabet> {
+    pub fn start(&self) -> &Vec<Alphabet> {
         &self.start
     }
 }

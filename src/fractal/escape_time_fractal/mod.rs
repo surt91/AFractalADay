@@ -80,10 +80,7 @@ pub trait EscapeTimeFractal : Sync + Stylable {
             }
         };
 
-        let center = match center {
-            Some(x) => x,
-            None => (0., 0.)
-        };
+        let center = center.unwrap_or((0., 0.));
 
         let states = self.raster(resolution, scale, center);
         let total_iterations: i64 = states.par_iter()

@@ -38,7 +38,7 @@ fn default_rng() -> RngType {
 
 enum FractalInstance {
     EscapeTime(Box<dyn escape_time_fractal::EscapeTimeFractal>),
-    IFS(Box<dyn iterated_function_system::IteratedFunctionSystem>),
+    Ifs(Box<dyn iterated_function_system::IteratedFunctionSystem>),
     LSys(Box<dyn lsystem::LSystem>),
     Lattice(Box<dyn lattice::LatticeFractal>),
 }
@@ -139,22 +139,22 @@ impl FractalBuilder {
     }
 
     pub fn vibrancy(mut self, vibrancy: &Option<f64>) -> FractalBuilder {
-        self.vibrancy = vibrancy.clone();
+        self.vibrancy = *vibrancy;
         self
     }
 
     pub fn gamma(mut self, gamma: &Option<f64>) -> FractalBuilder {
-        self.gamma = gamma.clone();
+        self.gamma = *gamma;
         self
     }
 
     pub fn bounds(mut self, bounds: &Option<BoundsTypes>) -> FractalBuilder {
-        self.bounds = bounds.clone();
+        self.bounds = *bounds;
         self
     }
 
     pub fn iterations(mut self, iterations: &Option<u32>) -> FractalBuilder {
-        self.iterations = iterations.clone();
+        self.iterations = *iterations;
         self
     }
 
@@ -169,17 +169,17 @@ impl FractalBuilder {
     }
 
     pub fn rpn(mut self, rpn: &Option<String>) -> FractalBuilder {
-        self.f = rpn.clone().and_then(|x| Some(ComplexFunction::rpn_from_string(&x)));
+        self.f = rpn.clone().map(|x| ComplexFunction::rpn_from_string(&x));
         self
     }
 
     pub fn zoom(mut self, zoom: &Option<u64>) -> FractalBuilder {
-        self.zoom = zoom.clone();
+        self.zoom = *zoom;
         self
     }
 
     pub fn center(mut self, center: &Option<(f64, f64)>) -> FractalBuilder {
-        self.center = center.clone();
+        self.center = *center;
         self
     }
 
@@ -204,12 +204,12 @@ impl FractalBuilder {
     }
 
     pub fn angle(mut self, angle: &Option<f64>) -> FractalBuilder {
-        self.angle = angle.clone();
+        self.angle = *angle;
         self
     }
 
     pub fn dimensions(mut self, dimensions: &Option<(u32, u32)>) -> FractalBuilder {
-        self.dimensions = dimensions.clone();
+        self.dimensions = *dimensions;
         self
     }
 
@@ -219,14 +219,14 @@ impl FractalBuilder {
             FractalType::Newton => FractalInstance::EscapeTime(Box::new(self.newton())),
             FractalType::Julia => FractalInstance::EscapeTime(Box::new(self.julia())),
             FractalType::Mandelbrot => FractalInstance::EscapeTime(Box::new(self.mandelbrot())),
-            FractalType::HeighwayDragon => FractalInstance::IFS(Box::new(self.heighway_dragon())),
-            FractalType::BarnsleyFern => FractalInstance::IFS(Box::new(self.barnsley_fern())),
-            FractalType::SierpinskiGasket => FractalInstance::IFS(Box::new(self.sierpinski_gasket())),
-            FractalType::SierpinskiPentagon => FractalInstance::IFS(Box::new(self.sierpinski_pentagon())),
-            FractalType::PythagoreanTree => FractalInstance::IFS(Box::new(self.pythagorean_tree())),
-            FractalType::AppolonianGasket => FractalInstance::IFS(Box::new(self.appolonian_gasket())),
-            FractalType::MobiusFlame => FractalInstance::IFS(Box::new(self.mobius_flame())),
-            FractalType::FractalFlame => FractalInstance::IFS(Box::new(self.fractal_flame())),
+            FractalType::HeighwayDragon => FractalInstance::Ifs(Box::new(self.heighway_dragon())),
+            FractalType::BarnsleyFern => FractalInstance::Ifs(Box::new(self.barnsley_fern())),
+            FractalType::SierpinskiGasket => FractalInstance::Ifs(Box::new(self.sierpinski_gasket())),
+            FractalType::SierpinskiPentagon => FractalInstance::Ifs(Box::new(self.sierpinski_pentagon())),
+            FractalType::PythagoreanTree => FractalInstance::Ifs(Box::new(self.pythagorean_tree())),
+            FractalType::AppolonianGasket => FractalInstance::Ifs(Box::new(self.appolonian_gasket())),
+            FractalType::MobiusFlame => FractalInstance::Ifs(Box::new(self.mobius_flame())),
+            FractalType::FractalFlame => FractalInstance::Ifs(Box::new(self.fractal_flame())),
             FractalType::KochCurve => FractalInstance::LSys(Box::new(self.koch_curve())),
             FractalType::SierpinskiArrowhead => FractalInstance::LSys(Box::new(self.sierpinski_arrowhead())),
             FractalType::HilbertCurve => FractalInstance::LSys(Box::new(self.hilbert_curve())),
@@ -238,11 +238,11 @@ impl FractalBuilder {
             FractalType::LDragon => FractalInstance::LSys(Box::new(self.ldragon())),
             FractalType::RandomLSystem => FractalInstance::LSys(Box::new(self.generic())),
             FractalType::Ising => FractalInstance::Lattice(Box::new(self.ising())),
-            FractalType::QuadraticMap => FractalInstance::IFS(Box::new(self.quadratic_map())),
-            FractalType::Lorenz => FractalInstance::IFS(Box::new(self.lorenz())),
-            FractalType::Rossler => FractalInstance::IFS(Box::new(self.rossler())),
-            FractalType::Thomas => FractalInstance::IFS(Box::new(self.thomas())),
-            FractalType::DoublePendulum => FractalInstance::IFS(Box::new(self.double_pendulum())),
+            FractalType::QuadraticMap => FractalInstance::Ifs(Box::new(self.quadratic_map())),
+            FractalType::Lorenz => FractalInstance::Ifs(Box::new(self.lorenz())),
+            FractalType::Rossler => FractalInstance::Ifs(Box::new(self.rossler())),
+            FractalType::Thomas => FractalInstance::Ifs(Box::new(self.thomas())),
+            FractalType::DoublePendulum => FractalInstance::Ifs(Box::new(self.double_pendulum())),
             FractalType::Random => unreachable!(),
             FractalType::LoadJson(ref json) => FractalInstance::guess_fractal_from_json(json),
         };
@@ -254,11 +254,17 @@ impl FractalBuilder {
     }
 }
 
+impl Default for FractalBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Fractal {
     pub fn render(&mut self, resolution: (u32, u32), filename: &str, supersampling: bool) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
-            FractalInstance::IFS(ref mut f) => f.render(
+            FractalInstance::Ifs(ref mut f) => f.render(
                 resolution,
                 f.suggested_iterations(),
                 f.suggested_parallelism(),
@@ -278,7 +284,7 @@ impl Fractal {
     pub fn render_draft(&mut self, resolution: (u32, u32), filename: &str) -> io::Result<bool> {
         let (buffer, good) = match self.fractal {
             FractalInstance::EscapeTime(ref mut f) => f.render(resolution, None, None),
-            FractalInstance::IFS(ref mut f) => f.render(
+            FractalInstance::Ifs(ref mut f) => f.render(
                 resolution,
                 f.suggested_iterations_draft(),
                 f.suggested_parallelism(),
@@ -297,7 +303,7 @@ impl Fractal {
     pub fn description(&self) -> &str {
         match self.fractal {
             FractalInstance::EscapeTime(ref f) => f.description(),
-            FractalInstance::IFS(ref f) => f.description(),
+            FractalInstance::Ifs(ref f) => f.description(),
             FractalInstance::LSys(ref f) => f.description(),
             FractalInstance::Lattice(ref f) => f.description(),
         }
@@ -306,16 +312,24 @@ impl Fractal {
     pub fn json(&self) -> String {
         match self.fractal {
             FractalInstance::EscapeTime(ref f) => {
-                serde_json::to_string(&f.get_serializable()).expect(&format!("Escape: {:#?}", &f.get_serializable()))
+                serde_json::to_string(&f.get_serializable())
+                    .unwrap_or_else(|_| panic!("Escape: {:#?}", &f.get_serializable())
+                )
             },
-            FractalInstance::IFS(ref f) => {
-                serde_json::to_string(&f.get_serializable()).expect(&format!("IFS: {:#?}", &f.get_serializable()))
+            FractalInstance::Ifs(ref f) => {
+                serde_json::to_string(&f.get_serializable())
+                    .unwrap_or_else(|_| panic!("IFS: {:#?}", &f.get_serializable())
+                )
             },
             FractalInstance::LSys(ref f) => {
-                serde_json::to_string(&f.get_serializable()).expect(&format!("Lsys: {:#?}", &f.get_serializable()))
+                serde_json::to_string(&f.get_serializable())
+                    .unwrap_or_else(|_| panic!("Lsys: {:#?}", &f.get_serializable())
+                )
             },
             FractalInstance::Lattice(ref f) => {
-                serde_json::to_string(&f.get_serializable()).expect(&format!("Lattice: {:#?}", &f.get_serializable()))
+                serde_json::to_string(&f.get_serializable())
+                    .unwrap_or_else(|_| panic!("Lattice: {:#?}", &f.get_serializable())
+                )
             },
         }
     }
@@ -324,7 +338,7 @@ impl Fractal {
         match self.fractal_type {
             FractalType::FractalFlame | FractalType::QuadraticMap => {
                 match self.fractal {
-                    FractalInstance::IFS(ref mut f) => f.estimate_quality_before(),
+                    FractalInstance::Ifs(ref mut f) => f.estimate_quality_before(),
                     _ => unreachable!(),
                 }
             },
@@ -335,7 +349,7 @@ impl Fractal {
     pub fn combine(&self, other: &Fractal) -> Result<Fractal, ()> {
         // both need to be IFS
         let (f1, f2) = match (&self.fractal, &other.fractal) {
-            (&FractalInstance::IFS(ref a), &FractalInstance::IFS(ref b)) => (a, b),
+            (&FractalInstance::Ifs(ref a), &FractalInstance::Ifs(ref b)) => (a, b),
             _ => return Err(()),
         };
 
@@ -368,7 +382,7 @@ impl Fractal {
         let f2_num_trafo = count_trafo(&f2_config);
 
         // create the new config
-        let mut f_config = f1_config.clone();
+        let mut f_config = f1_config;
         let mut rng = SmallRng::from_entropy();
 
         // TODO: take one trafos from f2 and add it to f, may overwrite
@@ -381,7 +395,7 @@ impl Fractal {
         } else {
             // add
             let overwrite = rng.gen_range(0, f1_num_trafo);
-            let new_prob = f_config.probabilities[overwrite].clone();
+            let new_prob = f_config.probabilities[overwrite];
             let previous_prob = if overwrite > 0 {f_config.probabilities[overwrite-1]} else {0.};
             let reduced_old_prob = (previous_prob + new_prob) / 2.;
             f_config.probabilities[overwrite] = reduced_old_prob;
@@ -402,22 +416,21 @@ impl Fractal {
 impl FractalInstance {
     // FIXME This has to be replaced by a better approach
     fn guess_fractal_from_json(json: &str) -> FractalInstance {
-        let out: FractalInstance;
-        let ifs = FractalBuilder::ifs_from_json(&json);
-        let lsys = FractalBuilder::lsys_from_json(&json);
-        let escape_type = FractalBuilder::escape_type_from_json(&json);
+        let ifs = FractalBuilder::ifs_from_json(json);
+        let lsys = FractalBuilder::lsys_from_json(json);
+        let escape_type = FractalBuilder::escape_type_from_json(json);
 
-        if ifs.is_ok() {
-            out = match ifs.unwrap() {
-                IterationFractalType::IFS(x) => FractalInstance::IFS(Box::new(x)),
-                IterationFractalType::QuadraticMap(x) => FractalInstance::IFS(Box::new(x)),
-                IterationFractalType::OdeFractal(x) => FractalInstance::IFS(Box::new(x)),
+        if let Ok(ft) = ifs {
+             match ft {
+                IterationFractalType::IFS(x) => FractalInstance::Ifs(Box::new(x)),
+                IterationFractalType::QuadraticMap(x) => FractalInstance::Ifs(Box::new(x)),
+                IterationFractalType::OdeFractal(x) => FractalInstance::Ifs(Box::new(x)),
                 IterationFractalType::None => panic!("invalid json")
             }
-        } else if lsys.is_ok() {
-            out = FractalInstance::LSys(Box::new(lsys.unwrap()))
-        } else if escape_type.is_ok() {
-            out = match escape_type.unwrap() {
+        } else if let Ok(ft) = lsys {
+            FractalInstance::LSys(Box::new(ft))
+        } else if let Ok(ft) = escape_type {
+            match ft {
                 EscapeTypes::Mandelbrot(x) => FractalInstance::EscapeTime(Box::new(x)),
                 EscapeTypes::Newton(x) => FractalInstance::EscapeTime(Box::new(x)),
                 EscapeTypes::None => panic!("invalid json")
@@ -453,7 +466,6 @@ impl FractalInstance {
             }
             panic!("invalid json");
         }
-        out
     }
 }
 
@@ -511,9 +523,7 @@ pub fn render_draft(
     fractal.render_draft(*dim, filename)
            .expect("creation of fractal failed");
 
-    let json = fractal.json();
-
-    json
+    fractal.json()
 }
 
 use crate::color::{RGBA, HSV, color_variance};

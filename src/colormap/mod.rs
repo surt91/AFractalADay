@@ -50,7 +50,7 @@ impl Colormap {
         }
     }
 
-    fn vec_to_map(val: &Vec<RGB>, name: &str) -> Colormap {
+    fn vec_to_map(val: &[RGB], name: &str) -> Colormap {
         let num = val.len();
         let idx = (0..num).map(|i| i as f64/num as f64).collect::<Vec<f64>>();
 
@@ -96,7 +96,7 @@ impl Colormap {
             (2./5., RGB(1., 1., 0.)),
             (3./5., RGB(0., 1., 0.)),
             (4./5., RGB(0., 0., 1.)),
-            (5./5., RGB(139./255., 0., 1.)),
+            (1., RGB(139./255., 0., 1.)),
         ];
         Colormap {
             map,

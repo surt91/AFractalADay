@@ -23,9 +23,9 @@ impl FractalBuilder
 
         let gamma = self.gamma.unwrap_or(4.);
         let vibrancy = self.vibrancy.unwrap_or_else(|| rng.gen());
-        let bounds = self.bounds.unwrap_or_else(|| BoundsTypes::StrictBounds);
+        let bounds = self.bounds.unwrap_or(BoundsTypes::StrictBounds);
 
-        let description = format!("Quadratic map");
+        let description = "Quadratic map".to_string();
 
         info!("Will render {}", description);
 
