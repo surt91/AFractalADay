@@ -1,4 +1,4 @@
-# A Fractal A Day
+# :art: A Fractal A Day
 
 <a href="https://twitter.com/AFractalADay/status/962651103325310976" target="_blank"><img align="right" width="256" height="256" alt="4 Möbius transformations with 7-fold rotational symmetry" src="extra/example_fractal.webp"></a>
 
@@ -12,7 +12,7 @@ can be found [here](https://blog.schawe.me/randomFractals.html) and [here](https
 
 Documentation at [surt91.github.io/AFractalADay](https://surt91.github.io/AFractalADay/).
 
-## Setup
+## :hammer_and_wrench: Setup
 
 This program is pure rust with an optional dependency on `Imagemagick` and `optipng`
 which will be called through the shell.
@@ -21,7 +21,7 @@ Just use cargo: `cargo run --release --features="binaries"`
 
 **Important:** Do not forget to put in valid keys and secrets in `keys_and_secrets.json`.
 
-### Docker
+### :whale: Docker
 
 You can also use a docker container:
 
@@ -34,7 +34,7 @@ docker run -v $PWD/img:/img fractal --appolonian --width 400 --height 400
 # the generated fractal will be saved to the mounted volume (here `./img`)
 ```
 
-## Dependencies
+## :herb: Dependencies
 
 * Imagemagick (optional)
 * optipng (optional)
