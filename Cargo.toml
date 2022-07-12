@@ -12,27 +12,27 @@ doc = false
 required-features = ["binaries"]
 
 [dependencies]
-png = "0.10"
-rand = "^0.6"
-rand_pcg = "^0.1"
+png = "0.14"
+rand = "0.6"
+rand_pcg = "0.1"
 num = {version = "*", features = ["serde"]}
 itertools = "*"
 rayon = "*"
 num_cpus = "*"
-time = "0.1"
+time = "*"
 clap = "*"
-quaternion = "0.4"
+quaternion = "*"
 
 log = "*"
 simplelog = "*"
 log-panics = "*"
 
-serde = { version = "1.0", features = ["derive"] }
-serde_derive = "1.0"
-serde_json = "1.0"
-serde_path_to_error = "0.1"
+serde = { version = "1", features = ["derive"] }
+serde_derive = "1"
+serde_json = "1"
+serde_path_to_error = "*"
 
-lazy_static = "1.2"
+lazy_static = "1"
 
 [dependencies.turtle]
 version = "0.1"
@@ -47,7 +47,7 @@ binaries = ["my_twitter"]
 
 [dev-dependencies]
 assert_approx_eq = "*"
-criterion = "0.3"
+criterion = "0.*"
 
 [[bench]]
 name = "benchmark"
